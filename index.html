@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bedtime Stories of Great Scientists · Hadithi za Wanasayansi · Histoires de Scientifiques</title>
+<style>
+  :root {
+    --night: #0f1630;
+    --night-deep: #0a0f22;
+    --card: #1a2244;
+    --card-hover: #222c56;
+    --ink: #f2f0e9;
+    --ink-soft: #b8bdd4;
+    --gold: #f5c664;
+    --moon: #ffe9b8;
+    --accent-africa: #6ecf8e;
+    --accent-europe: #7fa8f0;
+    --accent-americas: #f08f7f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { background: var(--night-deep); }
+  body {
+    background: linear-gradient(180deg, var(--night-deep) 0%, var(--night) 40%, #16204a 100%);
+    color: var(--ink);
+    font-family: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  /* --- twinkling stars --- */
+  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .star { position: absolute; background: #fff; border-radius: 50%; opacity: .7; animation: twinkle 3s infinite ease-in-out; }
+  @keyframes twinkle { 0%,100% { opacity:.15; } 50% { opacity:.85; } }
+
+  .wrap { position: relative; z-index: 1; max-width: 1060px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  header { text-align: center; margin-bottom: 28px; }
+  .moon { font-size: 52px; display: inline-block; animation: floaty 6s ease-in-out infinite; }
+  @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  h1 { font-size: clamp(26px, 4vw, 40px); color: var(--moon); margin: 8px 0 6px; font-weight: 700; }
+  .subtitle { color: var(--ink-soft); font-size: 16px; max-width: 640px; margin: 0 auto; }
+
+  /* --- language switcher --- */
+  .lang-switch { display: flex; justify-content: center; gap: 8px; margin: 22px 0 8px; }
+  .lang-btn {
+    background: transparent; border: 1.5px solid #3a466f; color: var(--ink-soft);
+    padding: 8px 20px; border-radius: 999px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all .2s; font-family: inherit;
+  }
+  .lang-btn:hover { border-color: var(--gold); color: var(--ink); }
+  .lang-btn.active { background: var(--gold); border-color: var(--gold); color: #201a08; }
+
+  /* --- filters --- */
+  .filters { background: rgba(255,255,255,.04); border: 1px solid #2b3560; border-radius: 18px; padding: 18px 20px; margin: 22px 0 30px; }
+  .filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .filter-row + .filter-row { margin-top: 12px; }
+  .filter-label { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--gold); font-weight: 700; min-width: 82px; }
+  .chip {
+    background: #232c52; border: 1.5px solid transparent; color: var(--ink-soft);
+    padding: 6px 15px; border-radius: 999px; font-size: 14px; cursor: pointer;
+    transition: all .18s; font-family: inherit;
+  }
+  .chip:hover { color: var(--ink); border-color: #4a568a; }
+  .chip.active { background: var(--moon); color: #241d07; font-weight: 700; }
+
+  .count-line { color: var(--ink-soft); font-size: 14px; margin: 0 4px 14px; }
+
+  /* --- story grid --- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  .card {
+    background: var(--card); border: 1px solid #2b3560; border-radius: 20px;
+    padding: 22px; cursor: pointer; transition: transform .18s, background .18s, box-shadow .18s;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .card:hover { transform: translateY(-4px); background: var(--card-hover); box-shadow: 0 12px 30px rgba(0,0,0,.35); }
+  .card-top { display: flex; align-items: center; gap: 14px; }
+  .avatar {
+    font-size: 30px; width: 58px; height: 58px; flex: 0 0 58px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 30% 25%, #33406f, #1c2547);
+  }
+  .card h2 { font-size: 19px; color: var(--ink); }
+  .years { font-size: 13px; color: var(--ink-soft); }
+  .card-title { color: var(--gold); font-size: 15px; font-weight: 600; font-style: italic; }
+  .hook { color: var(--ink-soft); font-size: 14.5px; flex: 1; }
+  .badges { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+  .badge { font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 999px; letter-spacing: .02em; }
+  .badge.region-africa   { background: rgba(110,207,142,.16); color: var(--accent-africa); }
+  .badge.region-europe   { background: rgba(127,168,240,.16); color: var(--accent-europe); }
+  .badge.region-americas { background: rgba(240,143,127,.16); color: var(--accent-americas); }
+  .badge.topic { background: rgba(245,198,100,.13); color: var(--gold); }
+  .read-hint { font-size: 13px; color: var(--ink-soft); margin-top: 6px; }
+  .empty { text-align: center; color: var(--ink-soft); padding: 50px 0; font-size: 17px; grid-column: 1 / -1; }
+
+  /* --- reader modal --- */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(5,8,20,.82); backdrop-filter: blur(6px);
+    display: none; align-items: flex-start; justify-content: center; z-index: 10;
+    padding: 4vh 16px; overflow-y: auto;
+  }
+  .overlay.open { display: flex; }
+  .reader {
+    background: linear-gradient(180deg, #1d2650, #161e40); border: 1px solid #38437a;
+    border-radius: 24px; max-width: 720px; width: 100%; padding: 34px 36px 40px;
+    box-shadow: 0 24px 80px rgba(0,0,0,.5); position: relative;
+  }
+  .close-btn {
+    position: absolute; top: 16px; right: 16px; background: #2a355f; border: none;
+    color: var(--ink); width: 38px; height: 38px; border-radius: 50%; font-size: 18px;
+    cursor: pointer; transition: background .2s;
+  }
+  .close-btn:hover { background: #3c4a80; }
+  .reader .avatar { margin-bottom: 6px; }
+  .reader h2 { font-size: 26px; color: var(--moon); margin: 4px 0 2px; }
+  .reader .story-title { color: var(--gold); font-size: 18px; font-style: italic; margin-bottom: 4px; }
+  .reader .meta { color: var(--ink-soft); font-size: 14px; margin-bottom: 16px; }
+  .reader .badges { margin-bottom: 18px; }
+  .reader p { font-size: 17.5px; margin-bottom: 16px; color: #e9e7de; }
+  .reader p strong { color: var(--moon); }
+  .goodnight { text-align: center; color: var(--gold); font-size: 16px; margin-top: 26px; }
+  .reader-langs { display: flex; gap: 6px; margin-bottom: 18px; }
+  .reader-langs .lang-btn { padding: 5px 14px; font-size: 13px; }
+
+  footer { text-align: center; color: var(--ink-soft); margin-top: 56px; font-size: 14px; }
+  @media (max-width: 560px) { .reader { padding: 26px 20px 32px; } }
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="wrap">
+  <header>
+    <span class="moon">🌙</span>
+    <h1 id="siteTitle"></h1>
+    <p class="subtitle" id="siteSubtitle"></p>
+    <div class="lang-switch" id="langSwitch"></div>
+  </header>
+
+  <div class="filters">
+    <div class="filter-row">
+      <span class="filter-label" id="regionLabel"></span>
+      <span id="regionChips"></span>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label" id="topicLabel"></span>
+      <span id="topicChips"></span>
+    </div>
+  </div>
+
+  <p class="count-line" id="countLine"></p>
+  <div class="grid" id="grid"></div>
+
+  <footer id="footerLine"></footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="reader" id="reader"></div>
+</div>
+
+<script>
+const UI = {
+  en: { title: "Bedtime Stories of Great Scientists",
+        subtitle: "Short two-minute stories about the people who changed the world — where they were born, how they grew up, and why they mattered.",
+        region: "Region", topic: "Topic", all: "All",
+        showing: n => `${n} ${n === 1 ? "story" : "stories"}`,
+        read: "Tap to read · ~2 min", born: "Born in", goodnight: "The end. Goodnight 🌙",
+        footer: "Made with love, for one curious little dreamer.",
+        empty: "No stories here yet — try another filter." },
+  sw: { title: "Hadithi za Usiku za Wanasayansi Wakubwa",
+        subtitle: "Hadithi fupi za dakika mbili kuhusu watu waliobadilisha dunia — walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
+        region: "Kanda", topic: "Mada", all: "Zote",
+        showing: n => `Hadithi ${n}`,
+        read: "Gusa kusoma · dakika 2", born: "Alizaliwa", goodnight: "Mwisho. Lala salama 🌙",
+        footer: "Imetengenezwa kwa upendo, kwa ajili ya mwotaji mdogo mdadisi.",
+        empty: "Hakuna hadithi hapa bado — jaribu kichujio kingine." },
+  fr: { title: "Histoires du Soir de Grands Scientifiques",
+        subtitle: "De courtes histoires de deux minutes sur les gens qui ont changé le monde — où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
+        region: "Région", topic: "Sujet", all: "Tout",
+        showing: n => `${n} histoire${n > 1 ? "s" : ""}`,
+        read: "Touchez pour lire · ~2 min", born: "Né(e) en", goodnight: "Fin. Bonne nuit 🌙",
+        footer: "Fait avec amour, pour un petit rêveur curieux.",
+        empty: "Pas encore d'histoire ici — essayez un autre filtre." }
+};
+
+const REGIONS = {
+  africa:   { en: "Africa",   sw: "Afrika",   fr: "Afrique" },
+  europe:   { en: "Europe",   sw: "Ulaya",    fr: "Europe" },
+  americas: { en: "Americas", sw: "Amerika",  fr: "Amériques" }
+};
+
+const TOPICS = {
+  physics:     { emoji: "⚛️", en: "Physics",          sw: "Fizikia",          fr: "Physique" },
+  chemistry:   { emoji: "🧪", en: "Chemistry",        sw: "Kemia",            fr: "Chimie" },
+  environment: { emoji: "🌳", en: "Environment",      sw: "Mazingira",        fr: "Environnement" },
+  farming:     { emoji: "🥜", en: "Plants & Farming", sw: "Mimea na Kilimo",  fr: "Plantes et Agriculture" },
+  space:       { emoji: "🚀", en: "Math & Space",     sw: "Hesabu na Anga",   fr: "Maths et Espace" },
+  medicine:    { emoji: "🔬", en: "Medicine",         sw: "Tiba",             fr: "Médecine" }
+};
+
+const STORIES = [
+{
+  id: "newton", emoji: "🍎", name: "Isaac Newton", years: "1643–1727",
+  region: "europe", topic: "physics",
+  country: { en: "England", sw: "Uingereza", fr: "Angleterre" },
+  title: { en: "The Boy Who Asked Why the Apple Falls",
+           sw: "Mvulana Aliyeuliza Kwa Nini Tufaha Huanguka",
+           fr: "Le Garçon Qui Demandait Pourquoi la Pomme Tombe" },
+  hook: { en: "A quiet farm boy watches an apple fall — and discovers the invisible force that moves the whole universe.",
+          sw: "Mvulana mkimya wa shambani aona tufaha likianguka — na kugundua nguvu isiyoonekana inayosogeza ulimwengu mzima.",
+          fr: "Un garçon de ferme silencieux voit une pomme tomber — et découvre la force invisible qui fait bouger tout l'univers." },
+  text: {
+    en: [
+      "A long time ago, in 1643, a baby boy was born on a small farm in England. His name was Isaac Newton. His father died before he was born, and Isaac grew up quiet and small, but his head was full of questions. While other children played, Isaac built little windmills and water clocks with his own hands.",
+      "One day, sitting under a tree, Isaac watched an apple fall to the ground. Everyone had seen apples fall before. But Isaac asked, \"Why does it fall <strong>down</strong>? Why not up, or sideways?\" He thought and thought, and discovered a great secret: an invisible force called <strong>gravity</strong> pulls everything toward the Earth — the apple, the rain, even the Moon.",
+      "Isaac wrote laws that explain how everything moves, from a rolling ball to the planets in the sky. That is why, hundreds of years later, we could fly rockets to the Moon — because one quiet boy never stopped asking <strong>why</strong>."
+    ],
+    sw: [
+      "Zamani sana, mwaka wa 1643, mtoto wa kiume alizaliwa katika shamba dogo huko Uingereza. Jina lake lilikuwa Isaac Newton. Baba yake alifariki kabla hajazaliwa, na Isaac alikua akiwa mtoto mkimya na mdogo, lakini kichwa chake kilijaa maswali. Watoto wengine walipocheza, Isaac alitengeneza vinu vidogo vya upepo kwa mikono yake mwenyewe.",
+      "Siku moja, akiwa ameketi chini ya mti, Isaac aliona tufaha likianguka chini. Watu wote walikuwa wameona matufaha yakianguka. Lakini Isaac aliuliza, \"Kwa nini linaanguka <strong>chini</strong>? Kwa nini si juu?\" Alifikiri na kufikiri, na akagundua siri kubwa: kuna nguvu isiyoonekana inayoitwa <strong>mvutano wa ardhi</strong> (gravity) inayovuta kila kitu kuelekea duniani — tufaha, mvua, hata Mwezi.",
+      "Isaac aliandika sheria zinazoeleza jinsi kila kitu kinavyosogea — kuanzia mpira unaoviringika hadi sayari angani. Ndiyo maana, miaka mia nyingi baadaye, tuliweza kupeleka roketi Mwezini — kwa sababu mvulana mmoja mkimya hakuacha kuuliza <strong>kwa nini</strong>."
+    ],
+    fr: [
+      "Il y a très longtemps, en 1643, un petit garçon est né dans une petite ferme en Angleterre. Il s'appelait Isaac Newton. Son père est mort avant sa naissance, et Isaac a grandi silencieux et petit, mais sa tête était pleine de questions. Pendant que les autres enfants jouaient, Isaac construisait de petits moulins à vent de ses propres mains.",
+      "Un jour, assis sous un arbre, Isaac a vu une pomme tomber par terre. Tout le monde avait déjà vu des pommes tomber. Mais Isaac a demandé : « Pourquoi tombe-t-elle vers le <strong>bas</strong> ? Pourquoi pas vers le haut ? » Il a réfléchi longtemps, et il a découvert un grand secret : une force invisible appelée la <strong>gravité</strong> attire tout vers la Terre — la pomme, la pluie, même la Lune.",
+      "Isaac a écrit les lois qui expliquent comment tout bouge, du ballon qui roule aux planètes dans le ciel. C'est pourquoi, des centaines d'années plus tard, nous avons pu envoyer des fusées sur la Lune — parce qu'un garçon silencieux n'a jamais cessé de demander <strong>pourquoi</strong>."
+    ]
+  }
+},
+{
+  id: "einstein", emoji: "💡", name: "Albert Einstein", years: "1879–1955",
+  region: "europe", topic: "physics",
+  country: { en: "Germany", sw: "Ujerumani", fr: "Allemagne" },
+  title: { en: "The Boy Who Dreamed of Riding on Light",
+           sw: "Mvulana Aliyeota Kusafiri na Mwanga",
+           fr: "Le Garçon Qui Rêvait de Voyager sur la Lumière" },
+  hook: { en: "He was so slow to speak that his family worried — then his daydreams changed how we see time and space.",
+          sw: "Alichelewa kuongea hata familia yake ikawa na wasiwasi — kisha ndoto zake zikabadilisha jinsi tunavyoona muda na anga.",
+          fr: "Il parlait si tard que sa famille s'inquiétait — puis ses rêveries ont changé notre vision du temps et de l'espace." },
+  text: {
+    en: [
+      "In 1879, in a town in Germany, a boy named Albert Einstein was born. He was slow to speak — so slow that his family worried. But when Albert was five and sick in bed, his father gave him a compass. Albert watched the needle always point north, moved by something invisible, and he was filled with wonder.",
+      "At school, some teachers thought he daydreamed too much. But Albert's daydreams were special. As a young man he asked himself, \"What would I see if I could ride on a beam of light?\" No one had ever asked such a question.",
+      "While working a simple job in an office, Albert did his thinking in the evenings. His ideas became the <strong>theory of relativity</strong> — it showed that time and space can stretch and bend, like rubber. His famous little equation, E = mc², revealed the enormous energy hidden inside tiny things.",
+      "Albert taught the world that imagination is more important than knowledge — and that a slow-speaking boy can change how humanity sees the whole universe."
+    ],
+    sw: [
+      "Mwaka wa 1879, katika mji mmoja nchini Ujerumani, mvulana aitwaye Albert Einstein alizaliwa. Alichelewa sana kuongea — hata familia yake ikawa na wasiwasi. Lakini Albert alipokuwa na miaka mitano, akiwa mgonjwa kitandani, baba yake alimpa dira. Albert aliangalia sindano ikielekeza kaskazini kila wakati, ikisukumwa na kitu kisichoonekana, na akajawa na mshangao.",
+      "Shuleni, walimu wengine walidhani anaota ndoto za mchana kupita kiasi. Lakini ndoto za Albert zilikuwa za pekee. Alipokuwa kijana alijiuliza, \"Ningeona nini kama ningeweza kupanda mwanga na kusafiri nao?\" Hakuna mtu aliyewahi kuuliza swali kama hilo.",
+      "Akifanya kazi ya kawaida ofisini, Albert alifikiri sana jioni. Mawazo yake yakawa <strong>nadharia ya urelativiti</strong> — ilionyesha kwamba muda na anga vinaweza kunyooka na kupinda kama mpira wa raba. Mlinganyo wake maarufu, E = mc², ulifunua nishati kubwa iliyofichwa ndani ya vitu vidogo sana.",
+      "Albert alifundisha ulimwengu kwamba mawazo ya kubuni ni muhimu kuliko maarifa — na kwamba mvulana aliyechelewa kuongea anaweza kubadilisha jinsi binadamu wanavyoona ulimwengu mzima."
+    ],
+    fr: [
+      "En 1879, dans une ville d'Allemagne, un garçon nommé Albert Einstein est né. Il a mis longtemps à parler — si longtemps que sa famille s'inquiétait. Mais quand Albert avait cinq ans, malade au lit, son père lui a donné une boussole. Albert regardait l'aiguille toujours pointer vers le nord, poussée par quelque chose d'invisible, et il était émerveillé.",
+      "À l'école, certains maîtres trouvaient qu'il rêvait trop. Mais les rêves d'Albert étaient spéciaux. Jeune homme, il s'est demandé : « Que verrais-je si je pouvais voyager sur un rayon de lumière ? » Personne n'avait jamais posé une telle question.",
+      "Tout en travaillant dans un simple bureau, Albert réfléchissait le soir. Ses idées sont devenues la <strong>théorie de la relativité</strong> — elle a montré que le temps et l'espace peuvent s'étirer et se courber, comme du caoutchouc. Sa célèbre petite équation, E = mc², a révélé l'énorme énergie cachée dans les choses minuscules.",
+      "Albert a appris au monde que l'imagination est plus importante que le savoir — et qu'un garçon qui parlait lentement peut changer la façon dont l'humanité voit tout l'univers."
+    ]
+  }
+},
+{
+  id: "curie", emoji: "✨", name: "Marie Curie", years: "1867–1934",
+  region: "europe", topic: "chemistry",
+  country: { en: "Poland", sw: "Poland", fr: "Pologne" },
+  title: { en: "The Girl Who Studied in Secret",
+           sw: "Msichana Aliyesoma kwa Siri",
+           fr: "La Fille Qui Étudiait en Secret" },
+  hook: { en: "Girls were not allowed at university — so she studied at night, in secret, and won two Nobel Prizes.",
+          sw: "Wasichana hawakuruhusiwa chuo kikuu — basi alisoma usiku, kwa siri, na akashinda Tuzo mbili za Nobel.",
+          fr: "Les filles n'avaient pas droit à l'université — alors elle a étudié la nuit, en secret, et gagné deux prix Nobel." },
+  text: {
+    en: [
+      "In 1867, in Warsaw, Poland, a girl named Maria was born. Her family was poor, and in her country, girls were not allowed to go to university. But Maria loved learning so much that she studied in secret, at night, sharing books with other brave young women.",
+      "She saved every coin she earned, and one day she took a train to Paris, France, to finally study science. She was often cold and hungry, but she was the best student in her class. There she became <strong>Marie Curie</strong>.",
+      "Working in an old shed with her husband Pierre, Marie discovered two new elements no one had ever seen — she named one <em>polonium</em>, after her beloved Poland. She discovered that some rocks give off invisible rays of energy, and she called it <strong>radioactivity</strong>.",
+      "Marie became the first woman ever to win a Nobel Prize — and then she won a second one! Her discoveries help doctors see inside our bodies and fight sickness today. She showed the world that no door stays closed to a girl who refuses to stop learning."
+    ],
+    sw: [
+      "Mwaka wa 1867, mjini Warsaw, Poland, msichana aitwaye Maria alizaliwa. Familia yake ilikuwa maskini, na katika nchi yake, wasichana hawakuruhusiwa kwenda chuo kikuu. Lakini Maria alipenda kujifunza sana hata akasoma kwa siri, usiku, akishirikiana vitabu na wasichana wengine wenye ujasiri.",
+      "Aliweka akiba ya kila sarafu aliyopata, na siku moja alipanda treni kwenda Paris, Ufaransa, ili hatimaye asome sayansi. Mara nyingi alikuwa na baridi na njaa, lakini alikuwa mwanafunzi bora darasani. Huko akawa <strong>Marie Curie</strong>.",
+      "Akifanya kazi katika kibanda kikuukuu pamoja na mume wake Pierre, Marie aligundua elementi mbili mpya ambazo hakuna mtu aliyewahi kuziona — aliipa moja jina <em>polonium</em>, kwa heshima ya nchi yake Poland. Aligundua kwamba mawe mengine hutoa miale ya nishati isiyoonekana, na akaiita <strong>radioactivity</strong>.",
+      "Marie akawa mwanamke wa kwanza kabisa kushinda Tuzo ya Nobel — kisha akashinda ya pili! Uvumbuzi wake unasaidia madaktari kuona ndani ya miili yetu na kupambana na magonjwa hadi leo. Alionyesha ulimwengu kwamba hakuna mlango unaobaki umefungwa kwa msichana asiyekubali kuacha kujifunza."
+    ],
+    fr: [
+      "En 1867, à Varsovie, en Pologne, une fille nommée Maria est née. Sa famille était pauvre, et dans son pays, les filles n'avaient pas le droit d'aller à l'université. Mais Maria aimait tellement apprendre qu'elle étudiait en secret, la nuit, en partageant des livres avec d'autres jeunes femmes courageuses.",
+      "Elle a économisé chaque pièce qu'elle gagnait, et un jour elle a pris le train pour Paris, en France, pour enfin étudier les sciences. Elle avait souvent froid et faim, mais elle était la meilleure élève de sa classe. C'est là qu'elle est devenue <strong>Marie Curie</strong>.",
+      "En travaillant dans un vieux hangar avec son mari Pierre, Marie a découvert deux nouveaux éléments que personne n'avait jamais vus — elle a nommé l'un d'eux <em>polonium</em>, en l'honneur de sa chère Pologne. Elle a découvert que certaines pierres émettent des rayons d'énergie invisibles : la <strong>radioactivité</strong>.",
+      "Marie est devenue la première femme à gagner un prix Nobel — puis elle en a gagné un deuxième ! Ses découvertes aident encore aujourd'hui les médecins à voir l'intérieur de notre corps et à combattre les maladies. Elle a montré au monde qu'aucune porte ne reste fermée à une fille qui refuse d'arrêter d'apprendre."
+    ]
+  }
+},
+{
+  id: "maathai", emoji: "🌳", name: "Wangari Maathai", years: "1940–2011",
+  region: "africa", topic: "environment",
+  country: { en: "Kenya", sw: "Kenya", fr: "Kenya" },
+  title: { en: "The Woman Who Planted a Forest",
+           sw: "Mwanamke Aliyepanda Msitu",
+           fr: "La Femme Qui a Planté une Forêt" },
+  hook: { en: "A girl from the hills of Nyeri planted fifty million trees — and won the Nobel Peace Prize.",
+          sw: "Msichana kutoka vilima vya Nyeri alipanda miti milioni hamsini — na akashinda Tuzo ya Amani ya Nobel.",
+          fr: "Une fille des collines de Nyeri a planté cinquante millions d'arbres — et gagné le prix Nobel de la paix." },
+  text: {
+    en: [
+      "In 1940, in the green hills of Nyeri, Kenya, a girl named Wangari Maathai was born. As a child she fetched water from a clear stream and played under a great fig tree her mother told her never to harm, because it was a tree of life.",
+      "Wangari loved school and worked so hard that she won a chance to study in America. She became a scientist of living things — a biologist — and the first woman in East and Central Africa to earn a doctorate degree.",
+      "When she came home, Wangari saw that the streams were drying and the trees were disappearing. So she did something simple and powerful: she began planting trees, and she taught thousands of village women to plant them too. Her Green Belt Movement planted more than <strong>fifty million trees</strong> across Kenya.",
+      "Some powerful people tried to stop her, but Wangari stood as strong as her fig tree. In 2004 she became the first African woman to win the Nobel Peace Prize. She showed the world that one person, planting one seed at a time, can heal a whole land."
+    ],
+    sw: [
+      "Mwaka wa 1940, katika vilima vya kijani vya Nyeri, Kenya, msichana aitwaye Wangari Maathai alizaliwa. Utotoni alichota maji kutoka kijito safi na alicheza chini ya mkuyu mkubwa ambao mama yake alimwambia asiwahi kuudhuru, kwa sababu ulikuwa mti wa uzima.",
+      "Wangari alipenda shule na alisoma kwa bidii sana hadi akapata nafasi ya kusoma Marekani. Akawa mwanasayansi wa viumbe hai — mwanabiolojia — na mwanamke wa kwanza Afrika Mashariki na Kati kupata shahada ya udaktari wa falsafa.",
+      "Aliporudi nyumbani, Wangari aliona vijito vinakauka na miti inatoweka. Basi alifanya jambo rahisi na lenye nguvu: alianza kupanda miti, na akawafundisha maelfu ya wanawake wa vijijini kupanda pia. Harakati yake ya Green Belt ilipanda zaidi ya <strong>miti milioni hamsini</strong> kote Kenya.",
+      "Watu wenye nguvu walijaribu kumzuia, lakini Wangari alisimama imara kama mkuyu wake. Mwaka wa 2004 akawa mwanamke wa kwanza wa Kiafrika kushinda Tuzo ya Amani ya Nobel. Alionyesha ulimwengu kwamba mtu mmoja, akipanda mbegu moja baada ya nyingine, anaweza kuponya nchi nzima."
+    ],
+    fr: [
+      "En 1940, dans les collines vertes de Nyeri, au Kenya, une fille nommée Wangari Maathai est née. Enfant, elle puisait l'eau d'un ruisseau clair et jouait sous un grand figuier que sa mère lui disait de ne jamais abîmer, car c'était un arbre de vie.",
+      "Wangari aimait l'école et travaillait si fort qu'elle a gagné une bourse pour étudier en Amérique. Elle est devenue une scientifique du vivant — une biologiste — et la première femme d'Afrique de l'Est et centrale à obtenir un doctorat.",
+      "Quand elle est rentrée chez elle, Wangari a vu que les ruisseaux séchaient et que les arbres disparaissaient. Alors elle a fait quelque chose de simple et de puissant : elle a commencé à planter des arbres, et elle a appris à des milliers de femmes des villages à en planter aussi. Son Mouvement de la Ceinture Verte a planté plus de <strong>cinquante millions d'arbres</strong> à travers le Kenya.",
+      "Des gens puissants ont essayé de l'arrêter, mais Wangari est restée solide comme son figuier. En 2004, elle est devenue la première femme africaine à gagner le prix Nobel de la paix. Elle a montré au monde qu'une seule personne, en plantant une graine à la fois, peut guérir tout un pays."
+    ]
+  }
+},
+{
+  id: "carver", emoji: "🥜", name: "George Washington Carver", years: "c. 1864–1943",
+  region: "americas", topic: "farming",
+  country: { en: "United States", sw: "Marekani", fr: "États-Unis" },
+  title: { en: "The Plant Doctor",
+           sw: "Daktari wa Mimea",
+           fr: "Le Docteur des Plantes" },
+  hook: { en: "Born into slavery, he became the scientist whose peanuts and sweet potatoes saved poor farmers' land.",
+          sw: "Alizaliwa utumwani, akawa mwanasayansi ambaye karanga na viazi vitamu vyake viliokoa mashamba ya wakulima maskini.",
+          fr: "Né esclave, il est devenu le scientifique dont les arachides et patates douces ont sauvé les terres des fermiers pauvres." },
+  text: {
+    en: [
+      "Around 1864, in Missouri, America, a baby named George was born into slavery. When slavery ended, George was free — but life was still very hard. He was a small, sickly boy who could not do heavy farm work, so he spent his days in the woods and gardens, talking to plants. Neighbors called him \"the plant doctor,\" because their sick plants got well in his hands.",
+      "George walked many miles to find schools that would accept a Black child. He never gave up, and he became the first Black student at his university, and then a great scientist of farming.",
+      "George saw that poor farmers' soil was tired and worn out from growing only cotton. He taught them to plant <strong>peanuts and sweet potatoes</strong> to make the soil strong again. Then, so farmers could sell their crops, he invented over three hundred things to make from peanuts — milk, soap, paper, and more!",
+      "George became famous, but he stayed humble and gave his knowledge away for free. He showed that a person born with nothing can grow wisdom that feeds millions."
+    ],
+    sw: [
+      "Karibu mwaka wa 1864, huko Missouri, Marekani, mtoto aitwaye George alizaliwa utumwani. Utumwa ulipokwisha, George alikuwa huru — lakini maisha yalikuwa bado magumu sana. Alikuwa mtoto mdogo na mgonjwa-mgonjwa asiyeweza kufanya kazi nzito za shamba, kwa hiyo alitumia siku zake msituni na bustanini, akizungumza na mimea. Majirani walimwita \"daktari wa mimea,\" kwa sababu mimea yao migonjwa ilipona mikononi mwake.",
+      "George alitembea maili nyingi kutafuta shule zilizokubali mtoto Mweusi. Hakukata tamaa, na akawa mwanafunzi Mweusi wa kwanza katika chuo kikuu chake, kisha mwanasayansi mkubwa wa kilimo.",
+      "George aliona kwamba udongo wa wakulima maskini ulikuwa umechoka kwa kulima pamba tu. Aliwafundisha kupanda <strong>karanga na viazi vitamu</strong> ili kuurudishia udongo nguvu. Kisha, ili wakulima waweze kuuza mazao yao, alivumbua zaidi ya vitu mia tatu vya kutengeneza kutokana na karanga — maziwa, sabuni, karatasi, na vingine vingi!",
+      "George alikuwa maarufu, lakini alibaki mnyenyekevu na alitoa maarifa yake bure. Alionyesha kwamba mtu aliyezaliwa bila kitu anaweza kukuza hekima inayolisha mamilioni."
+    ],
+    fr: [
+      "Vers 1864, dans le Missouri, en Amérique, un bébé nommé George est né esclave. Quand l'esclavage a pris fin, George était libre — mais la vie restait très dure. C'était un petit garçon fragile qui ne pouvait pas faire les gros travaux de la ferme, alors il passait ses journées dans les bois et les jardins, à parler aux plantes. Les voisins l'appelaient « le docteur des plantes », car leurs plantes malades guérissaient entre ses mains.",
+      "George a marché des kilomètres pour trouver des écoles qui acceptaient un enfant noir. Il n'a jamais abandonné, et il est devenu le premier étudiant noir de son université, puis un grand scientifique de l'agriculture.",
+      "George a vu que la terre des fermiers pauvres était fatiguée à force de ne cultiver que du coton. Il leur a appris à planter des <strong>arachides et des patates douces</strong> pour redonner des forces au sol. Puis, pour que les fermiers puissent vendre leurs récoltes, il a inventé plus de trois cents choses à base d'arachide — du lait, du savon, du papier, et plus encore !",
+      "George est devenu célèbre, mais il est resté humble et a offert son savoir gratuitement. Il a montré qu'une personne née sans rien peut faire pousser une sagesse qui nourrit des millions de gens."
+    ]
+  }
+},
+{
+  id: "johnson", emoji: "🚀", name: "Katherine Johnson", years: "1918–2020",
+  region: "americas", topic: "space",
+  country: { en: "United States", sw: "Marekani", fr: "États-Unis" },
+  title: { en: "The Girl Who Counted the Stars",
+           sw: "Msichana Aliyehesabu Nyota",
+           fr: "La Fille Qui Comptait les Étoiles" },
+  hook: { en: "She counted everything as a little girl — then her numbers carried astronauts to the Moon and safely home.",
+          sw: "Alihesabu kila kitu akiwa msichana mdogo — kisha hesabu zake zikawapeleka wanaanga Mwezini na kuwarudisha salama.",
+          fr: "Petite, elle comptait tout — puis ses chiffres ont porté des astronautes jusqu'à la Lune et les ont ramenés sains et saufs." },
+  text: {
+    en: [
+      "In 1918, in a small town in West Virginia, America, a girl named Katherine was born. She loved to count everything — the steps to church, the dishes she washed, the stars in the sky. She was so clever that she skipped grades and started high school at only ten years old.",
+      "In those days, many schools and jobs were closed to Black people, and especially to Black women. But Katherine's father worked extra jobs and moved the family so his children could keep studying. Katherine never forgot that.",
+      "She became a mathematician at NASA, where people called her a <strong>\"human computer\"</strong> because she solved enormous sums with just a pencil. When America sent its first astronauts into space, it was Katherine who calculated their paths. The astronaut John Glenn would not fly until he said, \"Get the girl to check the numbers.\" Her numbers helped carry astronauts all the way to the Moon and safely home again.",
+      "Katherine showed the world that the path to the stars can begin with a little girl who loves to count."
+    ],
+    sw: [
+      "Mwaka wa 1918, katika mji mdogo wa West Virginia, Marekani, msichana aitwaye Katherine alizaliwa. Alipenda kuhesabu kila kitu — ngazi za kanisani, vyombo alivyoosha, nyota angani. Alikuwa na akili sana hata akaruka madarasa na kuanza sekondari akiwa na miaka kumi tu.",
+      "Siku hizo, shule nyingi na kazi nyingi zilikuwa zimefungwa kwa watu Weusi, hasa wanawake Weusi. Lakini baba yake Katherine alifanya kazi za ziada na kuhamisha familia ili watoto wake waendelee kusoma. Katherine hakusahau jambo hilo kamwe.",
+      "Akawa mtaalamu wa hesabu katika NASA, ambako watu walimwita <strong>\"kompyuta ya binadamu\"</strong> kwa sababu alitatua hesabu kubwa kwa penseli tu. Marekani ilipopeleka wanaanga wake wa kwanza angani, ni Katherine aliyekokotoa njia zao. Mwanaanga John Glenn alikataa kuruka mpaka aliposema, \"Mwiteni yule binti akague hesabu.\" Hesabu zake zilisaidia kuwapeleka wanaanga hadi Mwezini na kuwarudisha nyumbani salama.",
+      "Katherine alionyesha ulimwengu kwamba safari ya kwenda kwenye nyota inaweza kuanza na msichana mdogo anayependa kuhesabu."
+    ],
+    fr: [
+      "En 1918, dans une petite ville de Virginie-Occidentale, en Amérique, une fille nommée Katherine est née. Elle adorait tout compter — les marches de l'église, les assiettes qu'elle lavait, les étoiles dans le ciel. Elle était si intelligente qu'elle a sauté des classes et commencé le lycée à seulement dix ans.",
+      "À cette époque, beaucoup d'écoles et de métiers étaient fermés aux personnes noires, surtout aux femmes noires. Mais le père de Katherine a pris des travaux supplémentaires et a déménagé la famille pour que ses enfants puissent continuer à étudier. Katherine ne l'a jamais oublié.",
+      "Elle est devenue mathématicienne à la NASA, où on l'appelait <strong>« l'ordinateur humain »</strong> parce qu'elle résolvait d'énormes calculs avec un simple crayon. Quand l'Amérique a envoyé ses premiers astronautes dans l'espace, c'est Katherine qui a calculé leurs trajectoires. L'astronaute John Glenn refusait de partir avant d'avoir dit : « Que la demoiselle vérifie les chiffres. » Ses chiffres ont aidé à emmener des astronautes jusqu'à la Lune et à les ramener sains et saufs.",
+      "Katherine a montré au monde que le chemin vers les étoiles peut commencer par une petite fille qui aime compter."
+    ]
+  }
+},
+{
+  id: "pasteur", emoji: "🔬", name: "Louis Pasteur", years: "1822–1895",
+  region: "europe", topic: "medicine",
+  country: { en: "France", sw: "Ufaransa", fr: "France" },
+  title: { en: "The Man Who Fought Invisible Enemies",
+           sw: "Mtu Aliyepambana na Maadui Wasioonekana",
+           fr: "L'Homme Qui Combattait des Ennemis Invisibles" },
+  hook: { en: "A patient painter's eye found a hidden world of germs — and gave us vaccines and safe milk.",
+          sw: "Jicho la mvumilivu lililopenda kuchora liligundua ulimwengu wa vijidudu — na kutupa chanjo na maziwa salama.",
+          fr: "L'œil patient d'un peintre a trouvé un monde caché de microbes — et nous a donné les vaccins et le lait sûr." },
+  text: {
+    en: [
+      "In 1822, in a small town in France, a boy named Louis Pasteur was born. His father made leather for a living, and the family was not rich. At school, Louis was not the fastest student — but he was the most patient. He loved to paint, and he looked at everything slowly and carefully.",
+      "That careful eye made him a great scientist. Looking through his microscope, Louis discovered a hidden world: tiny living things called <strong>germs</strong>, too small to see, that make milk go sour and make people sick. Many scientists laughed at him. Invisible creatures? Impossible!",
+      "But Louis proved it. He showed that gently heating milk kills the germs — we still call this <em>pasteurization</em>. Then he made <strong>vaccines</strong>, tiny gentle doses that teach our bodies to fight sickness. One day, a mother brought him a boy who had been bitten by a rabid dog. Louis's new vaccine saved the boy's life.",
+      "Because of Louis Pasteur, doctors wash their hands, our milk is safe, and vaccines protect children everywhere. He proved that patience can defeat even enemies we cannot see."
+    ],
+    sw: [
+      "Mwaka wa 1822, katika mji mdogo nchini Ufaransa, mvulana aitwaye Louis Pasteur alizaliwa. Baba yake alitengeneza ngozi, na familia haikuwa tajiri. Shuleni, Louis hakuwa mwanafunzi wa haraka zaidi — lakini alikuwa mvumilivu kuliko wote. Alipenda kuchora, na aliangalia kila kitu polepole na kwa makini.",
+      "Jicho hilo la makini lilimfanya mwanasayansi mkubwa. Akiangalia kupitia hadubini yake, Louis aligundua ulimwengu uliofichika: viumbe vidogo sana viitwavyo <strong>vijidudu</strong>, visivyoonekana kwa macho, vinavyoharibu maziwa na kuwafanya watu wagonjwa. Wanasayansi wengi walimcheka. Viumbe visivyoonekana? Haiwezekani!",
+      "Lakini Louis alithibitisha. Alionyesha kwamba kupasha maziwa moto kidogo kunaua vijidudu — hadi leo tunaita <em>pasteurization</em>. Kisha alitengeneza <strong>chanjo</strong>, dozi ndogo laini zinazofundisha miili yetu kupambana na magonjwa. Siku moja, mama mmoja alimletea mvulana aliyeng'atwa na mbwa mwenye kichaa cha mbwa. Chanjo mpya ya Louis iliokoa maisha ya mvulana yule.",
+      "Kwa sababu ya Louis Pasteur, madaktari huosha mikono, maziwa yetu ni salama, na chanjo zinawalinda watoto kila mahali. Alithibitisha kwamba uvumilivu unaweza kushinda hata maadui tusioweza kuwaona."
+    ],
+    fr: [
+      "En 1822, dans une petite ville de France, un garçon nommé Louis Pasteur est né. Son père fabriquait du cuir, et la famille n'était pas riche. À l'école, Louis n'était pas l'élève le plus rapide — mais il était le plus patient. Il aimait peindre, et il regardait tout lentement et attentivement.",
+      "Cet œil attentif a fait de lui un grand scientifique. En regardant dans son microscope, Louis a découvert un monde caché : de minuscules êtres vivants appelés <strong>microbes</strong>, trop petits pour être vus, qui font tourner le lait et rendent les gens malades. Beaucoup de scientifiques se sont moqués de lui. Des créatures invisibles ? Impossible !",
+      "Mais Louis l'a prouvé. Il a montré que chauffer doucement le lait tue les microbes — on appelle encore cela la <em>pasteurisation</em>. Puis il a créé des <strong>vaccins</strong>, de toutes petites doses qui apprennent à notre corps à combattre les maladies. Un jour, une mère lui a amené un garçon mordu par un chien enragé. Le nouveau vaccin de Louis a sauvé la vie du garçon.",
+      "Grâce à Louis Pasteur, les médecins se lavent les mains, notre lait est sûr, et les vaccins protègent les enfants partout. Il a prouvé que la patience peut vaincre même les ennemis qu'on ne voit pas."
+    ]
+  }
+}
+];
+
+/* ---------- state ---------- */
+let lang = "en";
+let regionFilter = "all";
+let topicFilter = "all";
+
+/* ---------- stars ---------- */
+(function makeStars() {
+  const holder = document.getElementById("stars");
+  for (let i = 0; i < 70; i++) {
+    const s = document.createElement("div");
+    s.className = "star";
+    const size = 1 + (i % 3);
+    s.style.width = s.style.height = size + "px";
+    s.style.left = ((i * 37) % 100) + "%";
+    s.style.top = ((i * 53) % 100) + "%";
+    s.style.animationDelay = ((i * 0.13) % 3) + "s";
+    holder.appendChild(s);
+  }
+})();
+
+/* ---------- rendering ---------- */
+function chipHtml(key, label, active, kind) {
+  return `<button class="chip ${active ? "active" : ""}" data-kind="${kind}" data-key="${key}">${label}</button>`;
+}
+
+function render() {
+  const t = UI[lang];
+  document.documentElement.lang = lang;
+  document.getElementById("siteTitle").textContent = t.title;
+  document.getElementById("siteSubtitle").textContent = t.subtitle;
+  document.getElementById("regionLabel").textContent = t.region;
+  document.getElementById("topicLabel").textContent = t.topic;
+  document.getElementById("footerLine").textContent = t.footer;
+
+  document.getElementById("langSwitch").innerHTML = ["en", "sw", "fr"].map(l =>
+    `<button class="lang-btn ${l === lang ? "active" : ""}" data-lang="${l}">${{en:"English",sw:"Kiswahili",fr:"Français"}[l]}</button>`
+  ).join("");
+
+  document.getElementById("regionChips").innerHTML =
+    chipHtml("all", t.all, regionFilter === "all", "region") +
+    Object.keys(REGIONS).map(k => chipHtml(k, REGIONS[k][lang], regionFilter === k, "region")).join("");
+
+  document.getElementById("topicChips").innerHTML =
+    chipHtml("all", t.all, topicFilter === "all", "topic") +
+    Object.keys(TOPICS).map(k => chipHtml(k, `${TOPICS[k].emoji} ${TOPICS[k][lang]}`, topicFilter === k, "topic")).join("");
+
+  const visible = STORIES.filter(s =>
+    (regionFilter === "all" || s.region === regionFilter) &&
+    (topicFilter === "all" || s.topic === topicFilter)
+  );
+
+  document.getElementById("countLine").textContent = t.showing(visible.length);
+
+  const grid = document.getElementById("grid");
+  grid.innerHTML = visible.length === 0
+    ? `<div class="empty">${t.empty}</div>`
+    : visible.map(s => `
+      <div class="card" data-story="${s.id}">
+        <div class="card-top">
+          <div class="avatar">${s.emoji}</div>
+          <div>
+            <h2>${s.name}</h2>
+            <div class="years">${s.years} · ${s.country[lang]}</div>
+          </div>
+        </div>
+        <div class="card-title">${s.title[lang]}</div>
+        <div class="hook">${s.hook[lang]}</div>
+        <div class="badges">
+          <span class="badge region-${s.region}">${REGIONS[s.region][lang]}</span>
+          <span class="badge topic">${TOPICS[s.topic].emoji} ${TOPICS[s.topic][lang]}</span>
+        </div>
+        <div class="read-hint">${t.read}</div>
+      </div>`).join("");
+}
+
+function openReader(id) {
+  const s = STORIES.find(x => x.id === id);
+  if (!s) return;
+  const t = UI[lang];
+  const reader = document.getElementById("reader");
+  reader.innerHTML = `
+    <button class="close-btn" id="closeReader" aria-label="Close">✕</button>
+    <div class="reader-langs">${["en","sw","fr"].map(l =>
+      `<button class="lang-btn ${l === lang ? "active" : ""}" data-reader-lang="${l}">${{en:"EN",sw:"SW",fr:"FR"}[l]}</button>`).join("")}
+    </div>
+    <div class="avatar">${s.emoji}</div>
+    <h2>${s.name}</h2>
+    <div class="story-title">${s.title[lang]}</div>
+    <div class="meta">${s.years} · ${t.born} ${s.country[lang]}</div>
+    <div class="badges">
+      <span class="badge region-${s.region}">${REGIONS[s.region][lang]}</span>
+      <span class="badge topic">${TOPICS[s.topic].emoji} ${TOPICS[s.topic][lang]}</span>
+    </div>
+    ${s.text[lang].map(p => `<p>${p}</p>`).join("")}
+    <div class="goodnight">${t.goodnight}</div>`;
+  document.getElementById("overlay").classList.add("open");
+  reader.dataset.story = id;
+  document.getElementById("overlay").scrollTop = 0;
+}
+
+function closeReader() {
+  document.getElementById("overlay").classList.remove("open");
+}
+
+/* ---------- events (delegated) ---------- */
+document.addEventListener("click", e => {
+  const langBtn = e.target.closest("[data-lang]");
+  if (langBtn) { lang = langBtn.dataset.lang; render(); return; }
+
+  const readerLang = e.target.closest("[data-reader-lang]");
+  if (readerLang) {
+    lang = readerLang.dataset.readerLang;
+    render();
+    openReader(document.getElementById("reader").dataset.story);
+    return;
+  }
+
+  const chip = e.target.closest(".chip");
+  if (chip) {
+    if (chip.dataset.kind === "region") regionFilter = chip.dataset.key;
+    else topicFilter = chip.dataset.key;
+    render(); return;
+  }
+
+  const card = e.target.closest("[data-story]");
+  if (card && !e.target.closest(".reader")) { openReader(card.dataset.story); return; }
+
+  if (e.target.id === "closeReader" || e.target.id === "overlay") closeReader();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeReader(); });
+
+render();
+</script>
+</body>
+</html>
