@@ -184,7 +184,8 @@ const UI = {
 const REGIONS = {
   africa:   { en: "Africa",   sw: "Afrika",   fr: "Afrique" },
   europe:   { en: "Europe",   sw: "Ulaya",    fr: "Europe" },
-  americas: { en: "Americas", sw: "Amerika",  fr: "Amériques" }
+  americas: { en: "Americas", sw: "Amerika",  fr: "Amériques" },
+  asia:     { en: "Asia",     sw: "Asia",     fr: "Asie" }
 };
 
 const TOPICS = {
@@ -193,7 +194,8 @@ const TOPICS = {
   environment: { emoji: "🌳", en: "Environment",      sw: "Mazingira",        fr: "Environnement" },
   farming:     { emoji: "🥜", en: "Plants & Farming", sw: "Mimea na Kilimo",  fr: "Plantes et Agriculture" },
   space:       { emoji: "🚀", en: "Math & Space",     sw: "Hesabu na Anga",   fr: "Maths et Espace" },
-  medicine:    { emoji: "🔬", en: "Medicine",         sw: "Tiba",             fr: "Médecine" }
+  medicine:    { emoji: "🔬", en: "Medicine",         sw: "Tiba",             fr: "Médecine" },
+  computing:   { emoji: "💻", en: "Computers",        sw: "Kompyuta",         fr: "Ordinateurs" }
 };
 
 const STORIES = [
@@ -408,6 +410,162 @@ const STORIES = [
       "Cet œil attentif a fait de lui un grand scientifique. En regardant dans son microscope, Louis a découvert un monde caché : de minuscules êtres vivants appelés <strong>microbes</strong>, trop petits pour être vus, qui font tourner le lait et rendent les gens malades. Beaucoup de scientifiques se sont moqués de lui. Des créatures invisibles ? Impossible !",
       "Mais Louis l'a prouvé. Il a montré que chauffer doucement le lait tue les microbes — on appelle encore cela la <em>pasteurisation</em>. Puis il a créé des <strong>vaccins</strong>, de toutes petites doses qui apprennent à notre corps à combattre les maladies. Un jour, une mère lui a amené un garçon mordu par un chien enragé. Le nouveau vaccin de Louis a sauvé la vie du garçon.",
       "Grâce à Louis Pasteur, les médecins se lavent les mains, notre lait est sûr, et les vaccins protègent les enfants partout. Il a prouvé que la patience peut vaincre même les ennemis qu'on ne voit pas."
+    ]
+  }
+}
+,
+{
+  id: "lovelace", emoji: "💻", name: "Ada Lovelace", years: "1815–1852",
+  region: "europe", topic: "computing",
+  country: { en: "England", sw: "Uingereza", fr: "Angleterre" },
+  title: { en: "The Girl Who Dreamed of Thinking Machines",
+           sw: "Msichana Aliyeota Mashine Zinazofikiri",
+           fr: "La Fille Qui Rêvait de Machines Pensantes" },
+  hook: { en: "A hundred years before computers existed, she wrote the first program — and imagined machines making music.",
+          sw: "Miaka mia moja kabla ya kompyuta kuwepo, aliandika programu ya kwanza — na kuwazia mashine zikitunga muziki.",
+          fr: "Cent ans avant l'existence des ordinateurs, elle a écrit le premier programme — et imaginé des machines faisant de la musique." },
+  text: {
+    en: [
+      "In 1815, in London, England, a girl named Ada was born. Her father was a famous poet who left when she was a baby, so her mother decided Ada would study numbers instead of poems. Ada loved both! As a little girl she drew plans for a flying machine with wings, and she called her way of thinking <strong>\"poetical science.\"</strong>",
+      "When Ada was seventeen, she met an inventor named Charles Babbage. He was building a giant metal machine that could do sums — a machine the size of a room, full of wheels and gears. Most people saw only a big calculator. Ada saw something more.",
+      "Ada wrote instructions to make the machine solve a hard problem all by itself — today we call that a <strong>computer program</strong>, and Ada wrote the very first one. She even predicted that one day such machines could make music and pictures, not just numbers.",
+      "Ada dreamed all this a hundred years before the first real computer was built. Every phone, laptop, and game today follows her big idea — that a machine can follow a recipe of instructions. The first programmer in the world was a girl who mixed poetry with mathematics."
+    ],
+    sw: [
+      "Mwaka wa 1815, mjini London, Uingereza, msichana aitwaye Ada alizaliwa. Baba yake alikuwa mshairi maarufu aliyeondoka Ada akiwa mchanga, kwa hiyo mama yake aliamua Ada asome hesabu badala ya mashairi. Ada alipenda vyote viwili! Akiwa msichana mdogo alichora ramani za mashine ya kuruka yenye mabawa, na aliita namna yake ya kufikiri <strong>\"sayansi ya kishairi.\"</strong>",
+      "Ada alipokuwa na miaka kumi na saba, alikutana na mvumbuzi aitwaye Charles Babbage. Alikuwa akijenga mashine kubwa ya chuma iliyoweza kufanya hesabu — mashine kubwa kama chumba, iliyojaa magurudumu. Watu wengi waliona kikokotoo kikubwa tu. Ada aliona zaidi.",
+      "Ada aliandika maelekezo ya kuifanya mashine itatue tatizo gumu yenyewe — leo tunaita hiyo <strong>programu ya kompyuta</strong>, na Ada aliandika ya kwanza kabisa. Alitabiri hata kwamba siku moja mashine kama hizo zingeweza kutunga muziki na picha, si hesabu tu.",
+      "Ada aliota haya yote miaka mia moja kabla ya kompyuta ya kwanza kujengwa. Kila simu, kompyuta, na mchezo wa leo unafuata wazo lake kubwa — kwamba mashine inaweza kufuata maelekezo kama mapishi. Mtayarishaji programu wa kwanza duniani alikuwa msichana aliyechanganya ushairi na hisabati."
+    ],
+    fr: [
+      "En 1815, à Londres, en Angleterre, une fille nommée Ada est née. Son père était un poète célèbre qui est parti quand elle était bébé, alors sa mère a décidé qu'Ada étudierait les nombres plutôt que les poèmes. Ada aimait les deux ! Petite fille, elle dessinait des plans de machine volante avec des ailes, et elle appelait sa façon de penser la <strong>« science poétique »</strong>.",
+      "Quand Ada avait dix-sept ans, elle a rencontré un inventeur nommé Charles Babbage. Il construisait une machine géante en métal qui pouvait faire des calculs — une machine grande comme une pièce, pleine de roues et d'engrenages. La plupart des gens voyaient une grosse calculatrice. Ada voyait bien plus.",
+      "Ada a écrit des instructions pour que la machine résolve toute seule un problème difficile — aujourd'hui on appelle cela un <strong>programme informatique</strong>, et Ada a écrit le tout premier. Elle a même prédit qu'un jour de telles machines feraient de la musique et des images, pas seulement des nombres.",
+      "Ada a rêvé tout cela cent ans avant la construction du premier vrai ordinateur. Chaque téléphone, ordinateur et jeu d'aujourd'hui suit sa grande idée — qu'une machine peut suivre une recette d'instructions. La première programmeuse du monde était une fille qui mélangeait la poésie et les mathématiques."
+    ]
+  }
+},
+{
+  id: "zewail", emoji: "⚡", name: "Ahmed Zewail", years: "1946–2016",
+  region: "africa", topic: "chemistry",
+  country: { en: "Egypt", sw: "Misri", fr: "Égypte" },
+  title: { en: "The Boy by the Nile Who Photographed Atoms",
+           sw: "Mvulana wa Kando ya Nile Aliyepiga Picha za Atomu",
+           fr: "Le Garçon du Nil Qui Photographiait les Atomes" },
+  hook: { en: "A boy from a small Egyptian town built the fastest camera in the world — fast enough to watch atoms dance.",
+          sw: "Mvulana kutoka mji mdogo wa Misri alitengeneza kamera ya kasi zaidi duniani — yenye kasi ya kutosha kuona atomu zikicheza.",
+          fr: "Un garçon d'une petite ville d'Égypte a construit la caméra la plus rapide du monde — assez rapide pour voir danser les atomes." },
+  text: {
+    en: [
+      "In 1946, in Egypt, a boy named Ahmed Zewail was born. He grew up in a small town near the great River Nile, in a house full of love for learning. On his bedroom door, his father hung a sign that said <strong>\"Doctor Ahmed\"</strong> — before Ahmed had even finished school! As a boy, Ahmed did little experiments in his room, watching how things burn and change.",
+      "Ahmed studied hard at Alexandria University, then crossed the ocean to America to learn more. He wondered about something nobody could see: when two chemicals meet and change into something new, the atoms move — but they move so unbelievably fast that no camera could ever catch them.",
+      "So Ahmed built a new kind of camera that used flashes of laser light — flashes lasting one <strong>femtosecond</strong>, which is to one second what one second is to thirty-two million years! With it, for the first time in history, humans could watch atoms move during a chemical reaction, like watching a dance in slow motion.",
+      "In 1999, Ahmed won the Nobel Prize in Chemistry — the first Egyptian, and the first Arab scientist, ever to win it. In Egypt they put his face on postage stamps. He showed every child by the Nile, and everywhere, that the fastest things in the universe can be caught by a patient mind."
+    ],
+    sw: [
+      "Mwaka wa 1946, nchini Misri, mvulana aitwaye Ahmed Zewail alizaliwa. Alikulia katika mji mdogo karibu na Mto Nile mkubwa, katika nyumba iliyojaa upendo wa elimu. Kwenye mlango wa chumba chake, baba yake aliweka kibao kilichosema <strong>\"Daktari Ahmed\"</strong> — kabla hata Ahmed hajamaliza shule! Akiwa mvulana, Ahmed alifanya majaribio madogo chumbani mwake, akiangalia jinsi vitu vinavyoungua na kubadilika.",
+      "Ahmed alisoma kwa bidii katika Chuo Kikuu cha Alexandria, kisha akavuka bahari kwenda Marekani kujifunza zaidi. Alijiuliza kuhusu kitu ambacho hakuna mtu angeweza kukiona: kemikali mbili zinapokutana na kubadilika kuwa kitu kipya, atomu husogea — lakini husogea kwa kasi isiyoaminika hata kamera yoyote isingeweza kuzinasa.",
+      "Basi Ahmed alitengeneza aina mpya ya kamera iliyotumia mimuliko ya mwanga wa leza — mimuliko ya <strong>femtosekunde</strong> moja, ambayo kwa sekunde moja ni kama sekunde moja kwa miaka milioni thelathini na mbili! Kwa kamera hiyo, kwa mara ya kwanza katika historia, binadamu waliweza kuona atomu zikisogea wakati wa mabadiliko ya kemikali, kama kuangalia dansi kwa mwendo wa polepole.",
+      "Mwaka wa 1999, Ahmed alishinda Tuzo ya Nobel ya Kemia — Mmisri wa kwanza, na mwanasayansi Mwarabu wa kwanza, kuishinda. Misri waliweka sura yake kwenye stempu za posta. Alionyesha kila mtoto wa kando ya Nile, na kila mahali, kwamba vitu vya kasi zaidi ulimwenguni vinaweza kunaswa na akili yenye subira."
+    ],
+    fr: [
+      "En 1946, en Égypte, un garçon nommé Ahmed Zewail est né. Il a grandi dans une petite ville près du grand fleuve Nil, dans une maison pleine d'amour pour les études. Sur la porte de sa chambre, son père avait accroché un panneau qui disait <strong>« Docteur Ahmed »</strong> — avant même qu'Ahmed ait fini l'école ! Petit garçon, Ahmed faisait de petites expériences dans sa chambre, observant comment les choses brûlent et se transforment.",
+      "Ahmed a étudié dur à l'université d'Alexandrie, puis il a traversé l'océan vers l'Amérique pour apprendre davantage. Il se posait une question sur une chose que personne ne pouvait voir : quand deux produits chimiques se rencontrent et se transforment, les atomes bougent — mais si incroyablement vite qu'aucune caméra ne pouvait les attraper.",
+      "Alors Ahmed a construit une nouvelle sorte de caméra utilisant des éclairs de lumière laser — des éclairs d'une <strong>femtoseconde</strong>, qui est à une seconde ce qu'une seconde est à trente-deux millions d'années ! Grâce à elle, pour la première fois de l'histoire, les humains ont pu voir les atomes bouger pendant une réaction chimique, comme une danse au ralenti.",
+      "En 1999, Ahmed a gagné le prix Nobel de chimie — le premier Égyptien, et le premier scientifique arabe, à le gagner. En Égypte, on a mis son visage sur des timbres. Il a montré à chaque enfant du bord du Nil, et de partout, que les choses les plus rapides de l'univers peuvent être attrapées par un esprit patient."
+    ]
+  }
+},
+{
+  id: "odhiambo", emoji: "🦗", name: "Thomas Odhiambo", years: "1931–2003",
+  region: "africa", topic: "farming",
+  country: { en: "Kenya", sw: "Kenya", fr: "Kenya" },
+  title: { en: "The Man Who Listened to Insects",
+           sw: "Mtu Aliyesikiliza Wadudu",
+           fr: "L'Homme Qui Écoutait les Insectes" },
+  hook: { en: "A Kenyan boy fascinated by tiny creatures built a world-famous insect science centre in Nairobi — to protect Africa's crops.",
+          sw: "Mvulana wa Kenya aliyevutiwa na viumbe vidogo alijenga kituo maarufu duniani cha sayansi ya wadudu Nairobi — kulinda mazao ya Afrika.",
+          fr: "Un garçon kenyan fasciné par les petites créatures a bâti à Nairobi un centre mondialement célèbre — pour protéger les récoltes d'Afrique." },
+  text: {
+    en: [
+      "In 1931, in Mombasa, Kenya, a boy named Thomas Odhiambo was born. While other people chased away insects, Thomas knelt down to watch them. Ants, crickets, butterflies — he wanted to know how such tiny creatures lived such busy, clever lives. Insects were everywhere in Africa, he noticed, yet almost nobody studied them.",
+      "Thomas worked hard in school and won a place at Cambridge University in England, where he became a doctor of insect science — an <strong>entomologist</strong>. Many people expected him to stay in Europe. But Thomas believed African problems needed African scientists, so he came home.",
+      "Insects were eating farmers' crops and spreading sickness, but Thomas knew that spraying poison everywhere hurt the land too. So in 1970 he founded <strong>ICIPE</strong>, a great centre of insect science in Nairobi, where African scientists learned to outsmart harmful insects using nature's own tricks — and to protect the helpful ones, like bees and silkworms, that give people honey, silk, and food.",
+      "Scientists from all over the world came to learn in Nairobi, and Thomas helped start an academy for Africa's best scientists. He showed that world-class science can grow on African soil — and that even the smallest creatures deserve a curious mind to listen to them."
+    ],
+    sw: [
+      "Mwaka wa 1931, mjini Mombasa, Kenya, mvulana aitwaye Thomas Odhiambo alizaliwa. Watu wengine walipofukuza wadudu, Thomas alipiga magoti kuwaangalia. Siafu, nyenze, vipepeo — alitaka kujua jinsi viumbe vidogo hivyo vinavyoishi maisha yenye shughuli na werevu mwingi. Aligundua kwamba wadudu wamejaa kila mahali Afrika, lakini karibu hakuna aliyewasoma.",
+      "Thomas alisoma kwa bidii shuleni na akapata nafasi katika Chuo Kikuu cha Cambridge, Uingereza, ambako alikuwa daktari wa sayansi ya wadudu — <strong>mtaalamu wa wadudu</strong>. Watu wengi walitarajia abaki Ulaya. Lakini Thomas aliamini matatizo ya Afrika yanahitaji wanasayansi wa Afrika, basi akarudi nyumbani.",
+      "Wadudu walikuwa wakila mazao ya wakulima na kueneza magonjwa, lakini Thomas alijua kwamba kunyunyiza sumu kila mahali kunaumiza ardhi pia. Basi mwaka wa 1970 alianzisha <strong>ICIPE</strong>, kituo kikubwa cha sayansi ya wadudu Nairobi, ambako wanasayansi wa Afrika walijifunza kuwashinda wadudu waharibifu kwa mbinu za asili yenyewe — na kuwalinda wale wenye manufaa, kama nyuki na viwavi vya hariri, wanaowapa watu asali, hariri, na chakula.",
+      "Wanasayansi kutoka duniani kote walikuja kujifunza Nairobi, na Thomas alisaidia kuanzisha chuo cha wanasayansi bora wa Afrika. Alionyesha kwamba sayansi ya kiwango cha dunia inaweza kukua kwenye udongo wa Afrika — na kwamba hata viumbe vidogo kabisa vinastahili akili ya udadisi ya kuvisikiliza."
+    ],
+    fr: [
+      "En 1931, à Mombasa, au Kenya, un garçon nommé Thomas Odhiambo est né. Quand les autres chassaient les insectes, Thomas s'agenouillait pour les observer. Fourmis, grillons, papillons — il voulait savoir comment de si petites créatures vivaient des vies si occupées et si intelligentes. Les insectes étaient partout en Afrique, remarqua-t-il, et pourtant presque personne ne les étudiait.",
+      "Thomas a travaillé dur à l'école et a gagné une place à l'université de Cambridge, en Angleterre, où il est devenu docteur en science des insectes — un <strong>entomologiste</strong>. Beaucoup pensaient qu'il resterait en Europe. Mais Thomas croyait que les problèmes africains avaient besoin de scientifiques africains, alors il est rentré chez lui.",
+      "Les insectes mangeaient les récoltes des fermiers et répandaient des maladies, mais Thomas savait que pulvériser du poison partout blessait aussi la terre. Alors en 1970, il a fondé <strong>l'ICIPE</strong>, un grand centre de science des insectes à Nairobi, où des scientifiques africains apprenaient à déjouer les insectes nuisibles avec les propres astuces de la nature — et à protéger les utiles, comme les abeilles et les vers à soie, qui donnent le miel, la soie et la nourriture.",
+      "Des scientifiques du monde entier sont venus apprendre à Nairobi, et Thomas a aidé à créer une académie pour les meilleurs scientifiques d'Afrique. Il a montré que la science de classe mondiale peut pousser sur le sol africain — et que même les plus petites créatures méritent un esprit curieux pour les écouter."
+    ]
+  }
+},
+{
+  id: "drew", emoji: "🩸", name: "Charles Drew", years: "1904–1950",
+  region: "americas", topic: "medicine",
+  country: { en: "United States", sw: "Marekani", fr: "États-Unis" },
+  title: { en: "The Doctor Who Taught Blood to Travel",
+           sw: "Daktari Aliyefundisha Damu Kusafiri",
+           fr: "Le Docteur Qui a Appris au Sang à Voyager" },
+  hook: { en: "He found a way to store and ship life-saving blood — and his blood banks still save lives every single day.",
+          sw: "Alipata njia ya kuhifadhi na kusafirisha damu iokoayo maisha — na benki zake za damu bado zinaokoa maisha kila siku.",
+          fr: "Il a trouvé comment conserver et transporter le sang qui sauve des vies — et ses banques du sang en sauvent encore chaque jour." },
+  text: {
+    en: [
+      "In 1904, in Washington, D.C., America, a boy named Charles Drew was born. He was a star athlete — fast in track, strong in football — and everyone thought sports would be his life. But when sickness took his sister, Charles decided to become a doctor instead.",
+      "In those days, many medical schools would not take Black students, so Charles went north to Canada to study. He became fascinated by a puzzle: blood could save a dying patient, but fresh blood spoiled in just a few days. What if blood could be stored, like food in a pantry, ready whenever someone needed it?",
+      "Charles discovered that <strong>plasma</strong> — the golden liquid part of blood — could be dried and kept for a long time, then used to save almost anyone. When a great war broke out, Charles led a rescue mission called <em>Blood for Britain</em>, shipping life-saving plasma across the ocean, and then set up the first big <strong>blood banks</strong> in America.",
+      "When officials wanted to separate blood by the donor's skin color, Charles spoke out bravely: blood is blood — it is all the same inside. Today, every time a hospital gives a patient blood, it works the way Charles Drew taught the world. The boy who lost his sister grew up to save millions of brothers and sisters everywhere."
+    ],
+    sw: [
+      "Mwaka wa 1904, mjini Washington, D.C., Marekani, mvulana aitwaye Charles Drew alizaliwa. Alikuwa mwanariadha hodari — mwepesi katika mbio, imara katika mpira — na kila mtu alidhani michezo ingekuwa maisha yake. Lakini ugonjwa ulipomchukua dada yake, Charles aliamua kuwa daktari badala yake.",
+      "Siku hizo, vyuo vingi vya udaktari havikuwapokea wanafunzi Weusi, kwa hiyo Charles alienda kaskazini Kanada kusoma. Alivutiwa na fumbo moja: damu ingeweza kuokoa mgonjwa anayekufa, lakini damu mbichi iliharibika kwa siku chache tu. Je, damu ingeweza kuhifadhiwa, kama chakula ghalani, tayari wakati wowote mtu anapoihitaji?",
+      "Charles aligundua kwamba <strong>plasma</strong> — sehemu ya damu iliyo kama maji ya dhahabu — inaweza kukaushwa na kuhifadhiwa kwa muda mrefu, kisha kutumika kuokoa karibu mtu yeyote. Vita kubwa vilipotokea, Charles aliongoza operesheni ya uokoaji iitwayo <em>Blood for Britain</em>, akisafirisha plasma iokoayo maisha ng'ambo ya bahari, kisha akaanzisha <strong>benki za damu</strong> kubwa za kwanza Marekani.",
+      "Viongozi walipotaka kutenganisha damu kwa rangi ya ngozi ya mtoaji, Charles alisema kwa ujasiri: damu ni damu — ni sawa ndani ya kila mtu. Leo, kila hospitali inapompa mgonjwa damu, inafanya kazi jinsi Charles Drew alivyofundisha ulimwengu. Mvulana aliyempoteza dada yake alikua na kuokoa mamilioni ya kaka na dada kila mahali."
+    ],
+    fr: [
+      "En 1904, à Washington, D.C., en Amérique, un garçon nommé Charles Drew est né. C'était un athlète étoile — rapide en course, fort au football — et tout le monde pensait que le sport serait sa vie. Mais quand la maladie a emporté sa sœur, Charles a décidé de devenir médecin.",
+      "À cette époque, beaucoup d'écoles de médecine refusaient les étudiants noirs, alors Charles est allé au Canada pour étudier. Une énigme le fascinait : le sang pouvait sauver un patient mourant, mais le sang frais s'abîmait en quelques jours. Et si on pouvait conserver le sang, comme la nourriture dans un garde-manger, prêt dès que quelqu'un en avait besoin ?",
+      "Charles a découvert que le <strong>plasma</strong> — la partie liquide et dorée du sang — pouvait être séché et gardé longtemps, puis utilisé pour sauver presque n'importe qui. Quand une grande guerre a éclaté, Charles a dirigé une mission de secours appelée <em>Blood for Britain</em>, envoyant du plasma par-delà l'océan, puis il a créé les premières grandes <strong>banques du sang</strong> d'Amérique.",
+      "Quand des responsables ont voulu séparer le sang selon la couleur de peau du donneur, Charles a parlé avec courage : le sang, c'est du sang — il est le même en chacun de nous. Aujourd'hui, chaque fois qu'un hôpital donne du sang à un patient, cela fonctionne comme Charles Drew l'a appris au monde. Le garçon qui avait perdu sa sœur a grandi pour sauver des millions de frères et sœurs partout."
+    ]
+  }
+},
+{
+  id: "tu", emoji: "🌿", name: "Tu Youyou", years: "1930–",
+  region: "asia", topic: "medicine",
+  country: { en: "China", sw: "China", fr: "Chine" },
+  title: { en: "The Woman Who Found Medicine in an Old Book",
+           sw: "Mwanamke Aliyepata Dawa katika Kitabu cha Kale",
+           fr: "La Femme Qui a Trouvé un Remède dans un Vieux Livre" },
+  hook: { en: "In a 1,600-year-old book she found the clue to a malaria medicine that has saved millions of children — many of them in Africa.",
+          sw: "Katika kitabu cha miaka 1,600 alipata dokezo la dawa ya malaria iliyookoa mamilioni ya watoto — wengi wao Afrika.",
+          fr: "Dans un livre vieux de 1 600 ans, elle a trouvé l'indice d'un remède contre le paludisme qui a sauvé des millions d'enfants — beaucoup en Afrique." },
+  text: {
+    en: [
+      "In 1930, in the city of Ningbo, China, a girl named Tu Youyou was born. Her name comes from an old poem about the gentle call of deer eating sweet herbs — as if her name already knew her future. When Youyou was sixteen, she caught a terrible sickness and had to stop school for two years. Lying in bed, she decided: when I am well, I will study medicine, so I can heal people like me.",
+      "Youyou studied both modern medicine and the old healing wisdom of China. Years later, a deadly problem needed her: <strong>malaria</strong>, carried by mosquitoes, was killing many people — and the old medicines had stopped working. Youyou and her team tested hundreds and hundreds of plants. Nothing worked.",
+      "Then Youyou searched through ancient books, and in one written 1,600 years ago she found a recipe using a plant called <strong>sweet wormwood</strong>. The book said to soak it in cool water — not to boil it! That was the secret: heat had been destroying the medicine all along. Her new medicine, <em>artemisinin</em>, worked wonderfully, and she bravely tested it on herself first to make sure it was safe.",
+      "In 2015, Tu Youyou won the Nobel Prize in Medicine. Her discovery has saved millions of lives — especially children in Africa, where malaria strikes hardest. She showed the world that sometimes the newest cure is hiding in the oldest book, waiting for a patient reader."
+    ],
+    sw: [
+      "Mwaka wa 1930, katika mji wa Ningbo, China, msichana aitwaye Tu Youyou alizaliwa. Jina lake linatoka katika shairi la kale kuhusu mlio mpole wa swala wakila majani matamu — kana kwamba jina lake lilijua tayari maisha yake ya baadaye. Youyou alipokuwa na miaka kumi na sita, alipatwa na ugonjwa mbaya na akalazimika kuacha shule kwa miaka miwili. Akiwa amelala kitandani, aliamua: nitakapopona, nitasoma udaktari, ili niwaponye watu kama mimi.",
+      "Youyou alisoma tiba ya kisasa na pia hekima ya kale ya uponyaji ya China. Miaka mingi baadaye, tatizo hatari lilimhitaji: <strong>malaria</strong>, inayobebwa na mbu, ilikuwa ikiua watu wengi — na dawa za zamani zilikuwa zimeacha kufanya kazi. Youyou na timu yake walijaribu mimea mamia kwa mamia. Hakuna iliyofaa.",
+      "Kisha Youyou alipekua vitabu vya kale, na katika kimoja kilichoandikwa miaka 1,600 iliyopita alipata mapishi ya mmea uitwao <strong>pakanga tamu</strong> (sweet wormwood). Kitabu kilisema uloweke katika maji baridi — usiuchemshe! Hiyo ndiyo ilikuwa siri: joto lilikuwa likiharibu dawa muda wote. Dawa yake mpya, <em>artemisinin</em>, ilifanya kazi vizuri ajabu, na kwa ujasiri aliijaribu kwake mwenyewe kwanza kuhakikisha ni salama.",
+      "Mwaka wa 2015, Tu Youyou alishinda Tuzo ya Nobel ya Tiba. Ugunduzi wake umeokoa maisha ya mamilioni — hasa watoto wa Afrika, ambako malaria hupiga zaidi. Alionyesha ulimwengu kwamba wakati mwingine dawa mpya kabisa imejificha katika kitabu cha kale kabisa, ikimsubiri msomaji mwenye subira."
+    ],
+    fr: [
+      "En 1930, dans la ville de Ningbo, en Chine, une fille nommée Tu Youyou est née. Son nom vient d'un vieux poème sur le doux appel des cerfs qui mangent des herbes sucrées — comme si son nom connaissait déjà son avenir. Quand Youyou avait seize ans, elle a attrapé une terrible maladie et a dû quitter l'école pendant deux ans. Couchée dans son lit, elle a décidé : quand je serai guérie, j'étudierai la médecine, pour soigner les gens comme moi.",
+      "Youyou a étudié la médecine moderne et aussi l'ancienne sagesse de guérison de la Chine. Des années plus tard, un problème mortel a eu besoin d'elle : le <strong>paludisme</strong>, porté par les moustiques, tuait beaucoup de gens — et les vieux médicaments ne marchaient plus. Youyou et son équipe ont testé des centaines et des centaines de plantes. Rien ne marchait.",
+      "Alors Youyou a fouillé les livres anciens, et dans l'un d'eux, écrit il y a 1 600 ans, elle a trouvé une recette avec une plante appelée <strong>armoise douce</strong>. Le livre disait de la tremper dans l'eau fraîche — pas de la faire bouillir ! C'était le secret : la chaleur détruisait le remède depuis le début. Son nouveau médicament, <em>l'artémisinine</em>, marchait merveilleusement, et elle l'a courageusement testé sur elle-même d'abord, pour s'assurer qu'il était sûr.",
+      "En 2015, Tu Youyou a gagné le prix Nobel de médecine. Sa découverte a sauvé des millions de vies — surtout des enfants en Afrique, où le paludisme frappe le plus fort. Elle a montré au monde que parfois le remède le plus nouveau se cache dans le livre le plus ancien, attendant un lecteur patient."
     ]
   }
 }
