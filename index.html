@@ -122,6 +122,20 @@
   .reader-langs .lang-btn { padding: 5px 14px; font-size: 13px; }
 
   footer { text-align: center; color: var(--ink-soft); margin-top: 56px; font-size: 14px; }
+  .credit { font-size: 12px; margin-top: 8px; opacity: .75; }
+
+  /* --- music toggle --- */
+  .music-btn {
+    position: fixed; bottom: 22px; right: 22px; z-index: 8;
+    background: var(--card); border: 1.5px solid #3a466f; color: var(--ink);
+    padding: 10px 18px; border-radius: 999px; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.4); transition: all .2s;
+  }
+  .music-btn:hover { border-color: var(--gold); }
+  .music-btn.playing { background: var(--gold); border-color: var(--gold); color: #201a08; }
+  .music-btn.playing .note { animation: sway 1.8s ease-in-out infinite; display: inline-block; }
+  @keyframes sway { 0%,100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } }
   @media (max-width: 560px) { .reader { padding: 26px 20px 32px; } }
 </style>
 </head>
@@ -149,8 +163,14 @@
   <p class="count-line" id="countLine"></p>
   <div class="grid" id="grid"></div>
 
-  <footer id="footerLine"></footer>
+  <footer>
+    <div id="footerLine"></div>
+    <div class="credit">♪ Erik Satie — Gymnopédie No. 1 · Robin Alciatore (public domain)</div>
+  </footer>
 </div>
+
+<button class="music-btn" id="musicBtn"><span class="note">🎵</span><span id="musicLabel"></span></button>
+<audio id="bgMusic" loop preload="none" src="audio/gymnopedie-1.mp3"></audio>
 
 <div class="overlay" id="overlay">
   <div class="reader" id="reader"></div>
@@ -163,6 +183,7 @@ const UI = {
         region: "Region", topic: "Topic", all: "All",
         showing: n => `${n} ${n === 1 ? "story" : "stories"}`,
         read: "Tap to read · ~2 min", born: "Born in", goodnight: "The end. Goodnight 🌙",
+        music: "Music", musicPause: "Pause",
         footer: "Made with love, for one curious little dreamer.",
         empty: "No stories here yet — try another filter." },
   sw: { title: "Malaka Story",
@@ -170,6 +191,7 @@ const UI = {
         region: "Kanda", topic: "Mada", all: "Zote",
         showing: n => `Hadithi ${n}`,
         read: "Gusa kusoma · dakika 2", born: "Alizaliwa", goodnight: "Mwisho. Lala salama 🌙",
+        music: "Muziki", musicPause: "Simamisha",
         footer: "Imetengenezwa kwa upendo, kwa ajili ya mwotaji mdogo mdadisi.",
         empty: "Hakuna hadithi hapa bado — jaribu kichujio kingine." },
   fr: { title: "Malaka Story",
@@ -177,6 +199,7 @@ const UI = {
         region: "Région", topic: "Sujet", all: "Tout",
         showing: n => `${n} histoire${n > 1 ? "s" : ""}`,
         read: "Touchez pour lire · ~2 min", born: "Né(e) en", goodnight: "Fin. Bonne nuit 🌙",
+        music: "Musique", musicPause: "Pause",
         footer: "Fait avec amour, pour un petit rêveur curieux.",
         empty: "Pas encore d'histoire ici — essayez un autre filtre." }
 };
@@ -604,6 +627,7 @@ function render() {
   document.getElementById("regionLabel").textContent = t.region;
   document.getElementById("topicLabel").textContent = t.topic;
   document.getElementById("footerLine").textContent = t.footer;
+  updateMusicBtn();
 
   document.getElementById("langSwitch").innerHTML = ["en", "sw", "fr"].map(l =>
     `<button class="lang-btn ${l === lang ? "active" : ""}" data-lang="${l}">${{en:"English",sw:"Kiswahili",fr:"Français"}[l]}</button>`
@@ -675,6 +699,29 @@ function openReader(id) {
 function closeReader() {
   document.getElementById("overlay").classList.remove("open");
 }
+
+/* ---------- music ---------- */
+const music = document.getElementById("bgMusic");
+music.volume = 0.35;
+
+function updateMusicBtn() {
+  const t = UI[lang];
+  const playing = !music.paused;
+  const btn = document.getElementById("musicBtn");
+  btn.classList.toggle("playing", playing);
+  document.getElementById("musicLabel").textContent = playing ? t.musicPause : t.music;
+}
+
+document.getElementById("musicBtn").addEventListener("click", () => {
+  if (music.paused) {
+    music.play().then(updateMusicBtn).catch(updateMusicBtn);
+  } else {
+    music.pause();
+    updateMusicBtn();
+  }
+});
+music.addEventListener("play", updateMusicBtn);
+music.addEventListener("pause", updateMusicBtn);
 
 /* ---------- events (delegated) ---------- */
 document.addEventListener("click", e => {
