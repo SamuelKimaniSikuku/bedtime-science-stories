@@ -617,10 +617,11 @@ function render() {
     chipHtml("all", t.all, topicFilter === "all", "topic") +
     Object.keys(TOPICS).map(k => chipHtml(k, `${TOPICS[k].emoji} ${TOPICS[k][lang]}`, topicFilter === k, "topic")).join("");
 
+  const bornYear = s => parseInt((s.years.match(/\d{4}/) || ["9999"])[0], 10);
   const visible = STORIES.filter(s =>
     (regionFilter === "all" || s.region === regionFilter) &&
     (topicFilter === "all" || s.topic === topicFilter)
-  );
+  ).sort((a, b) => bornYear(a) - bornYear(b));
 
   document.getElementById("countLine").textContent = t.showing(visible.length);
 
