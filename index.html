@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Malaka Story · Bedtime Stories That Teach · Hadithi za Usiku Zenye Funzo · Histoires du Soir Qui Enseignent</title>
+<title>Malakai Stories · Bedtime Stories That Teach · Hadithi za Usiku Zenye Funzo · Histoires du Soir Qui Enseignent</title>
 <style>
   :root {
     --night: #0f1630;
@@ -17,6 +17,7 @@
     --accent-africa: #6ecf8e;
     --accent-europe: #7fa8f0;
     --accent-americas: #f08f7f;
+    --accent-asia: #c39bf0;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { background: var(--night-deep); }
@@ -51,17 +52,31 @@
   .lang-btn.active { background: var(--gold); border-color: var(--gold); color: #201a08; }
 
   /* --- filters --- */
-  .filters { background: rgba(255,255,255,.04); border: 1px solid #2b3560; border-radius: 18px; padding: 18px 20px; margin: 22px 0 30px; }
-  .filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-  .filter-row + .filter-row { margin-top: 12px; }
-  .filter-label { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--gold); font-weight: 700; min-width: 82px; }
-  .chip {
-    background: #232c52; border: 1.5px solid transparent; color: var(--ink-soft);
-    padding: 6px 15px; border-radius: 999px; font-size: 14px; cursor: pointer;
-    transition: all .18s; font-family: inherit;
+  .filters {
+    background: rgba(255,255,255,.03); border: 1px solid #2b3560; border-radius: 20px;
+    padding: 20px 22px; margin: 26px 0 30px;
+    display: flex; flex-direction: column; gap: 18px;
   }
-  .chip:hover { color: var(--ink); border-color: #4a568a; }
-  .chip.active { background: var(--moon); color: #241d07; font-weight: 700; }
+  .filter-group + .filter-group { border-top: 1px solid rgba(255,255,255,.06); padding-top: 18px; }
+  .filter-label {
+    display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .14em;
+    color: var(--gold); font-weight: 700; margin-bottom: 10px;
+  }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    background: transparent; border: 1.5px solid #323d68; color: var(--ink-soft);
+    padding: 8px 16px; border-radius: 999px; font-size: 14px; cursor: pointer;
+    transition: all .18s; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 8px; line-height: 1.1;
+  }
+  .chip:hover { color: var(--ink); border-color: #56639a; background: rgba(255,255,255,.05); }
+  .chip.active {
+    background: var(--gold); border-color: var(--gold); color: #241d07; font-weight: 700;
+    box-shadow: 0 4px 14px rgba(245,198,100,.28);
+  }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 8px; }
+  .chip .cnt { font-size: 11.5px; opacity: .55; font-weight: 600; }
+  .chip.active .cnt { opacity: .75; }
 
   .count-line { color: var(--ink-soft); font-size: 14px; margin: 0 4px 14px; }
 
@@ -88,6 +103,7 @@
   .badge.region-africa   { background: rgba(110,207,142,.16); color: var(--accent-africa); }
   .badge.region-europe   { background: rgba(127,168,240,.16); color: var(--accent-europe); }
   .badge.region-americas { background: rgba(240,143,127,.16); color: var(--accent-americas); }
+  .badge.region-asia     { background: rgba(195,155,240,.16); color: var(--accent-asia); }
   .badge.topic { background: rgba(245,198,100,.13); color: var(--gold); }
   .read-hint { font-size: 13px; color: var(--ink-soft); margin-top: 6px; }
   .empty { text-align: center; color: var(--ink-soft); padding: 50px 0; font-size: 17px; grid-column: 1 / -1; }
@@ -150,13 +166,13 @@
   </header>
 
   <div class="filters">
-    <div class="filter-row">
+    <div class="filter-group">
       <span class="filter-label" id="regionLabel"></span>
-      <span id="regionChips"></span>
+      <div class="chip-row" id="regionChips"></div>
     </div>
-    <div class="filter-row">
+    <div class="filter-group">
       <span class="filter-label" id="topicLabel"></span>
-      <span id="topicChips"></span>
+      <div class="chip-row" id="topicChips"></div>
     </div>
   </div>
 
@@ -178,7 +194,7 @@
 
 <script>
 const UI = {
-  en: { title: "Malaka Story",
+  en: { title: "Malakai Stories",
         subtitle: "Short bedtime stories that teach something — about people who changed the world: where they were born, how they grew up, and why they mattered.",
         region: "Region", topic: "Topic", all: "All",
         showing: n => `${n} ${n === 1 ? "story" : "stories"}`,
@@ -186,7 +202,7 @@ const UI = {
         music: "Music", musicPause: "Pause",
         footer: "Made with love, for one curious little dreamer.",
         empty: "No stories here yet — try another filter." },
-  sw: { title: "Malaka Story",
+  sw: { title: "Malakai Stories",
         subtitle: "Hadithi fupi za usiku zenye funzo — kuhusu watu waliobadilisha dunia: walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
         region: "Kanda", topic: "Mada", all: "Zote",
         showing: n => `Hadithi ${n}`,
@@ -194,7 +210,7 @@ const UI = {
         music: "Muziki", musicPause: "Simamisha",
         footer: "Imetengenezwa kwa upendo, kwa ajili ya mwotaji mdogo mdadisi.",
         empty: "Hakuna hadithi hapa bado — jaribu kichujio kingine." },
-  fr: { title: "Malaka Story",
+  fr: { title: "Malakai Stories",
         subtitle: "De courtes histoires du soir qui enseignent — sur les gens qui ont changé le monde : où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
         region: "Région", topic: "Sujet", all: "Tout",
         showing: n => `${n} histoire${n > 1 ? "s" : ""}`,
@@ -615,8 +631,17 @@ let topicFilter = "all";
 })();
 
 /* ---------- rendering ---------- */
-function chipHtml(key, label, active, kind) {
-  return `<button class="chip ${active ? "active" : ""}" data-kind="${kind}" data-key="${key}">${label}</button>`;
+const REGION_COLORS = {
+  africa: "var(--accent-africa)", europe: "var(--accent-europe)",
+  americas: "var(--accent-americas)", asia: "var(--accent-asia)"
+};
+
+function chipHtml(key, label, active, kind, dot, count) {
+  return `<button class="chip ${active ? "active" : ""}" data-kind="${kind}" data-key="${key}">` +
+    (dot ? `<span class="dot" style="background:${dot}"></span>` : "") +
+    label +
+    (count != null ? `<span class="cnt">${count}</span>` : "") +
+    `</button>`;
 }
 
 function render() {
@@ -634,12 +659,16 @@ function render() {
   ).join("");
 
   document.getElementById("regionChips").innerHTML =
-    chipHtml("all", t.all, regionFilter === "all", "region") +
-    Object.keys(REGIONS).map(k => chipHtml(k, REGIONS[k][lang], regionFilter === k, "region")).join("");
+    chipHtml("all", t.all, regionFilter === "all", "region", null, STORIES.length) +
+    Object.keys(REGIONS).map(k =>
+      chipHtml(k, REGIONS[k][lang], regionFilter === k, "region", REGION_COLORS[k],
+        STORIES.filter(s => s.region === k).length)).join("");
 
   document.getElementById("topicChips").innerHTML =
-    chipHtml("all", t.all, topicFilter === "all", "topic") +
-    Object.keys(TOPICS).map(k => chipHtml(k, `${TOPICS[k].emoji} ${TOPICS[k][lang]}`, topicFilter === k, "topic")).join("");
+    chipHtml("all", t.all, topicFilter === "all", "topic", null, STORIES.length) +
+    Object.keys(TOPICS).map(k =>
+      chipHtml(k, `${TOPICS[k].emoji} ${TOPICS[k][lang]}`, topicFilter === k, "topic", null,
+        STORIES.filter(s => s.topic === k).length)).join("");
 
   const bornYear = s => parseInt((s.years.match(/\d{4}/) || ["9999"])[0], 10);
   const visible = STORIES.filter(s =>
