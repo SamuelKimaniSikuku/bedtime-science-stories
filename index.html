@@ -234,7 +234,9 @@ const TOPICS = {
   farming:     { emoji: "🥜", en: "Plants & Farming", sw: "Mimea na Kilimo",  fr: "Plantes et Agriculture" },
   space:       { emoji: "🚀", en: "Math & Space",     sw: "Hesabu na Anga",   fr: "Maths et Espace" },
   medicine:    { emoji: "🔬", en: "Medicine",         sw: "Tiba",             fr: "Médecine" },
-  computing:   { emoji: "💻", en: "Computers",        sw: "Kompyuta",         fr: "Ordinateurs" }
+  computing:   { emoji: "💻", en: "Computers",        sw: "Kompyuta",         fr: "Ordinateurs" },
+  biology:     { emoji: "🧬", en: "Life & Nature",    sw: "Viumbe na Asili",  fr: "Vie et Nature" },
+  inventions:  { emoji: "🛠️", en: "Inventions",       sw: "Uvumbuzi",         fr: "Inventions" }
 };
 
 const STORIES = [
@@ -607,6 +609,681 @@ const STORIES = [
       "En 2015, Tu Youyou a gagné le prix Nobel de médecine. Sa découverte a sauvé des millions de vies — surtout des enfants en Afrique, où le paludisme frappe le plus fort. Elle a montré au monde que parfois le remède le plus nouveau se cache dans le livre le plus ancien, attendant un lecteur patient."
     ]
   }
+},
+{
+  id: "archimedes", emoji: "⚖️", name: "Archimedes", years: "c. 287–212 BC", born: -287,
+  region: "europe", topic: "physics",
+  country: {"en":"Greece","sw":"Ugiriki","fr":"Grèce"},
+  title: {"en":"The Man Who Shouted Eureka","sw":"Mtu Aliyepiga Kelele 'Eureka'","fr":"L'Homme Qui Cria Eurêka"},
+  hook: {"en":"Long, long ago in Greece, a curious boy grew up to find the secret of why things float.","sw":"Zamani sana huko Ugiriki, mvulana mdadisi alikua na kugundua siri ya kwa nini vitu vinaelea.","fr":"Il y a très longtemps en Grèce, un garçon curieux découvrit le secret pour savoir pourquoi les choses flottent."},
+  text: {
+    en: [
+      "A very long time ago, in a sunny city by the sea called Syracuse, a boy named Archimedes was born in the land of Greece. He loved to draw shapes in the sand and ask big questions about the world.",
+      "As he grew, Archimedes became one of the cleverest thinkers of all. He loved numbers, circles, and machines. One day the king gave him a tricky puzzle, and Archimedes thought about it and thought about it.",
+      "Then, while climbing into his bath, he watched the water rise up and spill over the sides. Suddenly he understood! He was so happy he jumped up and shouted <strong>Eureka</strong>, which means 'I found it!' He had discovered how <strong>floating</strong> works.",
+      "Archimedes also learned about the <strong>lever</strong>, a simple bar that can lift very heavy things. 'Give me a place to stand and a long enough lever,' he said, 'and I can move the whole world.' His clever ideas still help builders and scientists today."
+    ],
+    sw: [
+      "Zamani sana, katika mji wenye jua kando ya bahari uitwao Sirakusa, mvulana aitwaye Arkimedi alizaliwa katika nchi ya Ugiriki. Alipenda kuchora maumbo kwenye mchanga na kuuliza maswali makubwa kuhusu dunia.",
+      "Alipokua, Arkimedi alikuwa mmoja wa wenye akili nyingi zaidi. Alipenda namba, miduara, na mashine. Siku moja mfalme alimpa kitendawili kigumu, naye Arkimedi alifikiri na kufikiri.",
+      "Kisha, alipokuwa akiingia bafuni, aliona maji yakipanda na kumwagika pembeni. Ghafla akaelewa! Alifurahi sana akaruka na kupiga kelele <strong>Eureka</strong>, maana yake 'Nimeipata!' Alikuwa amegundua jinsi <strong>kuelea</strong> kunavyofanya kazi.",
+      "Arkimedi pia alijifunza kuhusu <strong>fito</strong>, ubao rahisi unaoweza kunyanyua vitu vizito sana. 'Nipe mahali pa kusimama na fito ndefu ya kutosha,' alisema, 'nami nitaweza kuisogeza dunia nzima.' Mawazo yake ya busara bado yanawasaidia wajenzi na wanasayansi hadi leo."
+    ],
+    fr: [
+      "Il y a très longtemps, dans une ville ensoleillée au bord de la mer appelée Syracuse, un garçon nommé Archimède naquit dans le pays de la Grèce. Il aimait dessiner des formes dans le sable et poser de grandes questions sur le monde.",
+      "En grandissant, Archimède devint l'un des penseurs les plus intelligents de tous. Il aimait les nombres, les cercles et les machines. Un jour, le roi lui posa une énigme difficile, et Archimède y réfléchit longuement.",
+      "Puis, en entrant dans son bain, il vit l'eau monter et déborder sur les côtés. Soudain, il comprit ! Il était si heureux qu'il sauta et cria <strong>Eurêka</strong>, ce qui veut dire 'Je l'ai trouvé !' Il avait découvert comment fonctionne la <strong>flottaison</strong>.",
+      "Archimède apprit aussi ce qu'est un <strong>levier</strong>, une simple barre qui peut soulever des choses très lourdes. 'Donnez-moi un point d'appui et un levier assez long,' dit-il, 'et je pourrai soulever le monde entier.' Ses idées astucieuses aident encore les bâtisseurs et les scientifiques aujourd'hui."
+    ]
+  }
+},
+{
+  id: "galileo", emoji: "🔭", name: "Galileo Galilei", years: "1564–1642", born: 1564,
+  region: "europe", topic: "physics",
+  country: {"en":"Italy","sw":"Italia","fr":"Italie"},
+  title: {"en":"The Man Who Looked at the Stars","sw":"Mtu Aliyetazama Nyota","fr":"L'Homme Qui Regardait les Étoiles"},
+  hook: {"en":"In Italy, a boy who loved to wonder built a tube that let him peek at the moons of the sky.","sw":"Nchini Italia, mvulana aliyependa kustaajabu alitengeneza mrija uliomruhusu kuchungulia miezi ya angani.","fr":"En Italie, un garçon qui aimait s'émerveiller fabriqua un tube pour observer les lunes du ciel."},
+  text: {
+    en: [
+      "In the beautiful city of Pisa, in Italy, a baby named Galileo was born. As a child he loved music and math, and he always asked 'why?' and 'how?' about everything around him.",
+      "When Galileo grew up, he heard of a special tube that made faraway things look close. So he built his own better one, called a <strong>telescope</strong>, and pointed it up at the night sky.",
+      "What he saw filled him with wonder! He found tiny moons dancing around the giant planet Jupiter. He learned that the Earth is not still at all — it travels around the Sun, spinning through space.",
+      "Some people did not believe him at first, but Galileo kept looking and kept asking questions. Today we call him the father of modern <strong>science</strong>, because he taught the world to look closely and find out what is true."
+    ],
+    sw: [
+      "Katika mji mzuri wa Pisa, nchini Italia, mtoto aitwaye Galileo alizaliwa. Akiwa mtoto alipenda muziki na hesabu, na daima aliuliza 'kwa nini?' na 'vipi?' kuhusu kila kitu kilichomzunguka.",
+      "Galileo alipokua, alisikia kuhusu mrija maalum uliofanya vitu vya mbali vionekane karibu. Basi akatengeneza wake mwenyewe ulio bora zaidi, uitwao <strong>darubini</strong>, akauelekeza juu angani usiku.",
+      "Kile alichokiona kilimjaza mshangao! Aligundua miezi midogo ikicheza kuzunguka sayari kubwa ya Mshtarii. Alijifunza kwamba Dunia haisimami kimya kabisa — inasafiri kuzunguka Jua, ikizunguka angani.",
+      "Watu wengine hawakumwamini mwanzoni, lakini Galileo aliendelea kutazama na kuuliza maswali. Leo tunamwita baba wa <strong>sayansi</strong> ya kisasa, kwa sababu alifundisha dunia kutazama kwa makini na kugundua ukweli."
+    ],
+    fr: [
+      "Dans la belle ville de Pise, en Italie, naquit un bébé nommé Galilée. Enfant, il aimait la musique et les mathématiques, et il demandait toujours 'pourquoi ?' et 'comment ?' à propos de tout ce qui l'entourait.",
+      "Quand Galilée grandit, il entendit parler d'un tube spécial qui rapprochait les choses lointaines. Alors il en construisit un meilleur, appelé <strong>télescope</strong>, et le pointa vers le ciel nocturne.",
+      "Ce qu'il vit le remplit d'émerveillement ! Il découvrit de petites lunes qui dansaient autour de la géante planète Jupiter. Il apprit que la Terre n'est pas immobile — elle voyage autour du Soleil en tournant dans l'espace.",
+      "Certaines personnes ne le crurent pas au début, mais Galilée continua d'observer et de poser des questions. Aujourd'hui nous l'appelons le père de la <strong>science</strong> moderne, car il apprit au monde à regarder de près et à découvrir la vérité."
+    ]
+  }
+},
+{
+  id: "gutenberg", emoji: "📖", name: "Johannes Gutenberg", years: "c. 1400–1468", born: 1400,
+  region: "europe", topic: "inventions",
+  country: {"en":"Germany","sw":"Ujerumani","fr":"Allemagne"},
+  title: {"en":"The Man Who Made Books for Everyone","sw":"Mtu Aliyetengeneza Vitabu kwa Kila Mtu","fr":"L'Homme Qui Fit des Livres pour Tous"},
+  hook: {"en":"In Germany, a clever boy dreamed of a machine that could make books fast enough for the whole world.","sw":"Nchini Ujerumani, mvulana mwerevu aliota mashine ambayo ingeweza kutengeneza vitabu haraka kwa dunia nzima.","fr":"En Allemagne, un garçon ingénieux rêva d'une machine capable de fabriquer des livres pour le monde entier."},
+  text: {
+    en: [
+      "Long ago in the town of Mainz, in Germany, a boy named Johannes Gutenberg was born. Back then, every book had to be copied by hand, one word at a time, so books were very rare and only a few people had them.",
+      "Johannes grew up loving to work with metal and tools. He had a wonderful idea: what if he could make little metal letters, dip them in ink, and press them onto paper again and again?",
+      "So he built a machine called the <strong>printing press</strong>. Now a whole page could be printed in a flash, and then another, and another. Books could be made quickly, and many more people could own them.",
+      "Because of Gutenberg, stories and ideas and knowledge could travel far and wide. Suddenly, children and grown-ups everywhere could learn to <strong>read</strong>. His invention helped bring learning to the whole world."
+    ],
+    sw: [
+      "Zamani katika mji wa Mainz, nchini Ujerumani, mvulana aitwaye Johannes Gutenberg alizaliwa. Wakati huo, kila kitabu kilipaswa kunakiliwa kwa mkono, neno moja baada ya jingine, hivyo vitabu vilikuwa adimu sana na ni watu wachache tu waliokuwa navyo.",
+      "Johannes alikua akipenda kufanya kazi na chuma na vifaa. Alikuwa na wazo zuri sana: je, angeweza kutengeneza herufi ndogo za chuma, kuzichovya kwenye wino, na kuzibonyeza kwenye karatasi tena na tena?",
+      "Basi akatengeneza mashine iitwayo <strong>mtambo wa kuchapisha</strong>. Sasa ukurasa mzima ungeweza kuchapishwa kwa haraka, kisha mwingine, na mwingine. Vitabu vingeweza kutengenezwa kwa haraka, na watu wengi zaidi wangeweza kuwa navyo.",
+      "Kwa sababu ya Gutenberg, hadithi, mawazo na maarifa yaliweza kusafiri mbali kotekote. Ghafla, watoto na watu wazima kila mahali waliweza kujifunza <strong>kusoma</strong>. Uvumbuzi wake ulisaidia kuleta elimu kwa dunia nzima."
+    ],
+    fr: [
+      "Il y a longtemps, dans la ville de Mayence, en Allemagne, naquit un garçon nommé Johannes Gutenberg. À cette époque, chaque livre devait être recopié à la main, un mot à la fois, alors les livres étaient très rares et peu de gens en possédaient.",
+      "Johannes grandit en aimant travailler le métal et les outils. Il eut une idée merveilleuse : et s'il pouvait fabriquer de petites lettres en métal, les tremper dans l'encre et les presser sur le papier encore et encore ?",
+      "Il construisit donc une machine appelée l'<strong>imprimerie</strong>. Maintenant, une page entière pouvait être imprimée en un instant, puis une autre, et une autre. Les livres pouvaient être fabriqués rapidement, et bien plus de gens pouvaient en avoir.",
+      "Grâce à Gutenberg, les histoires, les idées et les savoirs purent voyager loin et partout. Soudain, les enfants et les grands du monde entier purent apprendre à <strong>lire</strong>. Son invention aida à apporter le savoir au monde entier."
+    ]
+  }
+},
+{
+  id: "leeuwenhoek", emoji: "🔬", name: "Anton van Leeuwenhoek", years: "1632–1723", born: 1632,
+  region: "europe", topic: "biology",
+  country: {"en":"Netherlands","sw":"Uholanzi","fr":"Pays-Bas"},
+  title: {"en":"The Man Who Saw the Tiny World","sw":"Mtu Aliyeona Ulimwengu Mdogo","fr":"L'Homme Qui Vit le Monde Minuscule"},
+  hook: {"en":"A cloth seller in Holland made tiny glasses and found a hidden world living in a single drop of water.","sw":"Muuza nguo nchini Uholanzi alitengeneza vioo vidogo na kugundua ulimwengu uliojificha ndani ya tone moja la maji.","fr":"Un marchand de tissus en Hollande fabriqua de petites lentilles et découvrit un monde caché dans une seule goutte d'eau."},
+  text: {
+    en: [
+      "In the town of Delft, in the Netherlands, a boy named Anton van Leeuwenhoek was born. When he grew up he sold cloth, and he used little glass <strong>lenses</strong> to check that the threads were fine and neat.",
+      "Anton became very good at making his own tiny lenses — so good that they could make small things look huge. He grew curious: what would he see if he looked at ordinary things very, very closely?",
+      "So he put a single drop of pond water under his lens. And there they were — tiny living creatures wriggling and swimming about! No one had ever seen them before. He called them his little 'animalcules.'",
+      "Anton had discovered <strong>microbes</strong>, the tiny living things that are all around us but too small to see. People call him the father of microbiology, and his curiosity helps doctors keep us healthy today."
+    ],
+    sw: [
+      "Katika mji wa Delft, nchini Uholanzi, mvulana aitwaye Anton van Leeuwenhoek alizaliwa. Alipokua aliuza nguo, na alitumia <strong>vioo</strong> vidogo vya glasi kuhakikisha nyuzi zilikuwa nzuri na safi.",
+      "Anton akawa hodari sana wa kutengeneza vioo vyake vidogo mwenyewe — hodari kiasi kwamba vingeweza kufanya vitu vidogo vionekane vikubwa. Alistaajabu: angeona nini kama angetazama vitu vya kawaida kwa karibu sana?",
+      "Basi akaweka tone moja la maji ya bwawa chini ya kioo chake. Na hapo walikuwepo — viumbe vidogo hai vikitembea na kuogelea huku na huko! Hakuna aliyewahi kuviona kabla. Aliviita 'wanyama wadogo' wake.",
+      "Anton alikuwa amegundua <strong>vijidudu</strong>, viumbe vidogo hai vilivyo pande zote lakini ni vidogo mno kuonekana. Watu humwita baba wa elimu ya vijidudu, na udadisi wake unawasaidia madaktari kutuweka na afya hadi leo."
+    ],
+    fr: [
+      "Dans la ville de Delft, aux Pays-Bas, naquit un garçon nommé Anton van Leeuwenhoek. En grandissant, il vendait du tissu, et il utilisait de petites <strong>lentilles</strong> en verre pour vérifier que les fils étaient fins et bien nets.",
+      "Anton devint très habile pour fabriquer ses propres petites lentilles — si habile qu'elles rendaient les petites choses énormes. Il devint curieux : que verrait-il s'il regardait les choses ordinaires de très, très près ?",
+      "Alors il plaça une seule goutte d'eau de mare sous sa lentille. Et les voilà — de minuscules créatures vivantes qui remuaient et nageaient partout ! Personne ne les avait jamais vues auparavant. Il les appela ses petits 'animalcules'.",
+      "Anton avait découvert les <strong>microbes</strong>, ces minuscules êtres vivants qui sont tout autour de nous mais trop petits pour être vus. On l'appelle le père de la microbiologie, et sa curiosité aide encore les médecins à nous garder en bonne santé."
+    ]
+  }
+},
+{
+  id: "celsius", emoji: "🌡️", name: "Anders Celsius", years: "1701–1744", born: 1701,
+  region: "europe", topic: "physics",
+  country: {"en":"Sweden","sw":"Uswidi","fr":"Suède"},
+  title: {"en":"The Man Who Measured Hot and Cold","sw":"Mtu Aliyepima Joto na Baridi","fr":"L'Homme Qui Mesura le Chaud et le Froid"},
+  hook: {"en":"In snowy Sweden, a star-gazing scientist found a simple way to tell exactly how hot or cold things are.","sw":"Katika Uswidi yenye theluji, mwanasayansi mpenda nyota alipata njia rahisi ya kujua hasa joto au baridi ya vitu.","fr":"Dans la Suède enneigée, un scientifique passionné d'étoiles trouva un moyen simple de savoir la température exacte des choses."},
+  text: {
+    en: [
+      "In the cold, snowy country of Sweden, a boy named Anders Celsius was born. His family loved learning, and Anders grew up gazing at the stars and dreaming about the sky.",
+      "Anders became an <strong>astronomer</strong>, a scientist who studies the stars and planets. But he also wondered about something closer to home: how could people know exactly how hot or cold something was?",
+      "So he made a clever number line called a <strong>temperature</strong> scale. He decided that water turning to ice would be 0, and water bubbling and boiling would be 100, with all the numbers in between.",
+      "Today, when you check if it is a warm day or a cold one, you might use degrees Celsius, named after him. His simple idea helps people all over the world know just how warm or chilly it is."
+    ],
+    sw: [
+      "Katika nchi ya baridi na theluji ya Uswidi, mvulana aitwaye Anders Celsius alizaliwa. Familia yake ilipenda kujifunza, naye Anders alikua akitazama nyota na kuota kuhusu anga.",
+      "Anders akawa <strong>mtaalamu wa nyota</strong>, mwanasayansi anayechunguza nyota na sayari. Lakini pia alishangaa kuhusu jambo lililo karibu zaidi: watu wangewezaje kujua hasa joto au baridi ya kitu?",
+      "Basi akatengeneza mstari wa namba wenye busara uitwao kipimo cha <strong>joto</strong>. Aliamua kwamba maji yanapogeuka barafu itakuwa 0, na maji yanapochemka na kutokota itakuwa 100, na namba zote zilizo katikati.",
+      "Leo, unapotaka kujua kama ni siku ya joto au ya baridi, unaweza kutumia digrii Selsiasi, zilizoitwa kwa jina lake. Wazo lake rahisi linawasaidia watu duniani kote kujua joto au baridi ilivyo."
+    ],
+    fr: [
+      "Dans le pays froid et enneigé de la Suède naquit un garçon nommé Anders Celsius. Sa famille aimait apprendre, et Anders grandit en contemplant les étoiles et en rêvant du ciel.",
+      "Anders devint <strong>astronome</strong>, un scientifique qui étudie les étoiles et les planètes. Mais il se posait aussi une question plus proche de la maison : comment savoir exactement si une chose était chaude ou froide ?",
+      "Alors il créa une ingénieuse ligne de nombres appelée une échelle de <strong>température</strong>. Il décida que l'eau qui se transforme en glace serait 0, et l'eau qui bouillonne serait 100, avec tous les nombres entre les deux.",
+      "Aujourd'hui, quand tu veux savoir s'il fait chaud ou froid, tu utilises peut-être des degrés Celsius, nommés d'après lui. Son idée toute simple aide les gens du monde entier à savoir combien il fait chaud ou frais."
+    ]
+  }
+},
+{
+  id: "linnaeus", emoji: "🌸", name: "Carl Linnaeus", years: "1707–1778", born: 1707,
+  region: "europe", topic: "biology",
+  country: {"en":"Sweden","sw":"Uswidi","fr":"Suède"},
+  title: {"en":"The Boy Who Named the Flowers","sw":"Mvulana Aliyetaja Maua","fr":"Le Garçon Qui Nomma les Fleurs"},
+  hook: {"en":"A flower-loving boy in Sweden gave every plant and animal its very own special name.","sw":"Mvulana mpenda maua nchini Uswidi aliyapa kila mmea na mnyama jina lake maalum.","fr":"Un garçon amoureux des fleurs en Suède donna à chaque plante et animal son propre nom spécial."},
+  text: {
+    en: [
+      "In a green corner of Sweden, a boy named Carl Linnaeus was born. His father kept a lovely garden, and little Carl loved flowers so much that people called him 'the little botanist' before he could even read well.",
+      "Carl spent his days wandering through fields and forests, gathering <strong>plants</strong> and looking closely at their leaves and petals. He noticed that all the world's living things came in wonderful families, some alike and some different.",
+      "But there was a problem: the same plant had many different names in different places, and it was very confusing. So Carl invented a tidy way to give each one two names, like a first name and a family name.",
+      "This clever idea is called <strong>naming</strong> with two words, and scientists still use it today. Thanks to Carl Linnaeus, every plant and animal on Earth has its own special name, so people everywhere can understand each other."
+    ],
+    sw: [
+      "Katika kona ya kijani ya Uswidi, mvulana aitwaye Carl Linnaeus alizaliwa. Baba yake alikuwa na bustani nzuri, naye Carl mdogo alipenda maua sana hivi kwamba watu walimwita 'mtaalamu mdogo wa mimea' hata kabla hajajua kusoma vizuri.",
+      "Carl alitumia siku zake akitembea mashambani na misituni, akikusanya <strong>mimea</strong> na kutazama kwa makini majani na petali zake. Aligundua kwamba viumbe hai vyote vya dunia vinakuja katika familia za ajabu, vingine vinafanana na vingine tofauti.",
+      "Lakini kulikuwa na tatizo: mmea uleule ulikuwa na majina mengi tofauti katika sehemu tofauti, na hilo lilichanganya sana. Basi Carl akavumbua njia nadhifu ya kuupa kila mmoja majina mawili, kama jina la kwanza na jina la ukoo.",
+      "Wazo hili la busara linaitwa <strong>kutaja</strong> kwa maneno mawili, na wanasayansi bado wanalitumia hadi leo. Shukrani kwa Carl Linnaeus, kila mmea na mnyama duniani ana jina lake maalum, ili watu kila mahali waweze kuelewana."
+    ],
+    fr: [
+      "Dans un coin verdoyant de la Suède naquit un garçon nommé Carl Linné. Son père avait un joli jardin, et le petit Carl aimait tellement les fleurs qu'on l'appelait 'le petit botaniste' avant même qu'il sache bien lire.",
+      "Carl passait ses journées à se promener dans les champs et les forêts, à cueillir des <strong>plantes</strong> et à observer de près leurs feuilles et leurs pétales. Il remarqua que tous les êtres vivants du monde formaient de merveilleuses familles, certaines semblables et d'autres différentes.",
+      "Mais il y avait un problème : une même plante portait plusieurs noms différents selon les endroits, et c'était très déroutant. Alors Carl inventa une manière bien rangée de donner à chacune deux noms, comme un prénom et un nom de famille.",
+      "Cette idée astucieuse s'appelle <strong>nommer</strong> avec deux mots, et les scientifiques l'utilisent encore aujourd'hui. Grâce à Carl Linné, chaque plante et chaque animal de la Terre a son propre nom spécial, pour que les gens du monde entier puissent se comprendre."
+    ]
+  }
+},
+{
+  id: "franklin", emoji: "⚡", name: "Benjamin Franklin", years: "1706–1790", born: 1706,
+  region: "americas", topic: "inventions",
+  country: {"en":"United States","sw":"Marekani","fr":"États-Unis"},
+  title: {"en":"The Boy Who Caught Lightning","sw":"Mvulana Aliyekamata Umeme","fr":"Le garçon qui a attrapé la foudre"},
+  hook: {"en":"He wondered if the light in the sky was the same little spark he made rubbing his hands.","sw":"Alijiuliza kama mwanga wa angani ni ile ile cheche ndogo aliyoitengeneza kwa kusugua mikono.","fr":"Il se demandait si la lumière du ciel était la même petite étincelle qu'il faisait en frottant ses mains."},
+  text: {
+    en: [
+      "Benjamin Franklin was born long ago in Boston, in the United States. He was one of many children in a small, busy home. He loved books more than anything, and he read every one he could find, even by candlelight.",
+      "As he grew up, Ben was always curious and full of questions. Why did the sky flash in a storm? He wondered if lightning was really <strong>electricity</strong>, the same little spark you feel sometimes. So one stormy day he flew a kite to find out. (Please never try this yourself, little one — storms are dangerous, and Ben was being very, very careful.)",
+      "He was right! The sky's light was electricity. To keep houses safe, he invented the <strong>lightning rod</strong>, a metal stick that gently carries lightning down into the ground. He also made glasses that help you see both near and far.",
+      "Benjamin helped build his young country and always tried to help others. He showed the world that a curious mind, and a kind heart, can light up the darkness."
+    ],
+    sw: [
+      "Benjamin Franklin alizaliwa zamani sana katika mji wa Boston, nchini Marekani. Alikuwa mmoja wa watoto wengi katika nyumba ndogo yenye shughuli nyingi. Alipenda vitabu kuliko kitu chochote, na alisoma kila kimoja alichoweza kupata, hata kwa mwanga wa mshumaa.",
+      "Alipokua, Ben alikuwa na hamu kubwa na maswali mengi. Kwa nini anga huangaza wakati wa dhoruba? Alijiuliza kama radi ni <strong>umeme</strong> kweli, ile cheche ndogo unayoihisi mara nyingine. Basi siku moja ya dhoruba aliruka kishada ili kujua. (Tafadhali usijaribu hivi wewe mwenyewe, mtoto wangu — dhoruba ni hatari, na Ben alikuwa mwangalifu sana.)",
+      "Alikuwa sahihi! Mwanga wa angani ulikuwa umeme. Ili kuweka nyumba salama, alivumbua <strong>fito ya radi</strong>, fimbo ya chuma inayopeleka radi taratibu chini ardhini. Pia alitengeneza miwani inayokusaidia kuona karibu na mbali.",
+      "Benjamin alisaidia kujenga nchi yake changa na daima alijaribu kuwasaidia wengine. Alionyesha ulimwengu kwamba akili yenye hamu, na moyo wa wema, vinaweza kuangaza giza."
+    ],
+    fr: [
+      "Benjamin Franklin est né il y a très longtemps à Boston, aux États-Unis. Il était l'un des nombreux enfants d'une petite maison animée. Il aimait les livres plus que tout, et il lisait chacun de ceux qu'il pouvait trouver, même à la lumière d'une bougie.",
+      "En grandissant, Ben était toujours curieux et plein de questions. Pourquoi le ciel s'illuminait-il pendant un orage ? Il se demandait si la foudre était vraiment de l'<strong>électricité</strong>, la même petite étincelle que l'on ressent parfois. Alors, un jour d'orage, il fit voler un cerf-volant pour le découvrir. (Ne fais jamais cela toi-même, mon petit — les orages sont dangereux, et Ben était très, très prudent.)",
+      "Il avait raison ! La lumière du ciel était de l'électricité. Pour garder les maisons en sécurité, il inventa le <strong>paratonnerre</strong>, une tige de métal qui guide doucement la foudre jusqu'au sol. Il fabriqua aussi des lunettes qui aident à voir de près et de loin.",
+      "Benjamin aida à bâtir son jeune pays et essaya toujours d'aider les autres. Il montra au monde qu'un esprit curieux, et un cœur bon, peuvent éclairer l'obscurité."
+    ]
+  }
+},
+{
+  id: "watt", emoji: "🚂", name: "James Watt", years: "1736–1819", born: 1736,
+  region: "europe", topic: "inventions",
+  country: {"en":"Scotland","sw":"Uskoti","fr":"Écosse"},
+  title: {"en":"The Boy and the Steaming Kettle","sw":"Mvulana na Birika Lililotoa Mvuke","fr":"Le garçon et la bouilloire fumante"},
+  hook: {"en":"He watched a kettle puff and puff — and imagined a whole world it could move.","sw":"Alitazama birika likitoa mvuke tena na tena — akawazia ulimwengu mzima ambao lingeuweza kusongesha.","fr":"Il regardait une bouilloire souffler encore et encore — et imaginait tout un monde qu'elle pourrait faire bouger."},
+  text: {
+    en: [
+      "James Watt was born in a small town in Scotland, near the cold, gray sea. He was a quiet, thoughtful boy who was often unwell, so he stayed home and used his hands to build and fix little things.",
+      "One day James sat by the fire and watched a kettle boil. The <strong>steam</strong> pushed the lid up and down, up and down. He thought, if steam can lift a lid, maybe it can push much bigger things! That little question stayed with him for years.",
+      "When he grew up, James made the <strong>steam engine</strong> far stronger and better. His engines powered trains that raced across the land, and machines in great factories. He helped begin a whole new age of the world.",
+      "James worked hard and never gave up on his ideas. Today, when we measure the power of a light or a machine, we say the word 'watt' — named just for him."
+    ],
+    sw: [
+      "James Watt alizaliwa katika mji mdogo huko Uskoti, karibu na bahari ya kijivu yenye baridi. Alikuwa mvulana mtulivu na mwenye kufikiri, ambaye mara nyingi aliugua, kwa hivyo alikaa nyumbani na kutumia mikono yake kutengeneza na kurekebisha vitu vidogo.",
+      "Siku moja James aliketi karibu na moto na kutazama birika likichemka. <strong>Mvuke</strong> ulisukuma mfuniko juu na chini, juu na chini. Akafikiri, ikiwa mvuke unaweza kunyanyua mfuniko, labda unaweza kusukuma vitu vikubwa zaidi! Swali hilo dogo lilibaki naye kwa miaka mingi.",
+      "Alipokua, James alifanya <strong>injini ya mvuke</strong> kuwa yenye nguvu na bora zaidi. Injini zake ziliendesha treni zilizokimbia nchi nzima, na mashine katika viwanda vikubwa. Alisaidia kuanzisha zama mpya kabisa duniani.",
+      "James alifanya kazi kwa bidii na hakuwahi kuacha ndoto zake. Leo, tunapopima nguvu ya taa au mashine, tunasema neno 'wati' — lililopewa jina lake tu."
+    ],
+    fr: [
+      "James Watt est né dans une petite ville d'Écosse, près de la mer froide et grise. C'était un garçon calme et réfléchi, souvent malade, alors il restait à la maison et se servait de ses mains pour construire et réparer de petites choses.",
+      "Un jour, James s'assit près du feu et regarda une bouilloire bouillir. La <strong>vapeur</strong> poussait le couvercle de haut en bas, de haut en bas. Il pensa : si la vapeur peut soulever un couvercle, elle peut peut-être pousser des choses bien plus grandes ! Cette petite question resta avec lui pendant des années.",
+      "En grandissant, James rendit la <strong>machine à vapeur</strong> beaucoup plus puissante et meilleure. Ses machines faisaient rouler les trains à travers le pays, et les machines des grandes usines. Il aida à ouvrir une toute nouvelle ère pour le monde.",
+      "James travailla dur et n'abandonna jamais ses idées. Aujourd'hui, quand on mesure la puissance d'une lampe ou d'une machine, on dit le mot « watt » — nommé rien que pour lui."
+    ]
+  }
+},
+{
+  id: "darwin", emoji: "🐢", name: "Charles Darwin", years: "1809–1882", born: 1809,
+  region: "europe", topic: "biology",
+  country: {"en":"England","sw":"Uingereza","fr":"Angleterre"},
+  title: {"en":"The Beetle Collector Who Sailed the World","sw":"Mkusanya-Mende Aliyesafiri Ulimwengu","fr":"Le collectionneur de scarabées qui a fait le tour du monde"},
+  hook: {"en":"He loved beetles so much that one island of giant tortoises changed how we see all of life.","sw":"Alipenda mende sana hivi kwamba kisiwa kimoja cha kobe wakubwa kilibadilisha jinsi tunavyoona uhai wote.","fr":"Il aimait tant les scarabées qu'une île de tortues géantes a changé notre vision de toute la vie."},
+  text: {
+    en: [
+      "Charles Darwin was born in England, in a big house near a river. As a boy he was not the best at his school lessons, but oh, how he loved nature! He collected beetles, watched birds, and explored every field and wood he could find.",
+      "When he grew up, Charles sailed away on a ship called the <strong>Beagle</strong>. It carried him far across the sea to faraway islands called the Galápagos. There he saw giant tortoises, funny birds, and creatures he had never seen before.",
+      "Charles noticed something wonderful. Over long, long time, living things slowly change to fit the places they live. He called this idea <strong>evolution</strong>. A bird's beak, a tortoise's shell — each one fits its home just right.",
+      "Charles was gentle, patient, and always full of wonder. He taught the world that all living things are connected, like one great big family growing and changing together."
+    ],
+    sw: [
+      "Charles Darwin alizaliwa Uingereza, katika nyumba kubwa karibu na mto. Akiwa mvulana hakuwa hodari sana katika masomo ya shule, lakini oh, jinsi alivyopenda maumbile! Alikusanya mende, alitazama ndege, na alichunguza kila shamba na msitu alioweza kupata.",
+      "Alipokua, Charles alisafiri kwa meli iliyoitwa <strong>Beagle</strong>. Ilimpeleka mbali sana baharini hadi visiwa vya mbali viitwavyo Galápagos. Huko aliona kobe wakubwa, ndege wa kuchekesha, na viumbe ambao hakuwahi kuwaona.",
+      "Charles aligundua jambo la ajabu. Kwa muda mrefu sana, viumbe hai hubadilika taratibu ili kufaa mahali wanapoishi. Aliita wazo hili <strong>mageuko</strong>. Mdomo wa ndege, gamba la kobe — kila kimoja hufaa nyumbani kwake vizuri kabisa.",
+      "Charles alikuwa mpole, mvumilivu, na daima amejaa mshangao. Alifundisha ulimwengu kwamba viumbe hai wote wameunganishwa, kama familia moja kubwa inayokua na kubadilika pamoja."
+    ],
+    fr: [
+      "Charles Darwin est né en Angleterre, dans une grande maison près d'une rivière. Enfant, il n'était pas le meilleur en classe, mais oh, comme il aimait la nature ! Il collectionnait les scarabées, observait les oiseaux, et explorait chaque champ et chaque bois qu'il pouvait trouver.",
+      "En grandissant, Charles partit sur un bateau appelé le <strong>Beagle</strong>. Il le porta très loin à travers la mer jusqu'à des îles lointaines nommées les Galápagos. Là, il vit des tortues géantes, des oiseaux amusants, et des créatures qu'il n'avait jamais vues.",
+      "Charles remarqua une chose merveilleuse. Au fil d'un très, très long temps, les êtres vivants changent doucement pour s'adapter aux endroits où ils vivent. Il appela cette idée l'<strong>évolution</strong>. Le bec d'un oiseau, la carapace d'une tortue — chacun convient parfaitement à sa maison.",
+      "Charles était doux, patient, et toujours émerveillé. Il apprit au monde que tous les êtres vivants sont liés, comme une seule grande famille qui grandit et change ensemble."
+    ]
+  }
+},
+{
+  id: "mendel", emoji: "🌱", name: "Gregor Mendel", years: "1822–1884", born: 1822,
+  region: "europe", topic: "biology",
+  country: {"en":"Austria","sw":"Austria","fr":"Autriche"},
+  title: {"en":"The Monk Who Counted Peas","sw":"Mtawa Aliyehesabu Njegere","fr":"Le moine qui comptait les petits pois"},
+  hook: {"en":"In a quiet garden, thousands of pea plants whispered the biggest secret of families.","sw":"Katika bustani tulivu, maelfu ya mimea ya njegere yalinong'ona siri kubwa ya familia.","fr":"Dans un jardin paisible, des milliers de plants de pois murmuraient le plus grand secret des familles."},
+  text: {
+    en: [
+      "Gregor Mendel was born in a small village in Austria, on a family farm. He grew up among gardens and fields, and he loved watching things grow. He was a bright, gentle boy who later became a monk in a quiet stone monastery.",
+      "In the monastery garden, Gregor grew <strong>pea plants</strong> — thousands and thousands of them. Some were tall and some were short. Some had purple flowers and some had white. Patiently, he counted and wrote down everything he saw.",
+      "Gregor discovered something amazing. Parent plants pass little hidden messages to their baby plants — messages for being tall, or short, or a certain color. Today we call these messages <strong>genes</strong>, and this was the very beginning of genetics.",
+      "Gregor was humble and worked alone for years. Long afterward, the world understood how special his peas were. Because of one kind, patient monk, we now know how children come to look a little like their parents."
+    ],
+    sw: [
+      "Gregor Mendel alizaliwa katika kijiji kidogo huko Austria, katika shamba la familia. Alikua kati ya bustani na mashamba, na alipenda kutazama vitu vikikua. Alikuwa mvulana mwerevu na mpole ambaye baadaye alikuwa mtawa katika monasteri tulivu ya mawe.",
+      "Katika bustani ya monasteri, Gregor alipanda <strong>mimea ya njegere</strong> — maelfu na maelfu yake. Baadhi yalikuwa marefu na mengine mafupi. Baadhi yalikuwa na maua ya zambarau na mengine meupe. Kwa uvumilivu, alihesabu na kuandika kila kitu alichokiona.",
+      "Gregor aligundua jambo la kushangaza. Mimea wazazi hupitisha ujumbe mdogo uliofichika kwa mimea watoto — ujumbe wa kuwa mrefu, au mfupi, au rangi fulani. Leo tunauita ujumbe huu <strong>jeni</strong>, na huu ulikuwa mwanzo kabisa wa elimu ya urithi.",
+      "Gregor alikuwa mnyenyekevu na alifanya kazi peke yake kwa miaka mingi. Muda mrefu baadaye, ulimwengu ulielewa jinsi njegere zake zilivyokuwa za pekee. Kwa sababu ya mtawa mmoja mpole na mvumilivu, sasa tunajua jinsi watoto wanavyokuja kufanana kidogo na wazazi wao."
+    ],
+    fr: [
+      "Gregor Mendel est né dans un petit village d'Autriche, dans une ferme familiale. Il grandit parmi les jardins et les champs, et il aimait regarder les choses pousser. C'était un garçon vif et doux qui devint plus tard moine dans un monastère de pierre tranquille.",
+      "Dans le jardin du monastère, Gregor cultiva des <strong>plants de pois</strong> — des milliers et des milliers. Certains étaient grands et d'autres petits. Certains avaient des fleurs violettes et d'autres des fleurs blanches. Patiemment, il comptait et notait tout ce qu'il voyait.",
+      "Gregor découvrit une chose étonnante. Les plants parents transmettent de petits messages cachés à leurs plants enfants — des messages pour être grand, ou petit, ou d'une certaine couleur. Aujourd'hui, on appelle ces messages des <strong>gènes</strong>, et ce fut le tout début de la génétique.",
+      "Gregor était humble et travailla seul pendant des années. Bien plus tard, le monde comprit à quel point ses pois étaient précieux. Grâce à un moine bon et patient, nous savons maintenant pourquoi les enfants ressemblent un peu à leurs parents."
+    ]
+  }
+},
+{
+  id: "nobel", emoji: "🕊️", name: "Alfred Nobel", years: "1833–1896", born: 1833,
+  region: "europe", topic: "chemistry",
+  country: {"en":"Sweden","sw":"Uswidi","fr":"Suède"},
+  title: {"en":"The Inventor Who Chose Peace","sw":"Mvumbuzi Aliyechagua Amani","fr":"L'inventeur qui a choisi la paix"},
+  hook: {"en":"He wanted to be remembered not for a loud invention, but for a kind gift to the whole world.","sw":"Alitaka kukumbukwa si kwa uvumbuzi wenye mlio mkubwa, bali kwa zawadi ya wema kwa ulimwengu mzima.","fr":"Il voulait qu'on se souvienne de lui non pas pour une invention bruyante, mais pour un beau cadeau au monde entier."},
+  text: {
+    en: [
+      "Alfred Nobel was born in Sweden, in a family that loved to build and invent. As a boy he was often unwell, so he stayed inside and read many books. He grew up loving both <strong>chemistry</strong> and poetry, mixing things in the lab and writing in his notebook.",
+      "When he grew up, Alfred invented <strong>dynamite</strong>. It could break through solid rock, so workers could build tunnels, roads, and railways more safely and easily. It helped people reach places they never could before.",
+      "But Alfred felt sad, because his invention was sometimes used to harm instead of to help. He thought hard about how he wished to be remembered, and he decided to do something good and lasting.",
+      "So Alfred gave his whole fortune to create the Nobel Prizes. Every year they honor people who help humanity — in science, in stories, and in kindness. The Peace Prize rewards those who help the world get along. Alfred is remembered, just as he wished, for hope."
+    ],
+    sw: [
+      "Alfred Nobel alizaliwa nchini Uswidi, katika familia iliyopenda kujenga na kuvumbua. Akiwa mvulana mara nyingi aliugua, kwa hivyo alikaa ndani na kusoma vitabu vingi. Alikua akipenda <strong>kemia</strong> na ushairi pia, akichanganya vitu maabarani na kuandika katika daftari lake.",
+      "Alipokua, Alfred alivumbua <strong>baruti</strong>. Iliweza kuvunja miamba migumu, ili wafanyakazi wajenge vichuguu, barabara, na reli kwa usalama na urahisi zaidi. Iliwasaidia watu kufika sehemu ambazo hawakuweza kufika awali.",
+      "Lakini Alfred alihuzunika, kwa sababu uvumbuzi wake wakati mwingine ulitumika kudhuru badala ya kusaidia. Alifikiri sana jinsi alivyotaka kukumbukwa, na akaamua kufanya jambo jema na la kudumu.",
+      "Basi Alfred alitoa mali yake yote kuanzisha Tuzo za Nobel. Kila mwaka huwaheshimu watu wanaosaidia wanadamu — katika sayansi, katika hadithi, na katika wema. Tuzo ya Amani huwazawadia wale wanaosaidia ulimwengu kuwa na amani. Alfred anakumbukwa, kama alivyotaka, kwa tumaini."
+    ],
+    fr: [
+      "Alfred Nobel est né en Suède, dans une famille qui aimait construire et inventer. Enfant, il était souvent malade, alors il restait à l'intérieur et lisait beaucoup de livres. Il grandit en aimant à la fois la <strong>chimie</strong> et la poésie, mélangeant des choses au laboratoire et écrivant dans son carnet.",
+      "En grandissant, Alfred inventa la <strong>dynamite</strong>. Elle pouvait percer la roche dure, pour que les ouvriers construisent des tunnels, des routes et des chemins de fer plus facilement et en sécurité. Elle aida les gens à atteindre des endroits où ils n'avaient jamais pu aller.",
+      "Mais Alfred était triste, car son invention servait parfois à blesser au lieu d'aider. Il réfléchit longuement à la façon dont il souhaitait qu'on se souvienne de lui, et il décida de faire quelque chose de bon et de durable.",
+      "Alors Alfred donna toute sa fortune pour créer les prix Nobel. Chaque année, ils honorent ceux qui aident l'humanité — dans les sciences, dans les histoires, et dans la bonté. Le prix de la paix récompense ceux qui aident le monde à s'entendre. On se souvient d'Alfred, comme il le souhaitait, pour l'espoir."
+    ]
+  }
+},
+{
+  id: "mendeleev", emoji: "🧪", name: "Dmitri Mendeleev", years: "1834–1907", born: 1834,
+  region: "europe", topic: "chemistry",
+  country: {"en":"Russia","sw":"Urusi","fr":"Russie"},
+  title: {"en":"The Man Who Made a Map of Everything","sw":"Mtu Aliyetengeneza Ramani ya Kila Kitu","fr":"L'homme qui a dessiné la carte de tout"},
+  hook: {"en":"He sorted all the building blocks of the world into a tidy table — and left empty spaces on purpose.","sw":"Alipanga vipande vyote vinavyounda ulimwengu katika jedwali nadhifu — na akaacha nafasi tupu kwa makusudi.","fr":"Il rangea tous les éléments du monde dans un tableau bien ordonné — et laissa des cases vides exprès."},
+  text: {
+    en: [
+      "Dmitri Mendeleev was born far away in Siberia, in Russia, where the winters are long and snowy. He was the youngest of a very big family with many brothers and sisters. His mother believed in him and traveled a long, long way so he could go to school.",
+      "Dmitri loved to know how everything was made. All around us are tiny building blocks called <strong>elements</strong> — like the oxygen we breathe and the iron in a nail. But no one had put them in order yet.",
+      "So Dmitri sorted the elements into a neat chart called the <strong>Periodic Table</strong>. He even left some boxes empty, saying, 'There are elements here we haven't found yet.' Years later, people found them — exactly as he had guessed!",
+      "Dmitri worked with patience and a clever, curious mind. His table hangs in classrooms all over the world today, helping every child learn what everything is made of."
+    ],
+    sw: [
+      "Dmitri Mendeleev alizaliwa mbali sana huko Siberia, nchini Urusi, ambako baridi hudumu muda mrefu na theluji nyingi. Alikuwa mdogo kabisa katika familia kubwa sana yenye kaka na dada wengi. Mama yake alimwamini na akasafiri njia ndefu sana ili aende shule.",
+      "Dmitri alipenda kujua jinsi kila kitu kilivyotengenezwa. Kutuzunguka kuna vipande vidogo vinavyounda vitu viitwavyo <strong>elementi</strong> — kama oksijeni tunayoivuta na chuma kilicho ndani ya msumari. Lakini bado hakuna aliyeviweka kwa mpangilio.",
+      "Basi Dmitri alipanga elementi katika jedwali nadhifu liitwalo <strong>Jedwali la Muhtasari</strong>. Hata aliacha visanduku vingine tupu, akisema, 'Kuna elementi hapa ambazo bado hatujazipata.' Miaka baadaye, watu walizipata — sawasawa kabisa na alivyokisia!",
+      "Dmitri alifanya kazi kwa uvumilivu na akili yenye ujanja na hamu. Jedwali lake linaning'inia katika madarasa kote ulimwenguni leo, likimsaidia kila mtoto kujifunza kila kitu kimeundwa na nini."
+    ],
+    fr: [
+      "Dmitri Mendeleïev est né très loin en Sibérie, en Russie, là où les hivers sont longs et enneigés. Il était le plus jeune d'une très grande famille, avec beaucoup de frères et de sœurs. Sa mère croyait en lui et voyagea très, très loin pour qu'il puisse aller à l'école.",
+      "Dmitri adorait savoir comment tout était fait. Autour de nous, il y a de minuscules briques que l'on appelle des <strong>éléments</strong> — comme l'oxygène que nous respirons et le fer d'un clou. Mais personne ne les avait encore mis en ordre.",
+      "Alors Dmitri rangea les éléments dans un tableau bien net appelé le <strong>tableau périodique</strong>. Il laissa même certaines cases vides, en disant : « Il y a ici des éléments que nous n'avons pas encore trouvés. » Des années plus tard, on les découvrit — exactement comme il l'avait deviné !",
+      "Dmitri travailla avec patience et un esprit malin et curieux. Son tableau est accroché dans les salles de classe du monde entier aujourd'hui, aidant chaque enfant à apprendre de quoi tout est fait."
+    ]
+  }
+},
+{
+  id: "bell", emoji: "📞", name: "Alexander Graham Bell", years: "1847–1922", born: 1847,
+  region: "europe", topic: "inventions",
+  country: {"en":"Scotland","sw":"Uskoti","fr":"Écosse"},
+  title: {"en":"The Man Who Sent Voices Down a Wire","sw":"Mtu Aliyepeleka Sauti Kupitia Waya","fr":"L'homme qui envoya les voix dans un fil"},
+  hook: {"en":"What if your voice could travel all the way across a whole city?","sw":"Je, ingekuwaje kama sauti yako ingeweza kusafiri jiji zima?","fr":"Et si ta voix pouvait voyager à travers toute une ville ?"},
+  text: {
+    en: [
+      "Long ago in Scotland, a boy named Alexander was born into a family that loved <strong>sound</strong> and speaking. His mother could not hear well, so young Alexander learned to speak close and clear, and he wondered how words move through the air.",
+      "He grew up gentle and curious. He would press his lips near his mother's forehead so she could feel the humming of his voice. Later he married a kind woman who was deaf too, and helping people hear and be heard became the dream of his life.",
+      "Alexander studied how sound travels as tiny <strong>vibrations</strong>. After much patient trying, he built a machine that could carry a voice along a wire. One day he spoke into it, and his friend in another room heard every word. He had invented the <strong>telephone</strong>!",
+      "Because of Alexander, people far apart could hear each other's voices again. Grandparents could talk to grandchildren, and friends across the miles could say goodnight. His love for the people he cared about helped the whole world feel a little closer."
+    ],
+    sw: [
+      "Zamani sana huko Uskoti, alizaliwa mvulana aliyeitwa Alexander katika familia iliyopenda <strong>sauti</strong> na maongezi. Mama yake hakusikia vizuri, kwa hiyo Alexander mdogo alijifunza kuongea karibu na kwa uwazi, naye akashangaa jinsi maneno yanavyosafiri hewani.",
+      "Alikua mtoto mpole na mwenye udadisi. Alikuwa akiweka midomo yake karibu na paji la uso la mama yake ili aweze kuhisi mtetemo wa sauti yake. Baadaye alioa mwanamke mwema ambaye pia hakusikia, na kuwasaidia watu kusikia na kusikika kukawa ndoto ya maisha yake.",
+      "Alexander alichunguza jinsi sauti inavyosafiri kama <strong>mitetemo</strong> midogo. Baada ya kujaribu kwa subira nyingi, alitengeneza mashine iliyoweza kubeba sauti kupitia waya. Siku moja aliongea ndani yake, na rafiki yake aliyekuwa chumba kingine akasikia kila neno. Alikuwa amevumbua <strong>simu</strong>!",
+      "Kwa sababu ya Alexander, watu waliokuwa mbali waliweza kusikilizana tena. Babu na bibi wangeweza kuongea na wajukuu, na marafiki waliokuwa mbali wangeweza kuambiana usiku mwema. Upendo wake kwa wale aliowajali ulisaidia dunia nzima kujihisi karibu zaidi."
+    ],
+    fr: [
+      "Il y a longtemps, en Écosse, un garçon nommé Alexander naquit dans une famille qui aimait le <strong>son</strong> et la parole. Sa maman entendait mal, alors le petit Alexander apprit à parler tout près et bien clairement, et il se demandait comment les mots voyagent dans l'air.",
+      "Il grandit doux et curieux. Il posait ses lèvres près du front de sa maman pour qu'elle sente le bourdonnement de sa voix. Plus tard, il épousa une femme gentille qui n'entendait pas non plus, et aider les gens à entendre et à être entendus devint le rêve de sa vie.",
+      "Alexander étudia comment le son voyage sous forme de petites <strong>vibrations</strong>. Après beaucoup d'essais patients, il construisit une machine qui pouvait porter une voix le long d'un fil. Un jour, il parla dedans, et son ami dans une autre pièce entendit chaque mot. Il avait inventé le <strong>téléphone</strong> !",
+      "Grâce à Alexander, les gens éloignés purent de nouveau entendre leurs voix. Les grands-parents pouvaient parler à leurs petits-enfants, et les amis au loin pouvaient se dire bonne nuit. Son amour pour ceux qu'il chérissait aida le monde entier à se sentir un peu plus proche."
+    ]
+  }
+},
+{
+  id: "edison", emoji: "💡", name: "Thomas Edison", years: "1847–1931", born: 1847,
+  region: "americas", topic: "inventions",
+  country: {"en":"United States","sw":"Marekani","fr":"États-Unis"},
+  title: {"en":"The Boy Who Never Stopped Asking Why","sw":"Mvulana Aliyeuliza 'Kwa Nini' Bila Kuchoka","fr":"Le garçon qui n'arrêtait jamais de demander pourquoi"},
+  hook: {"en":"Can you imagine a world with no light at night?","sw":"Je, unaweza kufikiria dunia isiyo na mwanga usiku?","fr":"Peux-tu imaginer un monde sans lumière la nuit ?"},
+  text: {
+    en: [
+      "In America long ago, a boy named Thomas was born full of questions. Why does the sky do this? How does that work? He asked so many questions that his teacher grew tired, but his mother believed in him and taught him at home.",
+      "Thomas loved to try things and build things. He set up a little laboratory and tinkered for hours. He learned that a mistake is not the end. 'I have not failed,' he liked to say. 'I have just found ways that do not work.'",
+      "He dreamed of making a <strong>light</strong> that people could use at home. He tried thousands of different threads inside a glass bulb before one finally glowed softly and stayed bright. At last, the <strong>light bulb</strong> worked! He also built a machine that could record and replay <strong>sound</strong>.",
+      "Because Thomas never gave up, homes and streets could shine at night, and voices could be saved and heard again. He taught the world that patience and curiosity can turn many small tries into one bright idea."
+    ],
+    sw: [
+      "Huko Marekani zamani, alizaliwa mvulana aliyeitwa Thomas aliyejaa maswali. Kwa nini anga hufanya hivi? Hii inafanyaje kazi? Aliuliza maswali mengi sana hata mwalimu wake akachoka, lakini mama yake alimwamini na akamfundisha nyumbani.",
+      "Thomas alipenda kujaribu vitu na kutengeneza vitu. Aliweka maabara ndogo na kucheza na vifaa kwa saa nyingi. Alijifunza kuwa kosa si mwisho. 'Sijashindwa,' alipenda kusema. 'Nimegundua tu njia zisizofanya kazi.'",
+      "Aliota kutengeneza <strong>mwanga</strong> ambao watu wangeweza kutumia nyumbani. Alijaribu maelfu ya nyuzi tofauti ndani ya kioo kabla ya moja hatimaye kuwaka taratibu na kubaki angavu. Mwishowe, <strong>balbu ya taa</strong> ikafanya kazi! Pia alitengeneza mashine iliyoweza kurekodi na kucheza tena <strong>sauti</strong>.",
+      "Kwa sababu Thomas hakukata tamaa, nyumba na barabara zingeweza kung'aa usiku, na sauti zingeweza kuhifadhiwa na kusikika tena. Alifundisha dunia kuwa subira na udadisi zinaweza kugeuza majaribio madogo mengi kuwa wazo moja angavu."
+    ],
+    fr: [
+      "En Amérique, il y a longtemps, un garçon nommé Thomas naquit plein de questions. Pourquoi le ciel fait-il ceci ? Comment cela fonctionne-t-il ? Il posait tant de questions que son maître se fatiguait, mais sa maman croyait en lui et lui fit l'école à la maison.",
+      "Thomas adorait essayer des choses et en construire. Il installa un petit laboratoire et bricola pendant des heures. Il apprit qu'une erreur n'est pas la fin. « Je n'ai pas échoué », aimait-il dire. « J'ai simplement trouvé des façons qui ne marchent pas. »",
+      "Il rêvait de créer une <strong>lumière</strong> que les gens pourraient utiliser chez eux. Il essaya des milliers de fils différents à l'intérieur d'une ampoule de verre avant qu'un seul ne brille enfin doucement et reste allumé. Enfin, l'<strong>ampoule</strong> fonctionna ! Il construisit aussi une machine capable d'enregistrer et de rejouer le <strong>son</strong>.",
+      "Parce que Thomas n'abandonna jamais, les maisons et les rues purent briller la nuit, et les voix purent être gardées puis réentendues. Il apprit au monde que la patience et la curiosité peuvent transformer beaucoup de petits essais en une seule idée lumineuse."
+    ]
+  }
+},
+{
+  id: "koch", emoji: "🦠", name: "Robert Koch", years: "1843–1910", born: 1843,
+  region: "europe", topic: "medicine",
+  country: {"en":"Germany","sw":"Ujerumani","fr":"Allemagne"},
+  title: {"en":"The Doctor Who Found the Tiniest Troublemakers","sw":"Daktari Aliyegundua Wadudu Wadogo Sana","fr":"Le docteur qui trouva les tout petits fauteurs de troubles"},
+  hook: {"en":"What if the thing that makes us sick is too small to see?","sw":"Je, ingekuwaje kama kinachotufanya wagonjwa ni kidogo mno kuonekana?","fr":"Et si ce qui nous rend malades était trop petit pour être vu ?"},
+  text: {
+    en: [
+      "In Germany long ago, a boy named Robert was born who loved to look closely at everything. He collected little plants and stones and wondered what secrets they held. He grew up to become a careful, kind doctor.",
+      "Robert had a <strong>microscope</strong>, a tool that makes tiny things look big. Peering through it, he saw living things so small that no one could see them with their eyes alone. He called them <strong>germs</strong>, and he wanted to know if they made people sick.",
+      "Like a patient detective, he studied and tested and wrote down everything. He proved that certain germs cause certain illnesses. He even found the tiny germ behind a sickness called tuberculosis. For his careful work, he was given a great award called the Nobel Prize.",
+      "Because of Robert, doctors learned to keep things clean and to fight the right germ for each illness. His gentle, careful looking helped keep children and families all over the world healthy and safe."
+    ],
+    sw: [
+      "Huko Ujerumani zamani, alizaliwa mvulana aliyeitwa Robert aliyependa kuangalia kila kitu kwa makini. Alikusanya mimea midogo na mawe, akashangaa siri walizobeba. Alikua na kuwa daktari mwenye makini na wema.",
+      "Robert alikuwa na <strong>hadubini</strong>, kifaa kinachofanya vitu vidogo vionekane vikubwa. Alipochungulia ndani yake, aliona viumbe vidogo sana ambavyo hakuna aliyeweza kuviona kwa macho pekee. Aliviita <strong>vijidudu</strong>, naye alitaka kujua kama vinawafanya watu wagonjwa.",
+      "Kama mpelelezi mwenye subira, alisoma na kupima na kuandika kila kitu. Alithibitisha kuwa vijidudu fulani husababisha magonjwa fulani. Hata aligundua kijidudu kidogo kilichosababisha ugonjwa uitwao kifua kikuu. Kwa kazi yake ya makini, alipewa tuzo kubwa iitwayo Tuzo ya Nobel.",
+      "Kwa sababu ya Robert, madaktari walijifunza kuweka vitu safi na kupambana na kijidudu sahihi kwa kila ugonjwa. Uangalizi wake mpole na wa makini ulisaidia kuwaweka watoto na familia duniani kote wenye afya na salama."
+    ],
+    fr: [
+      "En Allemagne, il y a longtemps, un garçon nommé Robert naquit, aimant tout regarder de très près. Il ramassait de petites plantes et des cailloux et se demandait quels secrets ils cachaient. Il devint un docteur soigneux et bienveillant.",
+      "Robert avait un <strong>microscope</strong>, un outil qui fait paraître grandes les toutes petites choses. En regardant à travers, il vit des êtres vivants si minuscules que personne ne pouvait les voir à l'œil nu. Il les appela des <strong>microbes</strong>, et il voulut savoir s'ils rendaient les gens malades.",
+      "Tel un détective patient, il étudia, testa et nota tout. Il prouva que certains microbes causent certaines maladies. Il trouva même le petit microbe responsable d'une maladie appelée tuberculose. Pour son travail minutieux, on lui remit un grand prix, le prix Nobel.",
+      "Grâce à Robert, les docteurs apprirent à garder les choses propres et à combattre le bon microbe pour chaque maladie. Son regard doux et attentif aida à garder en bonne santé les enfants et les familles du monde entier."
+    ]
+  }
+},
+{
+  id: "freud", emoji: "💭", name: "Sigmund Freud", years: "1856–1939", born: 1856,
+  region: "europe", topic: "medicine",
+  country: {"en":"Austria","sw":"Austria","fr":"Autriche"},
+  title: {"en":"The Doctor Who Listened to Dreams","sw":"Daktari Aliyesikiliza Ndoto","fr":"Le docteur qui écoutait les rêves"},
+  hook: {"en":"Have you ever wondered why we dream at night?","sw":"Je, umewahi kujiuliza kwa nini tunaota usiku?","fr":"T'es-tu déjà demandé pourquoi nous rêvons la nuit ?"},
+  text: {
+    en: [
+      "In Austria long ago, a curious boy named Sigmund was born who loved to read and think. He always wanted to understand what was happening deep inside people, even the things they could not see.",
+      "He grew up to be a doctor, but he was most curious about <strong>feelings</strong> and dreams. He noticed that when people talked about their worries out loud, they often felt lighter and better inside.",
+      "Sigmund began the study of the <strong>mind</strong>, which we call psychology. He believed our dreams and hidden thoughts could tell us gentle secrets about how we feel. So he sat and listened carefully as people shared their hearts.",
+      "Because of Sigmund, the world learned to listen to feelings and to take dreams seriously. He taught us that it is kind and helpful to talk about how we feel, so that no one has to carry their worries alone."
+    ],
+    sw: [
+      "Huko Austria zamani, alizaliwa mvulana mdadisi aliyeitwa Sigmund aliyependa kusoma na kufikiri. Sikuzote alitaka kuelewa kilichokuwa kikitokea ndani kabisa ya watu, hata vitu ambavyo hawakuweza kuviona.",
+      "Alikua na kuwa daktari, lakini alikuwa mdadisi zaidi kuhusu <strong>hisia</strong> na ndoto. Aligundua kuwa watu walipoongea kuhusu wasiwasi wao kwa sauti, mara nyingi walijihisi wepesi na vizuri zaidi ndani.",
+      "Sigmund alianzisha somo la <strong>akili</strong>, ambalo tunaliita saikolojia. Aliamini kuwa ndoto zetu na mawazo yaliyofichika zinaweza kutuambia siri za upole kuhusu jinsi tunavyohisi. Kwa hiyo alikaa na kusikiliza kwa makini watu walipoeleza mioyo yao.",
+      "Kwa sababu ya Sigmund, dunia ilijifunza kusikiliza hisia na kuchukua ndoto kwa uzito. Alitufundisha kuwa ni wema na kusaidia kuongea kuhusu jinsi tunavyohisi, ili hakuna anayehitaji kubeba wasiwasi wake peke yake."
+    ],
+    fr: [
+      "En Autriche, il y a longtemps, un garçon curieux nommé Sigmund naquit, aimant lire et réfléchir. Il voulait toujours comprendre ce qui se passait au fond des gens, même ce qu'ils ne pouvaient pas voir.",
+      "Il devint docteur, mais ce qui l'intriguait le plus, c'étaient les <strong>émotions</strong> et les rêves. Il remarqua que lorsque les gens parlaient de leurs soucis à voix haute, ils se sentaient souvent plus légers et mieux au-dedans.",
+      "Sigmund commença l'étude de l'<strong>esprit</strong>, que nous appelons la psychologie. Il pensait que nos rêves et nos pensées cachées pouvaient nous confier de doux secrets sur ce que nous ressentons. Alors il s'asseyait et écoutait attentivement les gens ouvrir leur cœur.",
+      "Grâce à Sigmund, le monde apprit à écouter les émotions et à prendre les rêves au sérieux. Il nous enseigna qu'il est bon et utile de parler de ce que l'on ressent, pour que personne n'ait à porter ses soucis tout seul."
+    ]
+  }
+},
+{
+  id: "banting", emoji: "💉", name: "Frederick Banting", years: "1891–1941", born: 1891,
+  region: "americas", topic: "medicine",
+  country: {"en":"Canada","sw":"Kanada","fr":"Canada"},
+  title: {"en":"The Doctor Who Gave His Gift to Everyone","sw":"Daktari Aliyetoa Zawadi Yake kwa Kila Mtu","fr":"Le docteur qui offrit son cadeau à tout le monde"},
+  hook: {"en":"What if you found a medicine that could save millions of lives?","sw":"Je, ingekuwaje kama ungegundua dawa inayoweza kuokoa mamilioni ya maisha?","fr":"Et si tu trouvais un médicament qui pouvait sauver des millions de vies ?"},
+  text: {
+    en: [
+      "In Canada long ago, a boy named Frederick was born on a family farm. He grew up hardworking and kind, helping with the animals and caring about people who were unwell.",
+      "He became a doctor and worried about people with an illness called <strong>diabetes</strong>, whose bodies could not use sugar the right way. Frederick had an idea, and with helpers he worked late into the night to test it.",
+      "At last they discovered <strong>insulin</strong>, a medicine that helps the body use sugar again. Suddenly children who had been very sick began to grow strong and well. It was one of the most wonderful discoveries in all of medicine.",
+      "Frederick had a big, generous heart. He sold his special right to the medicine for just one dollar, so that everyone, rich or poor, could have it. Today insulin saves millions of people, all because a farm boy chose to share."
+    ],
+    sw: [
+      "Huko Kanada zamani, alizaliwa mvulana aliyeitwa Frederick katika shamba la familia. Alikua mchapakazi na mwema, akisaidia na wanyama na kuwajali watu waliokuwa wagonjwa.",
+      "Alikuwa daktari na alihangaikia watu wenye ugonjwa uitwao <strong>kisukari</strong>, ambao miili yao haikuweza kutumia sukari kwa njia sahihi. Frederick alipata wazo, na pamoja na wasaidizi alifanya kazi hadi usiku wa manane kulijaribu.",
+      "Mwishowe waligundua <strong>insulini</strong>, dawa inayosaidia mwili kutumia sukari tena. Ghafla watoto waliokuwa wagonjwa sana walianza kukua wenye nguvu na afya. Ilikuwa mojawapo ya ugunduzi wa ajabu zaidi katika tiba yote.",
+      "Frederick alikuwa na moyo mkubwa wa ukarimu. Aliuza haki yake maalum ya dawa hiyo kwa dola moja tu, ili kila mtu, tajiri au maskini, aweze kuipata. Leo insulini inaokoa mamilioni ya watu, yote kwa sababu mvulana wa shambani alichagua kushirikiana."
+    ],
+    fr: [
+      "Au Canada, il y a longtemps, un garçon nommé Frederick naquit dans une ferme familiale. Il grandit travailleur et gentil, aidant avec les animaux et se souciant des personnes malades.",
+      "Il devint docteur et s'inquiétait pour les gens atteints d'une maladie appelée <strong>diabète</strong>, dont le corps ne pouvait pas utiliser le sucre comme il faut. Frederick eut une idée, et avec des aides il travailla tard dans la nuit pour la tester.",
+      "Enfin, ils découvrirent l'<strong>insuline</strong>, un médicament qui aide le corps à utiliser de nouveau le sucre. Soudain, des enfants qui avaient été très malades commencèrent à devenir forts et bien portants. Ce fut l'une des plus merveilleuses découvertes de toute la médecine.",
+      "Frederick avait un grand cœur généreux. Il vendit son droit spécial sur le médicament pour un seul dollar, afin que tout le monde, riche ou pauvre, puisse l'avoir. Aujourd'hui l'insuline sauve des millions de personnes, tout cela parce qu'un garçon de ferme choisit de partager."
+    ]
+  }
+},
+{
+  id: "hahn", emoji: "⚛️", name: "Otto Hahn", years: "1879–1968", born: 1879,
+  region: "europe", topic: "chemistry",
+  country: {"en":"Germany","sw":"Ujerumani","fr":"Allemagne"},
+  title: {"en":"The Chemist Who Found the Secret Inside an Atom","sw":"Mwanakemia Aliyegundua Siri Ndani ya Atomu","fr":"Le chimiste qui trouva le secret à l'intérieur d'un atome"},
+  hook: {"en":"What if the smallest things in the world held a hidden surprise?","sw":"Je, ingekuwaje kama vitu vidogo zaidi duniani vingekuwa na mshangao uliofichika?","fr":"Et si les plus petites choses du monde cachaient une surprise ?"},
+  text: {
+    en: [
+      "In Germany long ago, a boy named Otto was born who loved mixing things and watching what happened. He grew up gentle and thoughtful, and he became a chemist who studied the tiny pieces that everything is made of.",
+      "Everything around us, this book, the air, even you, is made of teeny building blocks called <strong>atoms</strong>. Atoms are so small we cannot see them, and each one has a busy little center. Otto and his friends wanted to understand that center.",
+      "After careful work, Otto discovered something amazing. The tiny center of an atom can split into smaller pieces, and when it does, it lets out a bit of hidden <strong>energy</strong>. This discovery is called nuclear fission, and it filled scientists with wonder.",
+      "Otto knew that such a powerful discovery must be used with great care. He bravely spoke up for using science kindly and responsibly, to help people and to keep the world safe. He reminds us that a discovery is a gift, and gifts should be used to do good."
+    ],
+    sw: [
+      "Huko Ujerumani zamani, alizaliwa mvulana aliyeitwa Otto aliyependa kuchanganya vitu na kuangalia kilichotokea. Alikua mpole na mwenye kufikiri, naye akawa mwanakemia aliyesoma vipande vidogo ambavyo kila kitu kimeundwa navyo.",
+      "Kila kitu kinachotuzunguka, kitabu hiki, hewa, hata wewe, kimeundwa kwa vijitofali vidogo sana viitwavyo <strong>atomu</strong>. Atomu ni ndogo sana kiasi kwamba hatuwezi kuziona, na kila moja ina kitovu kidogo chenye shughuli. Otto na marafiki zake walitaka kuelewa kitovu hicho.",
+      "Baada ya kazi ya makini, Otto aligundua jambo la kushangaza. Kitovu kidogo cha atomu kinaweza kugawanyika kuwa vipande vidogo zaidi, na kinapofanya hivyo, hutoa kiasi kidogo cha <strong>nishati</strong> iliyofichika. Ugunduzi huu unaitwa mpasuko wa nyuklia, nao ulijaza wanasayansi mshangao.",
+      "Otto alijua kuwa ugunduzi wenye nguvu kama huo lazima utumike kwa uangalifu mkubwa. Alizungumza kwa ujasiri kuhusu kutumia sayansi kwa wema na kwa uwajibikaji, kuwasaidia watu na kuiweka dunia salama. Anatukumbusha kuwa ugunduzi ni zawadi, na zawadi zinapaswa kutumika kutenda mema."
+    ],
+    fr: [
+      "En Allemagne, il y a longtemps, un garçon nommé Otto naquit, aimant mélanger des choses et observer ce qui se passait. Il grandit doux et réfléchi, et devint un chimiste qui étudiait les toutes petites pièces dont tout est fait.",
+      "Tout ce qui nous entoure, ce livre, l'air, même toi, est fait de minuscules briques appelées <strong>atomes</strong>. Les atomes sont si petits qu'on ne peut pas les voir, et chacun possède un petit centre bien affairé. Otto et ses amis voulaient comprendre ce centre.",
+      "Après un travail minutieux, Otto découvrit quelque chose d'étonnant. Le petit centre d'un atome peut se diviser en pièces plus petites, et quand cela arrive, il libère un peu d'<strong>énergie</strong> cachée. Cette découverte s'appelle la fission nucléaire, et elle émerveilla les scientifiques.",
+      "Otto savait qu'une découverte aussi puissante devait être utilisée avec grand soin. Il prit courageusement la parole pour que la science soit employée avec bonté et responsabilité, pour aider les gens et garder le monde en sécurité. Il nous rappelle qu'une découverte est un cadeau, et que les cadeaux doivent servir à faire le bien."
+    ]
+  }
+},
+{
+  id: "heisenberg", emoji: "⚛️", name: "Werner Heisenberg", years: "1901–1976", born: 1901,
+  region: "europe", topic: "physics",
+  country: {"en":"Germany","sw":"Ujerumani","fr":"Allemagne"},
+  title: {"en":"The Boy Who Found the Rules of the Tiny","sw":"Mvulana Aliyegundua Sheria za Vitu Vidogo Sana","fr":"Le garçon qui a trouvé les règles du minuscule"},
+  hook: {"en":"At the smallest sizes, the world plays a game of hide-and-seek.","sw":"Katika vitu vidogo sana, dunia hucheza mchezo wa kujificha.","fr":"Aux plus petites tailles, le monde joue à cache-cache."},
+  text: {
+    en: [
+      "Long ago in Germany, a boy named Werner loved two things: music at the piano and climbing high in the mountains. He was quiet and thoughtful, and he liked to wonder about how the world was put together.",
+      "When he grew up, Werner became a <strong>physicist</strong>. He studied the very tiniest bits of everything — smaller than a speck of dust, smaller than we can ever see. These tiny pieces are called <strong>particles</strong>.",
+      "Werner made a surprising discovery. Down among the smallest things, you can never be perfectly sure exactly where a particle is and where it is going, both at the very same moment. He called this the <strong>uncertainty principle</strong>.",
+      "It sounds strange, but it is one of the great truths of nature. Werner taught the world that even a little bit of mystery can be beautiful, and that wondering is one of the finest things a person can do."
+    ],
+    sw: [
+      "Zamani nchini Ujerumani, aliishi mvulana aitwaye Werner. Alipenda vitu viwili: kupiga kinanda na kupanda milima mirefu. Alikuwa mtulivu na mwenye kufikiri, na alipenda kutafakari jinsi dunia ilivyoundwa.",
+      "Alipokua, Werner akawa <strong>mwanafizikia</strong>. Alichunguza vipande vidogo kabisa vya kila kitu — vidogo kuliko chembe ya vumbi, vidogo kiasi ambacho hatuwezi kuviona kamwe. Vipande hivi vidogo huitwa <strong>chembechembe</strong>.",
+      "Werner aligundua jambo la ajabu. Miongoni mwa vitu vidogo kabisa, huwezi kamwe kuwa na uhakika kamili chembe iko wapi hasa na inaenda wapi, kwa wakati mmoja. Aliliita hili <strong>kanuni ya kutokuwa na uhakika</strong>.",
+      "Inaonekana la ajabu, lakini ni mojawapo ya kweli kubwa za asili. Werner alifundisha dunia kwamba hata fumbo dogo linaweza kuwa zuri, na kwamba kutafakari ni jambo bora kabisa mtu anaweza kufanya."
+    ],
+    fr: [
+      "Il y a longtemps, en Allemagne, vivait un garçon nommé Werner. Il aimait deux choses : jouer du piano et grimper tout en haut des montagnes. Il était calme et pensif, et il aimait se demander comment le monde était fait.",
+      "En grandissant, Werner est devenu <strong>physicien</strong>. Il étudiait les tout petits morceaux de chaque chose — plus petits qu'un grain de poussière, plus petits que ce que nous pourrons jamais voir. Ces petits morceaux s'appellent des <strong>particules</strong>.",
+      "Werner a fait une découverte surprenante. Chez les plus petites choses, on ne peut jamais savoir avec certitude où se trouve une particule et où elle va, au même moment. Il a appelé cela le <strong>principe d'incertitude</strong>.",
+      "Cela semble étrange, mais c'est l'une des grandes vérités de la nature. Werner a montré au monde qu'un peu de mystère peut être beau, et que se poser des questions est l'une des plus belles choses qu'une personne puisse faire."
+    ]
+  }
+},
+{
+  id: "oppenheimer", emoji: "🌌", name: "J. Robert Oppenheimer", years: "1904–1967", born: 1904,
+  region: "americas", topic: "physics",
+  country: {"en":"United States","sw":"Marekani","fr":"États-Unis"},
+  title: {"en":"The Dreamer Who Loved to Learn","sw":"Mwotaji Aliyependa Kujifunza","fr":"Le rêveur qui aimait apprendre"},
+  hook: {"en":"Great power in the world needs great care and a kind heart.","sw":"Nguvu kubwa duniani zinahitaji uangalifu mkubwa na moyo mwema.","fr":"Un grand pouvoir a besoin d'un grand soin et d'un cœur bon."},
+  text: {
+    en: [
+      "In the United States, a boy named Robert grew up gazing at rocks and reading poems. He was dreamy and clever, and he loved to learn so much that he studied many languages, just for the joy of it.",
+      "Robert grew into a wonderful <strong>physicist</strong> and a beloved teacher. He could take the hardest ideas about atoms and make his students feel excited and curious. People traveled far just to learn from him.",
+      "During a war, Robert was asked to lead a big team of scientists working with tiny <strong>atoms</strong> to make something very, very powerful. He led them well, but afterward he felt the heavy weight of how strong it was.",
+      "For the rest of his life, Robert reminded the whole world of an important lesson: great power must always be used with great care, wisely and for peace. Cleverness is a gift, he taught, but kindness must guide it."
+    ],
+    sw: [
+      "Nchini Marekani, mvulana aitwaye Robert alikua akitazama mawe na kusoma mashairi. Alikuwa mwotaji na mwerevu, na alipenda kujifunza sana hata akajifunza lugha nyingi, kwa furaha tu.",
+      "Robert akakua na kuwa <strong>mwanafizikia</strong> wa ajabu na mwalimu mpendwa. Aliweza kuchukua mawazo magumu kabisa kuhusu atomu na kuwafanya wanafunzi wake wafurahie na kutamani kujua zaidi. Watu walisafiri mbali ili kujifunza kutoka kwake.",
+      "Wakati wa vita, Robert aliombwa kuongoza timu kubwa ya wanasayansi waliofanya kazi na <strong>atomu</strong> ndogo ili kutengeneza kitu chenye nguvu kubwa sana. Aliwaongoza vizuri, lakini baadaye alihisi uzito wa jinsi kilivyokuwa na nguvu.",
+      "Maisha yake yote yaliyobaki, Robert aliikumbusha dunia nzima funzo muhimu: nguvu kubwa lazima zitumike kwa uangalifu mkubwa, kwa hekima na kwa amani. Uerevu ni zawadi, alifundisha, lakini wema lazima uuongoze."
+    ],
+    fr: [
+      "Aux États-Unis, un garçon nommé Robert a grandi en contemplant les roches et en lisant des poèmes. Il était rêveur et intelligent, et il aimait tant apprendre qu'il a étudié beaucoup de langues, juste pour le plaisir.",
+      "Robert est devenu un merveilleux <strong>physicien</strong> et un professeur très aimé. Il savait prendre les idées les plus difficiles sur les atomes et rendre ses élèves curieux et enthousiastes. Des gens venaient de loin pour apprendre avec lui.",
+      "Pendant une guerre, on a demandé à Robert de diriger une grande équipe de scientifiques qui travaillaient avec de minuscules <strong>atomes</strong> pour fabriquer quelque chose de très, très puissant. Il les a bien guidés, mais ensuite il a ressenti le poids de cette immense force.",
+      "Pour le reste de sa vie, Robert a rappelé au monde entier une leçon importante : un grand pouvoir doit toujours être utilisé avec un grand soin, avec sagesse et pour la paix. L'intelligence est un don, disait-il, mais la bonté doit la guider."
+    ]
+  }
+},
+{
+  id: "feynman", emoji: "🥁", name: "Richard Feynman", years: "1918–1988", born: 1918,
+  region: "americas", topic: "physics",
+  country: {"en":"United States","sw":"Marekani","fr":"États-Unis"},
+  title: {"en":"The Boy Who Kept Asking Why","sw":"Mvulana Aliyeendelea Kuuliza Kwa Nini","fr":"Le garçon qui n'arrêtait pas de demander pourquoi"},
+  hook: {"en":"Science is play, and curiosity is a gift you never lose.","sw":"Sayansi ni mchezo, na udadisi ni zawadi usiyoipoteza kamwe.","fr":"La science est un jeu, et la curiosité est un cadeau qu'on ne perd jamais."},
+  text: {
+    en: [
+      "In New York, a joyful boy named Richard loved to take things apart. He fixed broken radios for his neighbors, and best of all, he never stopped asking one little question: \"Why?\"",
+      "Richard grew up to be a famous <strong>physicist</strong>. But he was a very special kind of scientist. He could take a tricky idea and explain it so simply and so happily that everyone around him would smile and understand.",
+      "Richard loved fun as much as he loved science. He played the bongo drums, told funny stories, and giggled his way through the biggest puzzles about how the universe works.",
+      "He taught the whole world a wonderful truth: science is not boring at all — it is play, it is wonder, it is joy. And <strong>curiosity</strong>, that little urge to ask \"why,\" is a gift we should keep forever."
+    ],
+    sw: [
+      "Huko New York, mvulana mchangamfu aitwaye Richard alipenda kubomoa vitu ili kuvichunguza. Aliwatengenezea majirani zake redio zilizoharibika, na zaidi ya yote, hakuacha kamwe kuuliza swali moja dogo: \"Kwa nini?\"",
+      "Richard alikua na kuwa <strong>mwanafizikia</strong> maarufu. Lakini alikuwa mwanasayansi wa aina ya kipekee. Aliweza kuchukua wazo gumu na kulieleza kwa urahisi na furaha kiasi kwamba kila mtu karibu naye angetabasamu na kuelewa.",
+      "Richard alipenda furaha kama alivyopenda sayansi. Alipiga ngoma za bongo, alisimulia hadithi za kuchekesha, na alicheka huku akitatua vitendawili vikubwa kuhusu jinsi ulimwengu unavyofanya kazi.",
+      "Aliifundisha dunia nzima kweli ya ajabu: sayansi si ya kuchosha hata kidogo — ni mchezo, ni maajabu, ni furaha. Na <strong>udadisi</strong>, ile hamu ndogo ya kuuliza \"kwa nini,\" ni zawadi tunayopaswa kuitunza milele."
+    ],
+    fr: [
+      "À New York, un garçon joyeux nommé Richard adorait démonter les choses. Il réparait les radios cassées de ses voisins, et surtout, il ne cessait jamais de poser une petite question : « Pourquoi ? »",
+      "Richard est devenu un célèbre <strong>physicien</strong>. Mais c'était un scientifique très particulier. Il pouvait prendre une idée compliquée et l'expliquer si simplement et si joyeusement que tout le monde autour de lui souriait et comprenait.",
+      "Richard aimait s'amuser autant qu'il aimait la science. Il jouait des tambours bongos, racontait des histoires drôles et riait en résolvant les plus grandes énigmes sur le fonctionnement de l'univers.",
+      "Il a enseigné au monde entier une merveilleuse vérité : la science n'est pas du tout ennuyeuse — c'est un jeu, c'est l'émerveillement, c'est la joie. Et la <strong>curiosité</strong>, cette petite envie de demander « pourquoi », est un cadeau qu'il faut garder pour toujours."
+    ]
+  }
+},
+{
+  id: "crick", emoji: "🧬", name: "Francis Crick", years: "1916–2004", born: 1916,
+  region: "europe", topic: "biology",
+  country: {"en":"England","sw":"Uingereza","fr":"Angleterre"},
+  title: {"en":"The Boy With a Thousand Questions","sw":"Mvulana Mwenye Maswali Elfu","fr":"Le garçon aux mille questions"},
+  hook: {"en":"Inside every living thing hides a tiny twisted ladder.","sw":"Ndani ya kila kiumbe hai hujificha ngazi ndogo iliyopindwa.","fr":"Dans chaque être vivant se cache une petite échelle torsadée."},
+  text: {
+    en: [
+      "In England, a boy named Francis asked so many questions that his parents finally bought him a big <strong>encyclopedia</strong>, so he could look up all the answers himself. But new questions kept popping up in his busy mind.",
+      "When Francis grew up, he wanted to solve one of life's greatest mysteries. Every plant, every animal, every person carries a secret code inside them. That code is called <strong>DNA</strong>, and it decides how living things grow.",
+      "Working with his friend James Watson, and using beautiful photographs taken by a clever scientist named Rosalind Franklin, Francis figured out the shape of DNA. It looked like a tiny twisted ladder, spiraling round and round.",
+      "This discovery helped us understand what makes each of us who we are. Because a curious boy never stopped asking questions, the whole world learned one of the deepest secrets of life."
+    ],
+    sw: [
+      "Nchini Uingereza, mvulana aitwaye Francis aliuliza maswali mengi sana hata wazazi wake mwishowe wakamnunulia <strong>kamusi kubwa ya elimu</strong>, ili aweze kutafuta majibu yote mwenyewe. Lakini maswali mapya yaliendelea kuibuka akilini mwake uliojaa shughuli.",
+      "Francis alipokua, alitaka kutatua mojawapo ya mafumbo makubwa ya uhai. Kila mmea, kila mnyama, kila mtu hubeba msimbo wa siri ndani yao. Msimbo huo huitwa <strong>DNA</strong>, nao huamua jinsi viumbe hai vinavyokua.",
+      "Akifanya kazi na rafiki yake James Watson, na kutumia picha nzuri zilizopigwa na mwanasayansi mahiri aitwaye Rosalind Franklin, Francis aligundua umbo la DNA. Lilionekana kama ngazi ndogo iliyopindwa, ikizunguka na kuzunguka.",
+      "Ugunduzi huu ulitusaidia kuelewa kinachotufanya kila mmoja wetu kuwa jinsi tulivyo. Kwa sababu mvulana mwenye udadisi hakuacha kamwe kuuliza maswali, dunia nzima ilijifunza mojawapo ya siri za ndani kabisa za uhai."
+    ],
+    fr: [
+      "En Angleterre, un garçon nommé Francis posait tant de questions que ses parents lui ont finalement offert une grande <strong>encyclopédie</strong>, pour qu'il puisse chercher lui-même toutes les réponses. Mais de nouvelles questions surgissaient sans cesse dans son esprit agité.",
+      "En grandissant, Francis a voulu résoudre l'un des plus grands mystères de la vie. Chaque plante, chaque animal, chaque personne porte en soi un code secret. Ce code s'appelle l'<strong>ADN</strong>, et il décide comment les êtres vivants grandissent.",
+      "En travaillant avec son ami James Watson, et grâce aux belles photographies prises par une scientifique douée nommée Rosalind Franklin, Francis a découvert la forme de l'ADN. Cela ressemblait à une petite échelle torsadée, qui tournait en spirale.",
+      "Cette découverte nous a aidés à comprendre ce qui fait de chacun de nous qui nous sommes. Parce qu'un garçon curieux n'a jamais cessé de poser des questions, le monde entier a appris l'un des secrets les plus profonds de la vie."
+    ]
+  }
+},
+{
+  id: "rosalind", emoji: "🧬", name: "Rosalind Franklin", years: "1920–1958", born: 1920,
+  region: "europe", topic: "biology",
+  country: {"en":"England","sw":"Uingereza","fr":"Angleterre"},
+  title: {"en":"The Girl Who Took the Famous Photo","sw":"Msichana Aliyepiga Picha Maarufu","fr":"La fille qui a pris la photo célèbre"},
+  hook: {"en":"One careful photograph revealed the shape of life itself.","sw":"Picha moja iliyopigwa kwa uangalifu ilifunua umbo la uhai wenyewe.","fr":"Une photo soigneuse a révélé la forme de la vie elle-même."},
+  text: {
+    en: [
+      "In England, a bright and determined girl named Rosalind loved facts and getting things exactly right. Even as a child, she liked to measure carefully and find true answers.",
+      "Rosalind became a <strong>scientist</strong> who used special cameras that could take pictures with <strong>X-rays</strong>. With great skill and patience, she photographed something no one had ever seen clearly before: the tiny shape of DNA.",
+      "Her most famous picture was called Photo 51. It gave the very first clear clue that DNA is shaped like a twisted ladder. Her careful work was the key that unlocked one of science's greatest discoveries.",
+      "For a long time, Rosalind did not get all the thanks she deserved. But today the whole world honors her. She reminds us that patience, care, and hard work can change what everyone knows about life."
+    ],
+    sw: [
+      "Nchini Uingereza, msichana mwerevu na mwenye azimio aitwaye Rosalind alipenda ukweli na kufanya mambo kwa usahihi kabisa. Hata akiwa mtoto, alipenda kupima kwa uangalifu na kupata majibu ya kweli.",
+      "Rosalind akawa <strong>mwanasayansi</strong> aliyetumia kamera maalum zilizoweza kupiga picha kwa <strong>miale ya eksirei</strong>. Kwa ustadi mkubwa na subira, alipiga picha ya kitu ambacho hakuna aliyewahi kukiona wazi kabla: umbo dogo la DNA.",
+      "Picha yake maarufu zaidi iliitwa Picha ya 51. Ilitoa dalili ya kwanza kabisa iliyo wazi kwamba DNA ina umbo la ngazi iliyopindwa. Kazi yake ya uangalifu ndiyo iliyokuwa ufunguo uliofungua mojawapo ya uvumbuzi mkubwa wa sayansi.",
+      "Kwa muda mrefu, Rosalind hakupata shukrani zote alizostahili. Lakini leo dunia nzima inamheshimu. Anatukumbusha kwamba subira, uangalifu, na kazi ngumu vinaweza kubadilisha kile kila mtu anachojua kuhusu uhai."
+    ],
+    fr: [
+      "En Angleterre, une fille brillante et déterminée nommée Rosalind aimait les faits et faire les choses avec exactitude. Même enfant, elle aimait mesurer soigneusement et trouver les vraies réponses.",
+      "Rosalind est devenue une <strong>scientifique</strong> qui utilisait des appareils photo spéciaux capables de prendre des images avec des <strong>rayons X</strong>. Avec beaucoup de talent et de patience, elle a photographié quelque chose que personne n'avait jamais vu clairement : la petite forme de l'ADN.",
+      "Sa photo la plus célèbre s'appelait la Photo 51. Elle a donné le tout premier indice clair que l'ADN a la forme d'une échelle torsadée. Son travail minutieux fut la clé de l'une des plus grandes découvertes de la science.",
+      "Pendant longtemps, Rosalind n'a pas reçu toute la reconnaissance qu'elle méritait. Mais aujourd'hui, le monde entier l'honore. Elle nous rappelle que la patience, le soin et le travail acharné peuvent changer ce que tout le monde sait sur la vie."
+    ]
+  }
+},
+{
+  id: "sagan", emoji: "🪐", name: "Carl Sagan", years: "1934–1996", born: 1934,
+  region: "americas", topic: "space",
+  country: {"en":"United States","sw":"Marekani","fr":"États-Unis"},
+  title: {"en":"The Boy Who Wondered About the Stars","sw":"Mvulana Aliyeshangaa Kuhusu Nyota","fr":"Le garçon qui rêvait aux étoiles"},
+  hook: {"en":"We are all made of star-stuff, twinkling far, far away.","sw":"Sote tumeundwa kwa vumbi la nyota, zing'aazo mbali sana.","fr":"Nous sommes tous faits de poussière d'étoiles, là-haut."},
+  text: {
+    en: [
+      "In Brooklyn, a boy named Carl loved to look up at the night sky and wonder. What were those tiny lights? How far away were they? His questions were as big as the whole universe.",
+      "Carl grew up to be an <strong>astronomer</strong>, a scientist who studies the stars and planets. He helped send spacecraft to explore faraway <strong>planets</strong>, sending back pictures no one had ever seen before.",
+      "But most of all, Carl loved to share his wonder. Through his books and his television shows, he helped millions of people all over the world fall in love with the sky.",
+      "Carl told everyone something amazing and true: the tiny bits inside our bodies were once made deep inside the stars. \"We are made of star-stuff,\" he said — so when you look up at night, you are looking at family."
+    ],
+    sw: [
+      "Huko Brooklyn, mvulana aitwaye Carl alipenda kutazama juu angani usiku na kushangaa. Yale mianga midogo yalikuwa nini? Yalikuwa mbali kiasi gani? Maswali yake yalikuwa makubwa kama ulimwengu wote.",
+      "Carl alikua na kuwa <strong>mnajimu</strong>, mwanasayansi anayechunguza nyota na sayari. Alisaidia kutuma vyombo vya angani kuchunguza <strong>sayari</strong> za mbali, vikirudisha picha ambazo hakuna aliyewahi kuziona kabla.",
+      "Lakini zaidi ya yote, Carl alipenda kushiriki mshangao wake. Kupitia vitabu vyake na vipindi vyake vya televisheni, aliwasaidia mamilioni ya watu duniani kote kupenda anga.",
+      "Carl aliwaambia wote jambo la ajabu na la kweli: vipande vidogo ndani ya miili yetu wakati mmoja viliundwa ndani kabisa ya nyota. \"Tumeundwa kwa vumbi la nyota,\" alisema — hivyo unapotazama juu usiku, unatazama familia yako."
+    ],
+    fr: [
+      "À Brooklyn, un garçon nommé Carl aimait lever les yeux vers le ciel nocturne et s'émerveiller. Qu'étaient ces petites lumières ? À quelle distance étaient-elles ? Ses questions étaient aussi grandes que l'univers tout entier.",
+      "Carl est devenu <strong>astronome</strong>, un scientifique qui étudie les étoiles et les planètes. Il a aidé à envoyer des vaisseaux explorer des <strong>planètes</strong> lointaines, qui ont renvoyé des images que personne n'avait jamais vues.",
+      "Mais surtout, Carl aimait partager son émerveillement. À travers ses livres et ses émissions de télévision, il a aidé des millions de gens partout dans le monde à tomber amoureux du ciel.",
+      "Carl a dit à tous une chose étonnante et vraie : les petits morceaux à l'intérieur de nos corps ont autrefois été fabriqués au cœur des étoiles. « Nous sommes faits de poussière d'étoiles », disait-il — alors quand tu regardes le ciel la nuit, tu regardes ta famille."
+    ]
+  }
+},
+{
+  id: "kalam", emoji: "🚀", name: "A.P.J. Abdul Kalam", years: "1931–2015", born: 1931,
+  region: "asia", topic: "space",
+  country: {"en":"India","sw":"India","fr":"Inde"},
+  title: {"en":"The Newspaper Boy Who Reached the Sky","sw":"Mvulana wa Magazeti Aliyefikia Anga","fr":"Le garçon aux journaux qui a touché le ciel"},
+  hook: {"en":"Dream big, work hard, and the sky becomes your friend.","sw":"Ota ndoto kubwa, fanya kazi kwa bidii, na anga litakuwa rafiki yako.","fr":"Rêve grand, travaille dur, et le ciel devient ton ami."},
+  text: {
+    en: [
+      "In a small fishing town in India, a poor boy named Abdul woke up early each morning to sell newspapers and help his family. He loved to watch the birds soar over the sea and dreamed of flying.",
+      "Abdul worked incredibly hard at school and never gave up. He grew up to become a great <strong>rocket</strong> scientist, helping his country reach up into <strong>space</strong>. People proudly called him the \"Missile Man.\"",
+      "Because he was so kind and wise, Abdul was later chosen to be the President of India. He was so loved that people called him the \"People's President.\" Yet he still lived simply and gently.",
+      "More than anything, Abdul loved to talk with children. \"Dream, dream, dream,\" he would say with a warm smile, \"for dreams turn into ideas, and ideas change the world.\""
+    ],
+    sw: [
+      "Katika mji mdogo wa wavuvi nchini India, mvulana maskini aitwaye Abdul aliamka mapema kila asubuhi kuuza magazeti na kusaidia familia yake. Alipenda kutazama ndege wakiruka juu ya bahari na aliota ndoto ya kuruka.",
+      "Abdul alifanya kazi kwa bidii sana shuleni na hakukata tamaa kamwe. Alikua na kuwa mwanasayansi mkuu wa <strong>roketi</strong>, akiisaidia nchi yake kufikia juu <strong>angani</strong>. Watu kwa fahari walimwita \"Mtu wa Kombora.\"",
+      "Kwa sababu alikuwa mwema na mwenye hekima sana, Abdul baadaye alichaguliwa kuwa Rais wa India. Alipendwa sana hata watu wakamwita \"Rais wa Wananchi.\" Hata hivyo aliendelea kuishi kwa unyenyekevu na upole.",
+      "Zaidi ya kitu chochote, Abdul alipenda kuzungumza na watoto. \"Ota, ota, ota,\" alisema kwa tabasamu la joto, \"kwa maana ndoto hugeuka kuwa mawazo, na mawazo hubadilisha dunia.\""
+    ],
+    fr: [
+      "Dans un petit village de pêcheurs en Inde, un garçon pauvre nommé Abdul se levait tôt chaque matin pour vendre des journaux et aider sa famille. Il aimait regarder les oiseaux planer au-dessus de la mer et rêvait de voler.",
+      "Abdul travaillait énormément à l'école et n'abandonnait jamais. Il est devenu un grand scientifique des <strong>fusées</strong>, aidant son pays à s'élancer dans l'<strong>espace</strong>. Les gens l'appelaient fièrement « l'Homme des fusées ».",
+      "Parce qu'il était si bon et si sage, Abdul a plus tard été choisi comme Président de l'Inde. Il était si aimé que les gens l'appelaient « le Président du peuple ». Pourtant, il vivait toujours simplement et avec douceur.",
+      "Plus que tout, Abdul aimait parler avec les enfants. « Rêve, rêve, rêve », disait-il avec un sourire chaleureux, « car les rêves deviennent des idées, et les idées changent le monde. »"
+    ]
+  }
 }
 ];
 
@@ -670,7 +1347,7 @@ function render() {
       chipHtml(k, `${TOPICS[k].emoji} ${TOPICS[k][lang]}`, topicFilter === k, "topic", null,
         STORIES.filter(s => s.topic === k).length)).join("");
 
-  const bornYear = s => parseInt((s.years.match(/\d{4}/) || ["9999"])[0], 10);
+  const bornYear = s => s.born ?? parseInt((s.years.match(/\d{4}/) || ["9999"])[0], 10);
   const visible = STORIES.filter(s =>
     (regionFilter === "all" || s.region === regionFilter) &&
     (topicFilter === "all" || s.topic === topicFilter)
