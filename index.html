@@ -1457,19 +1457,40 @@ music.addEventListener("pause", updateMusicBtn);
 const synth = window.speechSynthesis;
 let narrating = false;
 let musicDucked = false;
+let narrateTimer = null;
 if (synth) { synth.getVoices(); synth.onvoiceschanged = () => synth.getVoices(); }
 
+// Gentle bedtime voice styling per language.
+// rate = slow & soothing; pitchBase/wave = soft sing-song rise & fall;
+// gaps = little breathing pauses that give the reading a lullaby rhythm.
+const VOICE_STYLE = {
+  en: { rate: 0.70, pitchBase: 1.12, wave: 0.14, gapSentence: 480, gapPara: 780 },
+  fr: { rate: 0.70, pitchBase: 1.12, wave: 0.14, gapSentence: 480, gapPara: 780 },
+  sw: { rate: 0.82, pitchBase: 1.02, wave: 0.06, gapSentence: 360, gapPara: 620 }
+};
+
+// Prefer the warmest, most natural voice the device offers.
 function pickVoice(code) {
   if (!synth) return null;
   const pref = { en: "en", sw: "sw", fr: "fr" }[code];
-  const voices = synth.getVoices();
-  return voices.find(v => v.lang && v.lang.toLowerCase().startsWith(pref + "-"))
-      || voices.find(v => v.lang && v.lang.toLowerCase().startsWith(pref))
-      || null;
+  const voices = synth.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith(pref));
+  if (!voices.length) return null;
+  const natural = /google|natural|neural|premium|enhanced|siri/i;
+  const warm = /female|samantha|ava|allison|serena|karen|moira|tessa|victoria|amelie|amélie|aurelie|aurélie|audrey|marie|julie|léa|lea/i;
+  const scored = voices.map(v => {
+    let s = 0;
+    if (natural.test(v.name)) s += 5;
+    if (warm.test(v.name)) s += 3;
+    if (code === "en" && /en-US|en-GB/i.test(v.lang)) s += 1;
+    if (code === "fr" && /fr-FR/i.test(v.lang)) s += 1;
+    return { v, s };
+  }).sort((a, b) => b.s - a.s);
+  return scored[0].v;
 }
 
 function stopNarration() {
   narrating = false;
+  if (narrateTimer) { clearTimeout(narrateTimer); narrateTimer = null; }
   if (synth && (synth.speaking || synth.pending)) synth.cancel();
   document.querySelectorAll(".reader p.speaking").forEach(p => p.classList.remove("speaking"));
   const btn = document.getElementById("narrateBtn");
@@ -1490,21 +1511,44 @@ function startNarration() {
   const btn = document.getElementById("narrateBtn");
   btn.classList.add("speaking");
   document.getElementById("narrateLabel").textContent = UI[lang].listenStop;
-  if (!music.paused) { music.volume = 0.1; musicDucked = true; }
+  if (!music.paused) { music.volume = 0.07; musicDucked = true; }
 
+  const cfg = VOICE_STYLE[lang] || VOICE_STYLE.en;
   const voice = pickVoice(lang);
   const langTag = { en: "en-US", sw: "sw-KE", fr: "fr-FR" }[lang];
-  let i = 0;
+
+  // Break each paragraph into sentences so we can add gentle pauses and a
+  // soft melodic pitch curve — the rhythm that captivates a small child.
+  const queue = [];
+  paras.forEach((p, pi) => {
+    const parts = p.textContent.trim().split(/(?<=[.!?…])\s+/).filter(Boolean);
+    (parts.length ? parts : [p.textContent.trim()]).forEach((sen, si) =>
+      queue.push({ text: sen, p, pi, firstInPara: si === 0 }));
+  });
+
+  let qi = 0, lastPara = -1;
   const speakNext = () => {
-    if (!narrating || i >= paras.length) { stopNarration(); return; }
-    const p = paras[i];
-    const u = new SpeechSynthesisUtterance(p.textContent.trim());
+    if (!narrating || qi >= queue.length) { stopNarration(); return; }
+    const item = queue[qi];
+    if (item.pi !== lastPara) {
+      document.querySelectorAll(".reader p.speaking").forEach(x => x.classList.remove("speaking"));
+      item.p.classList.add("speaking");
+      item.p.scrollIntoView({ block: "center", behavior: "smooth" });
+      lastPara = item.pi;
+    }
+    const u = new SpeechSynthesisUtterance(item.text);
     u.lang = langTag;
     if (voice) u.voice = voice;
-    u.rate = 0.9; u.pitch = 1.05;
-    u.onstart = () => { p.classList.add("speaking"); p.scrollIntoView({ block: "center", behavior: "smooth" }); };
-    u.onend = () => { p.classList.remove("speaking"); i++; speakNext(); };
-    u.onerror = () => { p.classList.remove("speaking"); i++; speakNext(); };
+    u.rate = cfg.rate;
+    u.volume = 1;
+    // soft rise-and-fall so it sings a little instead of droning
+    u.pitch = Math.max(0.6, cfg.pitchBase + cfg.wave * Math.sin(qi * 0.9));
+    u.onend = () => {
+      qi++;
+      const gap = (queue[qi] && queue[qi].firstInPara) ? cfg.gapPara : cfg.gapSentence;
+      narrateTimer = setTimeout(speakNext, narrating ? gap : 0);
+    };
+    u.onerror = () => { qi++; narrateTimer = setTimeout(speakNext, 0); };
     synth.speak(u);
   };
   speakNext();
