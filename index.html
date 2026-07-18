@@ -137,6 +137,24 @@
   .reader-langs { display: flex; gap: 6px; margin-bottom: 18px; }
   .reader-langs .lang-btn { padding: 5px 14px; font-size: 13px; }
 
+  /* --- narrate (read aloud) --- */
+  .narrate-btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--card-hover); border: 1.5px solid #3a466f; color: var(--ink);
+    padding: 11px 22px; border-radius: 999px; font-size: 15.5px; font-weight: 700;
+    cursor: pointer; font-family: inherit; margin: 2px 0 22px; transition: all .2s;
+  }
+  .narrate-btn:hover { border-color: var(--gold); }
+  .narrate-btn.speaking { background: var(--gold); border-color: var(--gold); color: #201a08; }
+  .narrate-btn .ico { font-size: 18px; line-height: 1; }
+  .narrate-btn.speaking .ico { animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+  .reader p.speaking {
+    background: rgba(245,198,100,.14);
+    box-shadow: 0 0 0 8px rgba(245,198,100,.14);
+    border-radius: 8px; transition: background .2s;
+  }
+
   footer { text-align: center; color: var(--ink-soft); margin-top: 56px; font-size: 14px; }
   .credit { font-size: 12px; margin-top: 8px; opacity: .75; }
 
@@ -200,6 +218,7 @@ const UI = {
         showing: n => `${n} ${n === 1 ? "story" : "stories"}`,
         read: "Tap to read · ~2 min", born: "Born in", goodnight: "The end. Goodnight 🌙",
         music: "Music", musicPause: "Pause",
+        listen: "Read to me", listenStop: "Stop reading",
         footer: "Made with love, for one curious little dreamer.",
         empty: "No stories here yet — try another filter." },
   sw: { title: "Malakai Stories",
@@ -208,6 +227,7 @@ const UI = {
         showing: n => `Hadithi ${n}`,
         read: "Gusa kusoma · dakika 2", born: "Alizaliwa", goodnight: "Mwisho. Lala salama 🌙",
         music: "Muziki", musicPause: "Simamisha",
+        listen: "Nisomee", listenStop: "Acha kusoma",
         footer: "Imetengenezwa kwa upendo, kwa ajili ya mwotaji mdogo mdadisi.",
         empty: "Hakuna hadithi hapa bado — jaribu kichujio kingine." },
   fr: { title: "Malakai Stories",
@@ -216,6 +236,7 @@ const UI = {
         showing: n => `${n} histoire${n > 1 ? "s" : ""}`,
         read: "Touchez pour lire · ~2 min", born: "Né(e) en", goodnight: "Fin. Bonne nuit 🌙",
         music: "Musique", musicPause: "Pause",
+        listen: "Lis-moi l'histoire", listenStop: "Arrête la lecture",
         footer: "Fait avec amour, pour un petit rêveur curieux.",
         empty: "Pas encore d'histoire ici — essayez un autre filtre." }
 };
@@ -1380,6 +1401,7 @@ function render() {
 function openReader(id) {
   const s = STORIES.find(x => x.id === id);
   if (!s) return;
+  if (typeof stopNarration === "function") stopNarration();
   const t = UI[lang];
   const reader = document.getElementById("reader");
   reader.innerHTML = `
@@ -1395,6 +1417,7 @@ function openReader(id) {
       <span class="badge region-${s.region}">${REGIONS[s.region][lang]}</span>
       <span class="badge topic">${TOPICS[s.topic].emoji} ${TOPICS[s.topic][lang]}</span>
     </div>
+    <button class="narrate-btn" id="narrateBtn"><span class="ico">🔊</span><span id="narrateLabel">${t.listen}</span></button>
     ${s.text[lang].map(p => `<p>${p}</p>`).join("")}
     <div class="goodnight">${t.goodnight}</div>`;
   document.getElementById("overlay").classList.add("open");
@@ -1403,6 +1426,7 @@ function openReader(id) {
 }
 
 function closeReader() {
+  stopNarration();
   document.getElementById("overlay").classList.remove("open");
 }
 
@@ -1429,13 +1453,76 @@ document.getElementById("musicBtn").addEventListener("click", () => {
 music.addEventListener("play", updateMusicBtn);
 music.addEventListener("pause", updateMusicBtn);
 
+/* ---------- narration (read aloud) ---------- */
+const synth = window.speechSynthesis;
+let narrating = false;
+let musicDucked = false;
+if (synth) { synth.getVoices(); synth.onvoiceschanged = () => synth.getVoices(); }
+
+function pickVoice(code) {
+  if (!synth) return null;
+  const pref = { en: "en", sw: "sw", fr: "fr" }[code];
+  const voices = synth.getVoices();
+  return voices.find(v => v.lang && v.lang.toLowerCase().startsWith(pref + "-"))
+      || voices.find(v => v.lang && v.lang.toLowerCase().startsWith(pref))
+      || null;
+}
+
+function stopNarration() {
+  narrating = false;
+  if (synth && (synth.speaking || synth.pending)) synth.cancel();
+  document.querySelectorAll(".reader p.speaking").forEach(p => p.classList.remove("speaking"));
+  const btn = document.getElementById("narrateBtn");
+  if (btn) {
+    btn.classList.remove("speaking");
+    const lbl = document.getElementById("narrateLabel");
+    if (lbl) lbl.textContent = UI[lang].listen;
+  }
+  if (musicDucked && !music.paused) music.volume = 0.35;
+  musicDucked = false;
+}
+
+function startNarration() {
+  if (!synth) { alert("Sorry, your browser can't read aloud."); return; }
+  const paras = [...document.querySelectorAll(".reader p")];
+  if (!paras.length) return;
+  narrating = true;
+  const btn = document.getElementById("narrateBtn");
+  btn.classList.add("speaking");
+  document.getElementById("narrateLabel").textContent = UI[lang].listenStop;
+  if (!music.paused) { music.volume = 0.1; musicDucked = true; }
+
+  const voice = pickVoice(lang);
+  const langTag = { en: "en-US", sw: "sw-KE", fr: "fr-FR" }[lang];
+  let i = 0;
+  const speakNext = () => {
+    if (!narrating || i >= paras.length) { stopNarration(); return; }
+    const p = paras[i];
+    const u = new SpeechSynthesisUtterance(p.textContent.trim());
+    u.lang = langTag;
+    if (voice) u.voice = voice;
+    u.rate = 0.9; u.pitch = 1.05;
+    u.onstart = () => { p.classList.add("speaking"); p.scrollIntoView({ block: "center", behavior: "smooth" }); };
+    u.onend = () => { p.classList.remove("speaking"); i++; speakNext(); };
+    u.onerror = () => { p.classList.remove("speaking"); i++; speakNext(); };
+    synth.speak(u);
+  };
+  speakNext();
+}
+
 /* ---------- events (delegated) ---------- */
 document.addEventListener("click", e => {
   const langBtn = e.target.closest("[data-lang]");
   if (langBtn) { lang = langBtn.dataset.lang; render(); return; }
 
+  if (e.target.closest("#narrateBtn")) {
+    if (narrating) stopNarration(); else startNarration();
+    return;
+  }
+
   const readerLang = e.target.closest("[data-reader-lang]");
   if (readerLang) {
+    stopNarration();
     lang = readerLang.dataset.readerLang;
     render();
     openReader(document.getElementById("reader").dataset.story);
