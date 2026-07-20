@@ -179,14 +179,24 @@ $("connectBtn").addEventListener("click", async () => {
   if (!apiKey) return;
   setStatus($("acctStatus"), "Connecting…");
   try {
-    const sub = await xi("/user/subscription");
+    let acctLine = "Connected ✓";
+    try {
+      const sub = await xi("/user/subscription");
+      const left = (sub.character_limit - sub.character_count).toLocaleString();
+      acctLine = `Connected ✓ — plan: ${sub.tier || "free"}, credits left this month: ${left}`;
+    } catch (e) {
+      if (!/user_read|permission/i.test(e.message)) throw e;
+      acctLine = "Connected ✓ (key can't read your credit balance — that's okay)";
+    }
+    await loadVoices();   // this needs voices_read; if it fails, the catch below explains
     if ($("rememberKey").checked) localStorage.setItem("xi-key", apiKey);
     else localStorage.removeItem("xi-key");
-    const left = (sub.character_limit - sub.character_count).toLocaleString();
-    setStatus($("acctStatus"), `Connected ✓ — plan: ${sub.tier || "free"}, credits left this month: ${left}`, true);
+    setStatus($("acctStatus"), acctLine, true);
     $("voiceStep").style.display = "";
-    await loadVoices();
-  } catch (e) { setStatus($("acctStatus"), "Could not connect: " + e.message, false); }
+  } catch (e) {
+    setStatus($("acctStatus"), "Could not connect: " + e.message +
+      " — if you made a restricted API key, edit it on elevenlabs.io and enable: Voices (read & write), Text to Speech, and User (read).", false);
+  }
 });
 
 async function xi(path, opts = {}) {
