@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Studio · Malakai Stories</title>
+<style>
+  :root {
+    --night: #0f1630; --night-deep: #0a0f22; --card: #1a2244; --card-hover: #222c56;
+    --ink: #f2f0e9; --ink-soft: #b8bdd4; --gold: #f5c664; --moon: #ffe9b8;
+    --green: #6ecf8e; --red: #f08f7f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { background: var(--night-deep); }
+  body {
+    background: linear-gradient(180deg, var(--night-deep) 0%, var(--night) 40%, #16204a 100%);
+    color: var(--ink); font-family: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+    min-height: 100vh; line-height: 1.6;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 80px; }
+  header { text-align: center; margin-bottom: 26px; }
+  h1 { font-size: clamp(24px, 4vw, 34px); color: var(--moon); margin: 6px 0; }
+  .subtitle { color: var(--ink-soft); font-size: 15px; max-width: 620px; margin: 0 auto; }
+  a.back { color: var(--gold); text-decoration: none; font-size: 14px; }
+  .step {
+    background: var(--card); border: 1px solid #2b3560; border-radius: 20px;
+    padding: 22px 24px; margin: 18px 0;
+  }
+  .step h2 { font-size: 18px; color: var(--gold); margin-bottom: 10px; }
+  .step p, .step li { font-size: 14.5px; color: var(--ink-soft); }
+  .step ol { margin: 8px 0 8px 20px; }
+  input[type=password], input[type=text], select {
+    background: #131a38; border: 1.5px solid #323d68; color: var(--ink);
+    padding: 10px 14px; border-radius: 12px; font-size: 14px; font-family: inherit;
+    width: 100%; max-width: 420px;
+  }
+  button {
+    background: var(--gold); border: none; color: #241d07; font-weight: 700;
+    padding: 10px 20px; border-radius: 999px; font-size: 14px; cursor: pointer;
+    font-family: inherit; transition: opacity .15s;
+  }
+  button:disabled { opacity: .4; cursor: default; }
+  button.ghost { background: transparent; border: 1.5px solid #3a466f; color: var(--ink-soft); font-weight: 600; }
+  button.rec { background: var(--red); color: #2a0d08; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 10px 0; }
+  .status { font-size: 13.5px; margin-top: 8px; }
+  .status.ok { color: var(--green); }
+  .status.err { color: var(--red); }
+  .muted { font-size: 13px; color: var(--ink-soft); opacity: .8; }
+  .script-box {
+    background: rgba(255,255,255,.04); border: 1px dashed #3a466f; border-radius: 14px;
+    padding: 14px 16px; font-size: 14.5px; color: var(--ink); margin: 10px 0;
+  }
+  .story-list { max-height: 340px; overflow-y: auto; border: 1px solid #2b3560; border-radius: 14px; padding: 10px 14px; margin: 10px 0; }
+  .story-item { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 14px; }
+  .story-item .cnt { margin-left: auto; font-size: 12px; color: var(--ink-soft); }
+  .story-item .done { color: var(--green); font-size: 12px; }
+  progress { width: 100%; height: 10px; accent-color: var(--gold); }
+  .lang-checks label { margin-right: 16px; font-size: 14px; }
+  .pill { display: inline-block; background: rgba(245,198,100,.13); color: var(--gold); border-radius: 999px; padding: 3px 12px; font-size: 12.5px; font-weight: 700; margin-left: 8px; }
+  audio { width: 100%; max-width: 420px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div style="font-size:44px">🎙️</div>
+    <h1>Voice Studio</h1>
+    <p class="subtitle">Clone your voice once — then let it read every bedtime story automatically.
+    Your API key and recordings go directly from this page to ElevenLabs; nothing is stored on the site.</p>
+    <p style="margin-top:8px"><a class="back" href="index.html">← Back to the stories</a></p>
+  </header>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <h2>1 · Connect your ElevenLabs account</h2>
+    <p>Paste your API key (elevenlabs.io → Profile → API Keys). It is only kept in this browser.</p>
+    <div class="row">
+      <input type="password" id="apiKey" placeholder="sk_...">
+      <button id="connectBtn">Connect</button>
+    </div>
+    <label class="muted"><input type="checkbox" id="rememberKey"> Remember key on this device</label>
+    <div class="status" id="acctStatus"></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="voiceStep" style="display:none">
+    <h2>2 · Your voice</h2>
+    <div id="voicePick" style="display:none">
+      <p>Choose the voice that will read the stories:</p>
+      <div class="row">
+        <select id="voiceSelect"></select>
+        <button class="ghost" id="refreshVoices">↻</button>
+      </div>
+    </div>
+    <div id="recordBlock">
+      <p><strong style="color:var(--ink)">Record a 1–2 minute sample</strong> in a quiet room, holding the phone/mic about 20&nbsp;cm away. Speak warmly and naturally — like you're telling a story. You can read this (or anything you like, in any language):</p>
+      <div class="script-box" id="readingScript">
+        Hello, my darling. Tonight I want to tell you a story about the stars.
+        Long ago, people looked up at the night sky and wondered what those little lights could be.
+        Some thought they were tiny holes in a great dark blanket. Others believed they were faraway fires.
+        Slowly, patiently, curious people began to measure and count, to draw maps of the sky, and to ask
+        why the moon changes shape and why the sun rises every morning. Every question they asked opened
+        a little door, and behind every door there was another wonderful question. Close your eyes now,
+        take a deep breath, and imagine you are floating gently among those stars, warm and safe,
+        while the whole universe hums you a lullaby. Goodnight, my love. Sleep well, and dream big dreams.
+      </div>
+      <div class="row">
+        <button id="recBtn">● Start recording</button>
+        <span class="muted" id="recTimer"></span>
+      </div>
+      <audio id="recPreview" controls style="display:none"></audio>
+      <div class="row" id="createCloneRow" style="display:none">
+        <input type="text" id="voiceName" placeholder="Voice name (e.g. Mama / Baba)" style="max-width:240px">
+        <button id="createCloneBtn">Create my voice clone</button>
+      </div>
+      <div class="status" id="voiceStatus"></div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="genStep" style="display:none">
+    <h2>3 · Generate the stories in your voice</h2>
+    <div class="row lang-checks">
+      <label><input type="checkbox" class="langChk" value="en" checked> English</label>
+      <label><input type="checkbox" class="langChk" value="sw" checked> Kiswahili</label>
+      <label><input type="checkbox" class="langChk" value="fr"> Français</label>
+      <span class="pill" id="estimate"></span>
+    </div>
+    <p class="muted">Swahili needs the “Eleven v3” model. Start with the <em>test sample</em> (one paragraph) to hear your cloned voice before spending credits on everything.</p>
+    <div class="row">
+      <button class="ghost" id="selAll">Select all</button>
+      <button class="ghost" id="selNone">Select none</button>
+      <button id="testBtn">🔊 Generate test sample</button>
+    </div>
+    <div class="story-list" id="storyList">Loading stories…</div>
+    <audio id="testAudio" controls style="display:none"></audio>
+    <div class="row">
+      <button id="genBtn">✨ Generate selected stories</button>
+      <button class="ghost" id="zipBtn" style="display:none">⬇ Download all (zip)</button>
+    </div>
+    <progress id="genProgress" value="0" max="1" style="display:none"></progress>
+    <div class="status" id="genStatus"></div>
+    <p class="muted" id="afterHelp" style="display:none; margin-top:10px">
+      Done! Download the zip and send it to Claude in your Cowork chat (or unzip it into the repo's
+      <code>audio/voice/</code> folder yourself). Once the files are on the site, the “Read to me” button
+      will automatically use your voice on every device.
+    </p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+const API = "https://api.elevenlabs.io/v1";
+let apiKey = "", voices = [], STORIES = [], results = {};  // results["id-lang"] = blob
+
+const $ = id => document.getElementById(id);
+const setStatus = (el, msg, ok) => { el.textContent = msg; el.className = "status " + (ok === true ? "ok" : ok === false ? "err" : ""); };
+const clean = html => html.replace(/<[^>]+>/g, "");
+const storyText = (s, l) => [s.title[l], ...s.text[l].map(clean)].join("\n\n");
+
+/* ---------- load stories from index.html ---------- */
+(async () => {
+  try {
+    const html = await (await fetch("index.html")).text();
+    const start = html.indexOf("const STORIES = [");
+    const end = html.indexOf("\n];", start);
+    STORIES = (new Function("return " + html.slice(start + "const STORIES =".length, end + 3)))();
+    renderStoryList();
+  } catch (e) { $("storyList").textContent = "Could not load stories: " + e.message; }
+})();
+
+/* ---------- step 1: connect ---------- */
+const savedKey = localStorage.getItem("xi-key");
+if (savedKey) { $("apiKey").value = savedKey; $("rememberKey").checked = true; }
+
+$("connectBtn").addEventListener("click", async () => {
+  apiKey = $("apiKey").value.trim();
+  if (!apiKey) return;
+  setStatus($("acctStatus"), "Connecting…");
+  try {
+    const sub = await xi("/user/subscription");
+    if ($("rememberKey").checked) localStorage.setItem("xi-key", apiKey);
+    else localStorage.removeItem("xi-key");
+    const left = (sub.character_limit - sub.character_count).toLocaleString();
+    setStatus($("acctStatus"), `Connected ✓ — plan: ${sub.tier || "free"}, credits left this month: ${left}`, true);
+    $("voiceStep").style.display = "";
+    await loadVoices();
+  } catch (e) { setStatus($("acctStatus"), "Could not connect: " + e.message, false); }
+});
+
+async function xi(path, opts = {}) {
+  const r = await fetch(API + path, { ...opts, headers: { "xi-api-key": apiKey, ...(opts.headers || {}) } });
+  if (!r.ok) {
+    let msg = r.status + "";
+    try { const j = await r.json(); msg = j.detail?.message || j.detail?.status || JSON.stringify(j.detail || j); } catch {}
+    throw new Error(msg);
+  }
+  return r.headers.get("content-type")?.includes("json") ? r.json() : r.blob();
+}
+
+/* ---------- step 2: voices ---------- */
+async function loadVoices() {
+  const data = await xi("/voices");
+  voices = data.voices || [];
+  const cloned = voices.filter(v => v.category === "cloned" || v.category === "professional");
+  const sel = $("voiceSelect");
+  sel.innerHTML = "";
+  [...cloned, ...voices.filter(v => !cloned.includes(v))].forEach(v => {
+    const o = document.createElement("option");
+    o.value = v.voice_id; o.textContent = `${v.name}${cloned.includes(v) ? " (your clone)" : ""}`;
+    sel.appendChild(o);
+  });
+  $("voicePick").style.display = cloned.length ? "" : "none";
+  if (cloned.length) { $("genStep").style.display = ""; updateEstimate(); }
+}
+$("refreshVoices").addEventListener("click", loadVoices);
+
+/* recording */
+let mediaRec = null, chunks = [], recBlob = null, recStart = 0, timerInt = null;
+$("recBtn").addEventListener("click", async () => {
+  if (mediaRec && mediaRec.state === "recording") { mediaRec.stop(); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    chunks = [];
+    mediaRec = new MediaRecorder(stream);
+    mediaRec.ondataavailable = e => chunks.push(e.data);
+    mediaRec.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      clearInterval(timerInt);
+      recBlob = new Blob(chunks, { type: mediaRec.mimeType });
+      $("recPreview").src = URL.createObjectURL(recBlob);
+      $("recPreview").style.display = "";
+      $("createCloneRow").style.display = "";
+      $("recBtn").textContent = "● Record again";
+      $("recBtn").classList.remove("rec");
+      setStatus($("voiceStatus"), "Listen to your sample — happy with it? Then create your clone. If not, record again.", true);
+    };
+    mediaRec.start();
+    recStart = Date.now();
+    $("recBtn").textContent = "■ Stop recording";
+    $("recBtn").classList.add("rec");
+    timerInt = setInterval(() => {
+      const s = Math.floor((Date.now() - recStart) / 1000);
+      $("recTimer").textContent = `${String(Math.floor(s/60)).padStart(1,"0")}:${String(s%60).padStart(2,"0")} — aim for 1:00–2:00`;
+      if (s >= 150) mediaRec.stop();
+    }, 250);
+  } catch (e) { setStatus($("voiceStatus"), "Microphone error: " + e.message, false); }
+});
+
+$("createCloneBtn").addEventListener("click", async () => {
+  if (!recBlob) return;
+  const name = $("voiceName").value.trim() || "My voice";
+  if ((Date.now() - recStart) < 30000) {
+    setStatus($("voiceStatus"), "That sample is very short — ElevenLabs needs at least ~30 seconds, and 1–2 minutes works much better.", false);
+    if ((Date.now() - recStart) < 20000) return;
+  }
+  setStatus($("voiceStatus"), "Uploading your sample and creating the clone…");
+  try {
+    const fd = new FormData();
+    fd.append("name", name);
+    const ext = (recBlob.type.includes("mp4") || recBlob.type.includes("aac")) ? "m4a" : "webm";
+    fd.append("files", recBlob, `sample.${ext}`);
+    const res = await xi("/voices/add", { method: "POST", body: fd });
+    setStatus($("voiceStatus"), `Voice clone “${name}” created ✓`, true);
+    await loadVoices();
+    $("voiceSelect").value = res.voice_id;
+    $("genStep").style.display = "";
+    updateEstimate();
+  } catch (e) { setStatus($("voiceStatus"), "Could not create clone: " + e.message + " (voice cloning needs the Starter plan or higher)", false); }
+});
+
+/* ---------- step 3: generate ---------- */
+function selectedLangs() { return [...document.querySelectorAll(".langChk:checked")].map(c => c.value); }
+function selectedStories() {
+  return [...document.querySelectorAll(".storyChk:checked")].map(c => STORIES.find(s => s.id === c.value));
+}
+function renderStoryList() {
+  $("storyList").innerHTML = STORIES.map(s => `
+    <div class="story-item">
+      <input type="checkbox" class="storyChk" value="${s.id}" checked id="chk-${s.id}">
+      <label for="chk-${s.id}">${s.emoji} ${s.name}</label>
+      <span class="done" id="done-${s.id}"></span>
+      <span class="cnt">${["en","sw","fr"].map(l => storyText(s, l).length).reduce((a,b)=>a+b,0).toLocaleString()} ch</span>
+    </div>`).join("");
+  document.querySelectorAll(".storyChk").forEach(c => c.addEventListener("change", updateEstimate));
+  updateEstimate();
+}
+function updateEstimate() {
+  const langs = selectedLangs();
+  const total = selectedStories().reduce((sum, s) => sum + langs.reduce((a, l) => a + storyText(s, l).length, 0), 0);
+  $("estimate").textContent = `≈ ${total.toLocaleString()} credits`;
+}
+document.querySelectorAll(".langChk").forEach(c => c.addEventListener("change", updateEstimate));
+$("selAll").addEventListener("click", () => { document.querySelectorAll(".storyChk").forEach(c => c.checked = true); updateEstimate(); });
+$("selNone").addEventListener("click", () => { document.querySelectorAll(".storyChk").forEach(c => c.checked = false); updateEstimate(); });
+
+async function tts(text) {
+  return xi(`/text-to-speech/${$("voiceSelect").value}?output_format=mp3_44100_128`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, model_id: "eleven_v3" })
+  });
+}
+
+$("testBtn").addEventListener("click", async () => {
+  const s = selectedStories()[0] || STORIES[0];
+  const l = selectedLangs()[0] || "en";
+  setStatus($("genStatus"), `Generating a test (first paragraph of “${s.name}”, ${l})…`);
+  try {
+    const blob = await tts(clean(s.text[l][0]));
+    $("testAudio").src = URL.createObjectURL(blob);
+    $("testAudio").style.display = "";
+    $("testAudio").play();
+    setStatus($("genStatus"), "Test ready — this is how the stories will sound. Happy? Generate everything!", true);
+  } catch (e) { setStatus($("genStatus"), "Test failed: " + e.message, false); }
+});
+
+$("genBtn").addEventListener("click", async () => {
+  const langs = selectedLangs(), stories = selectedStories();
+  const jobs = stories.flatMap(s => langs.map(l => ({ s, l })));
+  if (!jobs.length) return;
+  $("genBtn").disabled = true;
+  $("genProgress").style.display = ""; $("genProgress").max = jobs.length;
+  let done = 0, failed = 0;
+  for (const { s, l } of jobs) {
+    const key = `${s.id}-${l}`;
+    if (!results[key]) {
+      setStatus($("genStatus"), `Generating ${done + 1}/${jobs.length}: ${s.name} (${l})…`);
+      try { results[key] = await tts(storyText(s, l)); }
+      catch (e) {
+        failed++;
+        setStatus($("genStatus"), `Failed on ${s.name} (${l}): ${e.message} — continuing…`, false);
+        if (/quota|credit|limit/i.test(e.message)) break;
+      }
+    }
+    done++;
+    $("genProgress").value = done;
+    $("done-" + s.id).textContent = langs.every(x => results[`${s.id}-${x}`]) ? "✓ ready" : "";
+  }
+  $("genBtn").disabled = false;
+  const okCount = Object.keys(results).length;
+  setStatus($("genStatus"), `Finished: ${okCount} audio file(s) ready` + (failed ? `, ${failed} failed (you can press Generate again to retry — finished ones are kept)` : ""), failed ? false : true);
+  if (okCount) { $("zipBtn").style.display = ""; $("afterHelp").style.display = ""; }
+});
+
+$("zipBtn").addEventListener("click", async () => {
+  const zip = new JSZip();
+  const folder = zip.folder("voice");
+  for (const [key, blob] of Object.entries(results)) folder.file(key + ".mp3", blob);
+  const out = await zip.generateAsync({ type: "blob" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(out);
+  a.download = "malakai-voice.zip";
+  a.click();
+});
+</script>
+</body>
+</html>

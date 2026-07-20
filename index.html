@@ -204,6 +204,7 @@
   <footer>
     <div id="footerLine"></div>
     <div class="credit">♪ Erik Satie — Gymnopédie No. 1 · Robin Alciatore (public domain)</div>
+    <div class="credit"><a href="voice-studio.html" style="color:inherit">🎙️ Voice Studio — record your own voice for the stories</a></div>
   </footer>
 </div>
 
@@ -1816,8 +1817,27 @@ function pickVoice(code) {
   return scored[0].v;
 }
 
+/* Parent-voice recordings: audio/voice/{storyId}-{lang}.mp3 (generated in the Voice Studio).
+   If a recording exists for this story+language it is preferred; otherwise we fall
+   back to the browser's built-in read-aloud voice. */
+const parentVoice = new Audio();
+let parentVoicePlaying = false;
+const voiceFileCache = new Map();
+async function voiceFileFor(id, l) {
+  const key = `${id}-${l}`;
+  if (!voiceFileCache.has(key)) {
+    try {
+      const r = await fetch(`audio/voice/${key}.mp3`, { method: "HEAD" });
+      voiceFileCache.set(key, r.ok ? `audio/voice/${key}.mp3` : null);
+    } catch { voiceFileCache.set(key, null); }
+  }
+  return voiceFileCache.get(key);
+}
+parentVoice.addEventListener("ended", () => stopNarration());
+
 function stopNarration() {
   narrating = false;
+  if (parentVoicePlaying) { parentVoice.pause(); parentVoice.currentTime = 0; parentVoicePlaying = false; }
   if (narrateTimer) { clearTimeout(narrateTimer); narrateTimer = null; }
   if (synth && (synth.speaking || synth.pending)) synth.cancel();
   document.querySelectorAll(".reader p.speaking").forEach(p => p.classList.remove("speaking"));
@@ -1831,7 +1851,22 @@ function stopNarration() {
   musicDucked = false;
 }
 
-function startNarration() {
+async function startNarration() {
+  const storyId = document.getElementById("reader").dataset.story;
+  const recorded = storyId ? await voiceFileFor(storyId, lang) : null;
+
+  if (recorded) {
+    narrating = true;
+    parentVoicePlaying = true;
+    const btn = document.getElementById("narrateBtn");
+    btn.classList.add("speaking");
+    document.getElementById("narrateLabel").textContent = UI[lang].listenStop;
+    if (!music.paused) { music.volume = 0.07; musicDucked = true; }
+    parentVoice.src = recorded;
+    parentVoice.play().catch(() => { parentVoicePlaying = false; stopNarration(); });
+    return;
+  }
+
   if (!synth) { alert("Sorry, your browser can't read aloud."); return; }
   const paras = [...document.querySelectorAll(".reader p")];
   if (!paras.length) return;
