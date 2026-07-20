@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Voice · Malakai Stories — bedtime stories read in YOUR voice</title>
+<meta name="description" content="Record 2 minutes of your voice and we turn it into a full library of bedtime science stories, read to your child in your own voice — in English, Kiswahili or Français.">
+<style>
+  :root {
+    --night: #0f1630; --night-deep: #0a0f22; --card: #1a2244;
+    --ink: #f2f0e9; --ink-soft: #b8bdd4; --gold: #f5c664; --moon: #ffe9b8;
+    --green: #6ecf8e; --red: #f08f7f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { background: var(--night-deep); }
+  body {
+    background: linear-gradient(180deg, var(--night-deep) 0%, var(--night) 40%, #16204a 100%);
+    color: var(--ink); font-family: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+    min-height: 100vh; line-height: 1.65;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 34px 20px 80px; }
+  header { text-align: center; margin-bottom: 30px; }
+  h1 { font-size: clamp(26px, 4.5vw, 40px); color: var(--moon); margin: 8px 0 8px; }
+  .subtitle { color: var(--ink-soft); font-size: 16.5px; max-width: 640px; margin: 0 auto; }
+  a.back { color: var(--gold); text-decoration: none; font-size: 14px; }
+  h2 { font-size: 19px; color: var(--gold); margin-bottom: 10px; }
+  .card {
+    background: var(--card); border: 1px solid #2b3560; border-radius: 20px;
+    padding: 24px 26px; margin: 18px 0;
+  }
+  .card p, .card li { font-size: 15px; color: var(--ink-soft); }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 12px 0; }
+  .stepbox { background: rgba(255,255,255,.04); border-radius: 16px; padding: 16px; text-align: center; }
+  .stepbox .big { font-size: 30px; }
+  .stepbox b { color: var(--ink); display: block; margin: 6px 0 4px; }
+  .stepbox span { font-size: 13.5px; color: var(--ink-soft); }
+  .prices { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 12px; }
+  .price {
+    background: rgba(255,255,255,.04); border: 1px solid #323d68; border-radius: 16px;
+    padding: 18px; text-align: center;
+  }
+  .price.best { border-color: var(--gold); box-shadow: 0 0 22px rgba(245,198,100,.15); }
+  .price h3 { color: var(--ink); font-size: 16px; }
+  .price .amt { color: var(--gold); font-size: 24px; font-weight: 700; margin: 6px 0; }
+  .price small { color: var(--ink-soft); font-size: 12.5px; display: block; }
+  .tag { display: inline-block; background: var(--gold); color: #241d07; font-size: 11px; font-weight: 800; border-radius: 999px; padding: 2px 10px; margin-bottom: 8px; letter-spacing: .06em; }
+  label { font-size: 14.5px; color: var(--ink-soft); }
+  input[type=text] {
+    background: #131a38; border: 1.5px solid #323d68; color: var(--ink);
+    padding: 10px 14px; border-radius: 12px; font-size: 14px; font-family: inherit;
+    width: 100%; max-width: 380px; margin: 4px 0 10px;
+  }
+  .consent {
+    background: rgba(245,198,100,.07); border: 1px solid rgba(245,198,100,.35);
+    border-radius: 14px; padding: 14px 16px; margin: 14px 0; font-size: 14.5px; color: var(--ink);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .consent input { margin-top: 5px; }
+  button {
+    background: var(--gold); border: none; color: #241d07; font-weight: 700;
+    padding: 12px 24px; border-radius: 999px; font-size: 15px; cursor: pointer; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: default; }
+  button.rec { background: var(--red); color: #2a0d08; }
+  button.ghost { background: transparent; border: 1.5px solid #3a466f; color: var(--ink-soft); font-weight: 600; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 12px 0; }
+  .script-box {
+    background: rgba(255,255,255,.04); border: 1px dashed #3a466f; border-radius: 14px;
+    padding: 14px 16px; font-size: 15px; color: var(--ink); margin: 10px 0;
+  }
+  .status { font-size: 14px; margin-top: 8px; }
+  .status.ok { color: var(--green); }
+  .status.err { color: var(--red); }
+  .muted { font-size: 13px; color: var(--ink-soft); opacity: .85; }
+  audio { width: 100%; max-width: 420px; margin-top: 10px; }
+  footer { text-align: center; color: var(--ink-soft); margin-top: 50px; font-size: 13.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div style="font-size:48px">💛</div>
+    <h1>Bedtime stories, read in <em>your</em> voice</h1>
+    <p class="subtitle">You record just <strong style="color:var(--moon)">2 minutes</strong>. We turn it into a whole library —
+    every Malakai story read aloud to your child in your own warm voice, in English, Kiswahili or Français.
+    Even when you're away, travelling, or working late… your voice tucks them in.</p>
+    <p style="margin-top:10px"><a class="back" href="index.html">← Back to the stories</a></p>
+  </header>
+
+  <div class="card">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="stepbox"><div class="big">🎙️</div><b>1 · Record</b><span>Read our 2-minute sample script below, right here on this page. No app, no account.</span></div>
+      <div class="stepbox"><div class="big">📧</div><b>2 · Send</b><span>Email us your recording with one click. We confirm your package and payment (M-Pesa or card).</span></div>
+      <div class="stepbox"><div class="big">🌙</div><b>3 · Listen</b><span>Within a few days, the “Read to me” button plays the stories in YOUR voice for your child.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Packages</h2>
+    <div class="prices">
+      <div class="price">
+        <h3>One language</h3>
+        <div class="amt">KSh 1,500 <small>≈ $12</small></div>
+        <small>All 47 stories in your voice, in English, Kiswahili or Français</small>
+      </div>
+      <div class="price best">
+        <div class="tag">MOST LOVED</div>
+        <h3>All three languages</h3>
+        <div class="amt">KSh 3,500 <small>≈ $27</small></div>
+        <small>The full library — 141 recordings in your voice</small>
+      </div>
+      <div class="price">
+        <h3>Two voices</h3>
+        <div class="amt">KSh 5,500 <small>≈ $42</small></div>
+        <small>Mama <em>and</em> Baba (or a grandparent!) — all three languages each</small>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:10px">New stories are added to the site over time — ask us about adding them to your voice pack.</p>
+  </div>
+
+  <div class="card">
+    <h2>Record your voice</h2>
+    <p>Find a quiet room. Hold your phone about 20&nbsp;cm from your mouth. Speak slowly, warmly — like you're tucking your little one in. You may read in any language you're comfortable with:</p>
+    <div class="script-box">
+      Hello, my darling. Tonight I want to tell you a story about the stars.
+      Long ago, people looked up at the night sky and wondered what those little lights could be.
+      Some thought they were tiny holes in a great dark blanket. Others believed they were faraway fires.
+      Slowly, patiently, curious people began to measure and count, to draw maps of the sky, and to ask
+      why the moon changes shape and why the sun rises every morning. Every question they asked opened
+      a little door, and behind every door there was another wonderful question. Close your eyes now,
+      take a deep breath, and imagine you are floating gently among those stars, warm and safe,
+      while the whole universe hums you a lullaby. Goodnight, my love. Sleep well, and dream big dreams.
+    </div>
+
+    <label>Your name<br><input type="text" id="parentName" placeholder="e.g. Amina"></label><br>
+    <label>Your child's name (optional — we use it to personalise our reply)<br><input type="text" id="childName" placeholder="e.g. Malakai"></label>
+
+    <div class="consent">
+      <input type="checkbox" id="consent">
+      <label for="consent">This is <strong>my own voice</strong>, and I give my consent for it to be digitally cloned for the sole purpose of narrating Malakai Stories for my family. I can ask for it to be deleted at any time.</label>
+    </div>
+
+    <div class="row">
+      <button id="recBtn" disabled>● Start recording</button>
+      <span class="muted" id="recTimer"></span>
+    </div>
+    <audio id="recPreview" controls style="display:none"></audio>
+    <div class="row" id="sendRow" style="display:none">
+      <button id="dlBtn">⬇ 1 · Download my recording</button>
+      <button class="ghost" id="mailBtn">📧 2 · Email it to us</button>
+    </div>
+    <div class="status" id="recStatus"></div>
+    <p class="muted" id="sendHelp" style="display:none">
+      The email opens pre-filled — just <strong>attach the recording file you downloaded</strong> (check your Downloads folder) and press send.
+      We'll reply with payment details and have your voice pack ready within a few days.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Questions parents ask</h2>
+    <p><strong style="color:var(--ink)">Is my voice safe?</strong> Yes. Your recording is used only to create your family's story narrations, is never shared, and is deleted on request.</p>
+    <p style="margin-top:8px"><strong style="color:var(--ink)">Do I need any app or account?</strong> No — just this page, your voice, and an email.</p>
+    <p style="margin-top:8px"><strong style="color:var(--ink)">What if I speak only one of the languages?</strong> No problem. Your 2-minute recording can be in any language — the stories can still be generated in all three, in your voice.</p>
+    <p style="margin-top:8px"><strong style="color:var(--ink)">How do I pay?</strong> After you send your recording, we reply with M-Pesa or card payment options. You pay only when you're ready.</p>
+  </div>
+
+  <footer>Made with love · <a class="back" href="mailto:samuel.kimani.sikuku@gmail.com">samuel.kimani.sikuku@gmail.com</a></footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let mediaRec = null, chunks = [], recBlob = null, recStart = 0, timerInt = null, recExt = "webm";
+
+$("consent").addEventListener("change", () => { $("recBtn").disabled = !$("consent").checked; });
+
+$("recBtn").addEventListener("click", async () => {
+  if (mediaRec && mediaRec.state === "recording") { mediaRec.stop(); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    chunks = [];
+    mediaRec = new MediaRecorder(stream);
+    mediaRec.ondataavailable = e => chunks.push(e.data);
+    mediaRec.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      clearInterval(timerInt);
+      recBlob = new Blob(chunks, { type: mediaRec.mimeType });
+      recExt = (mediaRec.mimeType.includes("mp4") || mediaRec.mimeType.includes("aac")) ? "m4a" : "webm";
+      $("recPreview").src = URL.createObjectURL(recBlob);
+      $("recPreview").style.display = "";
+      $("sendRow").style.display = "";
+      $("sendHelp").style.display = "";
+      $("recBtn").textContent = "● Record again";
+      $("recBtn").classList.remove("rec");
+      const secs = Math.round((Date.now() - recStart) / 1000);
+      $("recStatus").textContent = secs < 45
+        ? "That was quite short — 1 to 2 minutes gives a much better voice. You can record again, or send it anyway."
+        : "Lovely! Listen back — happy with it? Then download and email it to us.";
+      $("recStatus").className = "status " + (secs < 45 ? "err" : "ok");
+    };
+    mediaRec.start();
+    recStart = Date.now();
+    $("recBtn").textContent = "■ Stop recording";
+    $("recBtn").classList.add("rec");
+    $("recStatus").textContent = "";
+    timerInt = setInterval(() => {
+      const s = Math.floor((Date.now() - recStart) / 1000);
+      $("recTimer").textContent = `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")} — aim for 1:00–2:00`;
+      if (s >= 150) mediaRec.stop();
+    }, 250);
+  } catch (e) {
+    $("recStatus").textContent = "Microphone error: " + e.message + " — please allow microphone access and try again.";
+    $("recStatus").className = "status err";
+  }
+});
+
+$("dlBtn").addEventListener("click", () => {
+  if (!recBlob) return;
+  const name = ($("parentName").value.trim() || "my").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(recBlob);
+  a.download = `${name}-voice-sample.${recExt}`;
+  a.click();
+});
+
+$("mailBtn").addEventListener("click", () => {
+  const parent = $("parentName").value.trim() || "(your name)";
+  const child = $("childName").value.trim();
+  const subject = encodeURIComponent(`Voice pack request — ${parent}`);
+  const body = encodeURIComponent(
+`Hello Malakai Stories,
+
+I would like the bedtime stories in my own voice.
+
+My name: ${parent}
+${child ? "My child's name: " + child + "\n" : ""}Package I'm interested in: (one language / all three / two voices)
+Language(s): (English / Kiswahili / Français)
+
+I have ATTACHED my 2-minute voice recording to this email (downloaded from your-voice page).
+I confirm the recording is my own voice and I consent to it being cloned for my family's story narrations.
+
+Thank you!`);
+  location.href = `mailto:samuel.kimani.sikuku@gmail.com?subject=${subject}&body=${body}`;
+});
+</script>
+</body>
+</html>
