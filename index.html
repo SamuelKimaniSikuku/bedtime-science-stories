@@ -192,6 +192,10 @@
       <span class="filter-label" id="topicLabel"></span>
       <div class="chip-row" id="topicChips"></div>
     </div>
+    <div class="filter-group">
+      <span class="filter-label" id="genderLabel"></span>
+      <div class="chip-row" id="genderChips"></div>
+    </div>
   </div>
 
   <p class="count-line" id="countLine"></p>
@@ -214,7 +218,7 @@
 const UI = {
   en: { title: "Malakai Stories",
         subtitle: "Short bedtime stories that teach something — about people who changed the world: where they were born, how they grew up, and why they mattered.",
-        region: "Region", topic: "Topic", all: "All",
+        region: "Region", topic: "Topic", gender: "Gender", all: "All",
         showing: n => `${n} ${n === 1 ? "story" : "stories"}`,
         read: "Tap to read · ~2 min", born: "Born in", goodnight: "The end. Goodnight 🌙",
         music: "Music", musicPause: "Pause",
@@ -223,7 +227,7 @@ const UI = {
         empty: "No stories here yet — try another filter." },
   sw: { title: "Malakai Stories",
         subtitle: "Hadithi fupi za usiku zenye funzo — kuhusu watu waliobadilisha dunia: walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
-        region: "Kanda", topic: "Mada", all: "Zote",
+        region: "Kanda", topic: "Mada", gender: "Jinsia", all: "Zote",
         showing: n => `Hadithi ${n}`,
         read: "Gusa kusoma · dakika 2", born: "Alizaliwa", goodnight: "Mwisho. Lala salama 🌙",
         music: "Muziki", musicPause: "Simamisha",
@@ -232,7 +236,7 @@ const UI = {
         empty: "Hakuna hadithi hapa bado — jaribu kichujio kingine." },
   fr: { title: "Malakai Stories",
         subtitle: "De courtes histoires du soir qui enseignent — sur les gens qui ont changé le monde : où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
-        region: "Région", topic: "Sujet", all: "Tout",
+        region: "Région", topic: "Sujet", gender: "Genre", all: "Tout",
         showing: n => `${n} histoire${n > 1 ? "s" : ""}`,
         read: "Touchez pour lire · ~2 min", born: "Né(e) en", goodnight: "Fin. Bonne nuit 🌙",
         music: "Musique", musicPause: "Pause",
@@ -260,10 +264,15 @@ const TOPICS = {
   inventions:  { emoji: "🛠️", en: "Inventions",       sw: "Uvumbuzi",         fr: "Inventions" }
 };
 
+const GENDERS = {
+  women: { emoji: "👩🏾‍🔬", en: "Women", sw: "Wanawake", fr: "Femmes" },
+  men:   { emoji: "👨🏽‍🔬", en: "Men",   sw: "Wanaume",  fr: "Hommes" }
+};
+
 const STORIES = [
 {
   id: "newton", emoji: "🍎", name: "Isaac Newton", years: "1643–1727",
-  region: "europe", topic: "physics",
+  region: "europe", topic: "physics", gender: "men",
   country: { en: "England", sw: "Uingereza", fr: "Angleterre" },
   title: { en: "The Boy Who Asked Why the Apple Falls",
            sw: "Mvulana Aliyeuliza Kwa Nini Tufaha Huanguka",
@@ -291,7 +300,7 @@ const STORIES = [
 },
 {
   id: "einstein", emoji: "💡", name: "Albert Einstein", years: "1879–1955",
-  region: "europe", topic: "physics",
+  region: "europe", topic: "physics", gender: "men",
   country: { en: "Germany", sw: "Ujerumani", fr: "Allemagne" },
   title: { en: "The Boy Who Dreamed of Riding on Light",
            sw: "Mvulana Aliyeota Kusafiri na Mwanga",
@@ -322,7 +331,7 @@ const STORIES = [
 },
 {
   id: "curie", emoji: "✨", name: "Marie Curie", years: "1867–1934",
-  region: "europe", topic: "chemistry",
+  region: "europe", topic: "chemistry", gender: "women",
   country: { en: "Poland", sw: "Poland", fr: "Pologne" },
   title: { en: "The Girl Who Studied in Secret",
            sw: "Msichana Aliyesoma kwa Siri",
@@ -353,7 +362,7 @@ const STORIES = [
 },
 {
   id: "maathai", emoji: "🌳", name: "Wangari Maathai", years: "1940–2011",
-  region: "africa", topic: "environment",
+  region: "africa", topic: "environment", gender: "women",
   country: { en: "Kenya", sw: "Kenya", fr: "Kenya" },
   title: { en: "The Woman Who Planted a Forest",
            sw: "Mwanamke Aliyepanda Msitu",
@@ -384,7 +393,7 @@ const STORIES = [
 },
 {
   id: "carver", emoji: "🥜", name: "George Washington Carver", years: "c. 1864–1943",
-  region: "americas", topic: "farming",
+  region: "americas", topic: "farming", gender: "men",
   country: { en: "United States", sw: "Marekani", fr: "États-Unis" },
   title: { en: "The Plant Doctor",
            sw: "Daktari wa Mimea",
@@ -415,7 +424,7 @@ const STORIES = [
 },
 {
   id: "johnson", emoji: "🚀", name: "Katherine Johnson", years: "1918–2020",
-  region: "americas", topic: "space",
+  region: "americas", topic: "space", gender: "women",
   country: { en: "United States", sw: "Marekani", fr: "États-Unis" },
   title: { en: "The Girl Who Counted the Stars",
            sw: "Msichana Aliyehesabu Nyota",
@@ -446,7 +455,7 @@ const STORIES = [
 },
 {
   id: "pasteur", emoji: "🔬", name: "Louis Pasteur", years: "1822–1895",
-  region: "europe", topic: "medicine",
+  region: "europe", topic: "medicine", gender: "men",
   country: { en: "France", sw: "Ufaransa", fr: "France" },
   title: { en: "The Man Who Fought Invisible Enemies",
            sw: "Mtu Aliyepambana na Maadui Wasioonekana",
@@ -478,7 +487,7 @@ const STORIES = [
 ,
 {
   id: "lovelace", emoji: "💻", name: "Ada Lovelace", years: "1815–1852",
-  region: "europe", topic: "computing",
+  region: "europe", topic: "computing", gender: "women",
   country: { en: "England", sw: "Uingereza", fr: "Angleterre" },
   title: { en: "The Girl Who Dreamed of Thinking Machines",
            sw: "Msichana Aliyeota Mashine Zinazofikiri",
@@ -509,7 +518,7 @@ const STORIES = [
 },
 {
   id: "zewail", emoji: "⚡", name: "Ahmed Zewail", years: "1946–2016",
-  region: "africa", topic: "chemistry",
+  region: "africa", topic: "chemistry", gender: "men",
   country: { en: "Egypt", sw: "Misri", fr: "Égypte" },
   title: { en: "The Boy by the Nile Who Photographed Atoms",
            sw: "Mvulana wa Kando ya Nile Aliyepiga Picha za Atomu",
@@ -540,7 +549,7 @@ const STORIES = [
 },
 {
   id: "odhiambo", emoji: "🦗", name: "Thomas Odhiambo", years: "1931–2003",
-  region: "africa", topic: "farming",
+  region: "africa", topic: "farming", gender: "men",
   country: { en: "Kenya", sw: "Kenya", fr: "Kenya" },
   title: { en: "The Man Who Listened to Insects",
            sw: "Mtu Aliyesikiliza Wadudu",
@@ -571,7 +580,7 @@ const STORIES = [
 },
 {
   id: "drew", emoji: "🩸", name: "Charles Drew", years: "1904–1950",
-  region: "americas", topic: "medicine",
+  region: "americas", topic: "medicine", gender: "men",
   country: { en: "United States", sw: "Marekani", fr: "États-Unis" },
   title: { en: "The Doctor Who Taught Blood to Travel",
            sw: "Daktari Aliyefundisha Damu Kusafiri",
@@ -602,7 +611,7 @@ const STORIES = [
 },
 {
   id: "tu", emoji: "🌿", name: "Tu Youyou", years: "1930–",
-  region: "asia", topic: "medicine",
+  region: "asia", topic: "medicine", gender: "women",
   country: { en: "China", sw: "China", fr: "Chine" },
   title: { en: "The Woman Who Found Medicine in an Old Book",
            sw: "Mwanamke Aliyepata Dawa katika Kitabu cha Kale",
@@ -633,7 +642,7 @@ const STORIES = [
 },
 {
   id: "archimedes", emoji: "⚖️", name: "Archimedes", years: "c. 287–212 BC", born: -287,
-  region: "europe", topic: "physics",
+  region: "europe", topic: "physics", gender: "men",
   country: {"en":"Greece","sw":"Ugiriki","fr":"Grèce"},
   title: {"en":"The Man Who Shouted Eureka","sw":"Mtu Aliyepiga Kelele 'Eureka'","fr":"L'Homme Qui Cria Eurêka"},
   hook: {"en":"Long, long ago in Greece, a curious boy grew up to find the secret of why things float.","sw":"Zamani sana huko Ugiriki, mvulana mdadisi alikua na kugundua siri ya kwa nini vitu vinaelea.","fr":"Il y a très longtemps en Grèce, un garçon curieux découvrit le secret pour savoir pourquoi les choses flottent."},
@@ -660,7 +669,7 @@ const STORIES = [
 },
 {
   id: "galileo", emoji: "🔭", name: "Galileo Galilei", years: "1564–1642", born: 1564,
-  region: "europe", topic: "physics",
+  region: "europe", topic: "physics", gender: "men",
   country: {"en":"Italy","sw":"Italia","fr":"Italie"},
   title: {"en":"The Man Who Looked at the Stars","sw":"Mtu Aliyetazama Nyota","fr":"L'Homme Qui Regardait les Étoiles"},
   hook: {"en":"In Italy, a boy who loved to wonder built a tube that let him peek at the moons of the sky.","sw":"Nchini Italia, mvulana aliyependa kustaajabu alitengeneza mrija uliomruhusu kuchungulia miezi ya angani.","fr":"En Italie, un garçon qui aimait s'émerveiller fabriqua un tube pour observer les lunes du ciel."},
@@ -687,7 +696,7 @@ const STORIES = [
 },
 {
   id: "gutenberg", emoji: "📖", name: "Johannes Gutenberg", years: "c. 1400–1468", born: 1400,
-  region: "europe", topic: "inventions",
+  region: "europe", topic: "inventions", gender: "men",
   country: {"en":"Germany","sw":"Ujerumani","fr":"Allemagne"},
   title: {"en":"The Man Who Made Books for Everyone","sw":"Mtu Aliyetengeneza Vitabu kwa Kila Mtu","fr":"L'Homme Qui Fit des Livres pour Tous"},
   hook: {"en":"In Germany, a clever boy dreamed of a machine that could make books fast enough for the whole world.","sw":"Nchini Ujerumani, mvulana mwerevu aliota mashine ambayo ingeweza kutengeneza vitabu haraka kwa dunia nzima.","fr":"En Allemagne, un garçon ingénieux rêva d'une machine capable de fabriquer des livres pour le monde entier."},
@@ -714,7 +723,7 @@ const STORIES = [
 },
 {
   id: "leeuwenhoek", emoji: "🔬", name: "Anton van Leeuwenhoek", years: "1632–1723", born: 1632,
-  region: "europe", topic: "biology",
+  region: "europe", topic: "biology", gender: "men",
   country: {"en":"Netherlands","sw":"Uholanzi","fr":"Pays-Bas"},
   title: {"en":"The Man Who Saw the Tiny World","sw":"Mtu Aliyeona Ulimwengu Mdogo","fr":"L'Homme Qui Vit le Monde Minuscule"},
   hook: {"en":"A cloth seller in Holland made tiny glasses and found a hidden world living in a single drop of water.","sw":"Muuza nguo nchini Uholanzi alitengeneza vioo vidogo na kugundua ulimwengu uliojificha ndani ya tone moja la maji.","fr":"Un marchand de tissus en Hollande fabriqua de petites lentilles et découvrit un monde caché dans une seule goutte d'eau."},
@@ -741,7 +750,7 @@ const STORIES = [
 },
 {
   id: "celsius", emoji: "🌡️", name: "Anders Celsius", years: "1701–1744", born: 1701,
-  region: "europe", topic: "physics",
+  region: "europe", topic: "physics", gender: "men",
   country: {"en":"Sweden","sw":"Uswidi","fr":"Suède"},
   title: {"en":"The Man Who Measured Hot and Cold","sw":"Mtu Aliyepima Joto na Baridi","fr":"L'Homme Qui Mesura le Chaud et le Froid"},
   hook: {"en":"In snowy Sweden, a star-gazing scientist found a simple way to tell exactly how hot or cold things are.","sw":"Katika Uswidi yenye theluji, mwanasayansi mpenda nyota alipata njia rahisi ya kujua hasa joto au baridi ya vitu.","fr":"Dans la Suède enneigée, un scientifique passionné d'étoiles trouva un moyen simple de savoir la température exacte des choses."},
@@ -768,7 +777,7 @@ const STORIES = [
 },
 {
   id: "linnaeus", emoji: "🌸", name: "Carl Linnaeus", years: "1707–1778", born: 1707,
-  region: "europe", topic: "biology",
+  region: "europe", topic: "biology", gender: "men",
   country: {"en":"Sweden","sw":"Uswidi","fr":"Suède"},
   title: {"en":"The Boy Who Named the Flowers","sw":"Mvulana Aliyetaja Maua","fr":"Le Garçon Qui Nomma les Fleurs"},
   hook: {"en":"A flower-loving boy in Sweden gave every plant and animal its very own special name.","sw":"Mvulana mpenda maua nchini Uswidi aliyapa kila mmea na mnyama jina lake maalum.","fr":"Un garçon amoureux des fleurs en Suède donna à chaque plante et animal son propre nom spécial."},
@@ -795,7 +804,7 @@ const STORIES = [
 },
 {
   id: "franklin", emoji: "⚡", name: "Benjamin Franklin", years: "1706–1790", born: 1706,
-  region: "americas", topic: "inventions",
+  region: "americas", topic: "inventions", gender: "men",
   country: {"en":"United States","sw":"Marekani","fr":"États-Unis"},
   title: {"en":"The Boy Who Caught Lightning","sw":"Mvulana Aliyekamata Umeme","fr":"Le garçon qui a attrapé la foudre"},
   hook: {"en":"He wondered if the light in the sky was the same little spark he made rubbing his hands.","sw":"Alijiuliza kama mwanga wa angani ni ile ile cheche ndogo aliyoitengeneza kwa kusugua mikono.","fr":"Il se demandait si la lumière du ciel était la même petite étincelle qu'il faisait en frottant ses mains."},
@@ -822,7 +831,7 @@ const STORIES = [
 },
 {
   id: "watt", emoji: "🚂", name: "James Watt", years: "1736–1819", born: 1736,
-  region: "europe", topic: "inventions",
+  region: "europe", topic: "inventions", gender: "men",
   country: {"en":"Scotland","sw":"Uskoti","fr":"Écosse"},
   title: {"en":"The Boy and the Steaming Kettle","sw":"Mvulana na Birika Lililotoa Mvuke","fr":"Le garçon et la bouilloire fumante"},
   hook: {"en":"He watched a kettle puff and puff — and imagined a whole world it could move.","sw":"Alitazama birika likitoa mvuke tena na tena — akawazia ulimwengu mzima ambao lingeuweza kusongesha.","fr":"Il regardait une bouilloire souffler encore et encore — et imaginait tout un monde qu'elle pourrait faire bouger."},
@@ -849,7 +858,7 @@ const STORIES = [
 },
 {
   id: "darwin", emoji: "🐢", name: "Charles Darwin", years: "1809–1882", born: 1809,
-  region: "europe", topic: "biology",
+  region: "europe", topic: "biology", gender: "men",
   country: {"en":"England","sw":"Uingereza","fr":"Angleterre"},
   title: {"en":"The Beetle Collector Who Sailed the World","sw":"Mkusanya-Mende Aliyesafiri Ulimwengu","fr":"Le collectionneur de scarabées qui a fait le tour du monde"},
   hook: {"en":"He loved beetles so much that one island of giant tortoises changed how we see all of life.","sw":"Alipenda mende sana hivi kwamba kisiwa kimoja cha kobe wakubwa kilibadilisha jinsi tunavyoona uhai wote.","fr":"Il aimait tant les scarabées qu'une île de tortues géantes a changé notre vision de toute la vie."},
@@ -876,7 +885,7 @@ const STORIES = [
 },
 {
   id: "mendel", emoji: "🌱", name: "Gregor Mendel", years: "1822–1884", born: 1822,
-  region: "europe", topic: "biology",
+  region: "europe", topic: "biology", gender: "men",
   country: {"en":"Austria","sw":"Austria","fr":"Autriche"},
   title: {"en":"The Monk Who Counted Peas","sw":"Mtawa Aliyehesabu Njegere","fr":"Le moine qui comptait les petits pois"},
   hook: {"en":"In a quiet garden, thousands of pea plants whispered the biggest secret of families.","sw":"Katika bustani tulivu, maelfu ya mimea ya njegere yalinong'ona siri kubwa ya familia.","fr":"Dans un jardin paisible, des milliers de plants de pois murmuraient le plus grand secret des familles."},
@@ -903,7 +912,7 @@ const STORIES = [
 },
 {
   id: "nobel", emoji: "🕊️", name: "Alfred Nobel", years: "1833–1896", born: 1833,
-  region: "europe", topic: "chemistry",
+  region: "europe", topic: "chemistry", gender: "men",
   country: {"en":"Sweden","sw":"Uswidi","fr":"Suède"},
   title: {"en":"The Inventor Who Chose Peace","sw":"Mvumbuzi Aliyechagua Amani","fr":"L'inventeur qui a choisi la paix"},
   hook: {"en":"He wanted to be remembered not for a loud invention, but for a kind gift to the whole world.","sw":"Alitaka kukumbukwa si kwa uvumbuzi wenye mlio mkubwa, bali kwa zawadi ya wema kwa ulimwengu mzima.","fr":"Il voulait qu'on se souvienne de lui non pas pour une invention bruyante, mais pour un beau cadeau au monde entier."},
@@ -930,7 +939,7 @@ const STORIES = [
 },
 {
   id: "mendeleev", emoji: "🧪", name: "Dmitri Mendeleev", years: "1834–1907", born: 1834,
-  region: "europe", topic: "chemistry",
+  region: "europe", topic: "chemistry", gender: "men",
   country: {"en":"Russia","sw":"Urusi","fr":"Russie"},
   title: {"en":"The Man Who Made a Map of Everything","sw":"Mtu Aliyetengeneza Ramani ya Kila Kitu","fr":"L'homme qui a dessiné la carte de tout"},
   hook: {"en":"He sorted all the building blocks of the world into a tidy table — and left empty spaces on purpose.","sw":"Alipanga vipande vyote vinavyounda ulimwengu katika jedwali nadhifu — na akaacha nafasi tupu kwa makusudi.","fr":"Il rangea tous les éléments du monde dans un tableau bien ordonné — et laissa des cases vides exprès."},
@@ -957,7 +966,7 @@ const STORIES = [
 },
 {
   id: "bell", emoji: "📞", name: "Alexander Graham Bell", years: "1847–1922", born: 1847,
-  region: "europe", topic: "inventions",
+  region: "europe", topic: "inventions", gender: "men",
   country: {"en":"Scotland","sw":"Uskoti","fr":"Écosse"},
   title: {"en":"The Man Who Sent Voices Down a Wire","sw":"Mtu Aliyepeleka Sauti Kupitia Waya","fr":"L'homme qui envoya les voix dans un fil"},
   hook: {"en":"What if your voice could travel all the way across a whole city?","sw":"Je, ingekuwaje kama sauti yako ingeweza kusafiri jiji zima?","fr":"Et si ta voix pouvait voyager à travers toute une ville ?"},
@@ -984,7 +993,7 @@ const STORIES = [
 },
 {
   id: "edison", emoji: "💡", name: "Thomas Edison", years: "1847–1931", born: 1847,
-  region: "americas", topic: "inventions",
+  region: "americas", topic: "inventions", gender: "men",
   country: {"en":"United States","sw":"Marekani","fr":"États-Unis"},
   title: {"en":"The Boy Who Never Stopped Asking Why","sw":"Mvulana Aliyeuliza 'Kwa Nini' Bila Kuchoka","fr":"Le garçon qui n'arrêtait jamais de demander pourquoi"},
   hook: {"en":"Can you imagine a world with no light at night?","sw":"Je, unaweza kufikiria dunia isiyo na mwanga usiku?","fr":"Peux-tu imaginer un monde sans lumière la nuit ?"},
@@ -1011,7 +1020,7 @@ const STORIES = [
 },
 {
   id: "koch", emoji: "🦠", name: "Robert Koch", years: "1843–1910", born: 1843,
-  region: "europe", topic: "medicine",
+  region: "europe", topic: "medicine", gender: "men",
   country: {"en":"Germany","sw":"Ujerumani","fr":"Allemagne"},
   title: {"en":"The Doctor Who Found the Tiniest Troublemakers","sw":"Daktari Aliyegundua Wadudu Wadogo Sana","fr":"Le docteur qui trouva les tout petits fauteurs de troubles"},
   hook: {"en":"What if the thing that makes us sick is too small to see?","sw":"Je, ingekuwaje kama kinachotufanya wagonjwa ni kidogo mno kuonekana?","fr":"Et si ce qui nous rend malades était trop petit pour être vu ?"},
@@ -1038,7 +1047,7 @@ const STORIES = [
 },
 {
   id: "freud", emoji: "💭", name: "Sigmund Freud", years: "1856–1939", born: 1856,
-  region: "europe", topic: "medicine",
+  region: "europe", topic: "medicine", gender: "men",
   country: {"en":"Austria","sw":"Austria","fr":"Autriche"},
   title: {"en":"The Doctor Who Listened to Dreams","sw":"Daktari Aliyesikiliza Ndoto","fr":"Le docteur qui écoutait les rêves"},
   hook: {"en":"Have you ever wondered why we dream at night?","sw":"Je, umewahi kujiuliza kwa nini tunaota usiku?","fr":"T'es-tu déjà demandé pourquoi nous rêvons la nuit ?"},
@@ -1065,7 +1074,7 @@ const STORIES = [
 },
 {
   id: "banting", emoji: "💉", name: "Frederick Banting", years: "1891–1941", born: 1891,
-  region: "americas", topic: "medicine",
+  region: "americas", topic: "medicine", gender: "men",
   country: {"en":"Canada","sw":"Kanada","fr":"Canada"},
   title: {"en":"The Doctor Who Gave His Gift to Everyone","sw":"Daktari Aliyetoa Zawadi Yake kwa Kila Mtu","fr":"Le docteur qui offrit son cadeau à tout le monde"},
   hook: {"en":"What if you found a medicine that could save millions of lives?","sw":"Je, ingekuwaje kama ungegundua dawa inayoweza kuokoa mamilioni ya maisha?","fr":"Et si tu trouvais un médicament qui pouvait sauver des millions de vies ?"},
@@ -1092,7 +1101,7 @@ const STORIES = [
 },
 {
   id: "hahn", emoji: "⚛️", name: "Otto Hahn", years: "1879–1968", born: 1879,
-  region: "europe", topic: "chemistry",
+  region: "europe", topic: "chemistry", gender: "men",
   country: {"en":"Germany","sw":"Ujerumani","fr":"Allemagne"},
   title: {"en":"The Chemist Who Found the Secret Inside an Atom","sw":"Mwanakemia Aliyegundua Siri Ndani ya Atomu","fr":"Le chimiste qui trouva le secret à l'intérieur d'un atome"},
   hook: {"en":"What if the smallest things in the world held a hidden surprise?","sw":"Je, ingekuwaje kama vitu vidogo zaidi duniani vingekuwa na mshangao uliofichika?","fr":"Et si les plus petites choses du monde cachaient une surprise ?"},
@@ -1119,7 +1128,7 @@ const STORIES = [
 },
 {
   id: "heisenberg", emoji: "⚛️", name: "Werner Heisenberg", years: "1901–1976", born: 1901,
-  region: "europe", topic: "physics",
+  region: "europe", topic: "physics", gender: "men",
   country: {"en":"Germany","sw":"Ujerumani","fr":"Allemagne"},
   title: {"en":"The Boy Who Found the Rules of the Tiny","sw":"Mvulana Aliyegundua Sheria za Vitu Vidogo Sana","fr":"Le garçon qui a trouvé les règles du minuscule"},
   hook: {"en":"At the smallest sizes, the world plays a game of hide-and-seek.","sw":"Katika vitu vidogo sana, dunia hucheza mchezo wa kujificha.","fr":"Aux plus petites tailles, le monde joue à cache-cache."},
@@ -1146,7 +1155,7 @@ const STORIES = [
 },
 {
   id: "oppenheimer", emoji: "🌌", name: "J. Robert Oppenheimer", years: "1904–1967", born: 1904,
-  region: "americas", topic: "physics",
+  region: "americas", topic: "physics", gender: "men",
   country: {"en":"United States","sw":"Marekani","fr":"États-Unis"},
   title: {"en":"The Dreamer Who Loved to Learn","sw":"Mwotaji Aliyependa Kujifunza","fr":"Le rêveur qui aimait apprendre"},
   hook: {"en":"Great power in the world needs great care and a kind heart.","sw":"Nguvu kubwa duniani zinahitaji uangalifu mkubwa na moyo mwema.","fr":"Un grand pouvoir a besoin d'un grand soin et d'un cœur bon."},
@@ -1173,7 +1182,7 @@ const STORIES = [
 },
 {
   id: "feynman", emoji: "🥁", name: "Richard Feynman", years: "1918–1988", born: 1918,
-  region: "americas", topic: "physics",
+  region: "americas", topic: "physics", gender: "men",
   country: {"en":"United States","sw":"Marekani","fr":"États-Unis"},
   title: {"en":"The Boy Who Kept Asking Why","sw":"Mvulana Aliyeendelea Kuuliza Kwa Nini","fr":"Le garçon qui n'arrêtait pas de demander pourquoi"},
   hook: {"en":"Science is play, and curiosity is a gift you never lose.","sw":"Sayansi ni mchezo, na udadisi ni zawadi usiyoipoteza kamwe.","fr":"La science est un jeu, et la curiosité est un cadeau qu'on ne perd jamais."},
@@ -1200,7 +1209,7 @@ const STORIES = [
 },
 {
   id: "crick", emoji: "🧬", name: "Francis Crick", years: "1916–2004", born: 1916,
-  region: "europe", topic: "biology",
+  region: "europe", topic: "biology", gender: "men",
   country: {"en":"England","sw":"Uingereza","fr":"Angleterre"},
   title: {"en":"The Boy With a Thousand Questions","sw":"Mvulana Mwenye Maswali Elfu","fr":"Le garçon aux mille questions"},
   hook: {"en":"Inside every living thing hides a tiny twisted ladder.","sw":"Ndani ya kila kiumbe hai hujificha ngazi ndogo iliyopindwa.","fr":"Dans chaque être vivant se cache une petite échelle torsadée."},
@@ -1227,7 +1236,7 @@ const STORIES = [
 },
 {
   id: "rosalind", emoji: "🧬", name: "Rosalind Franklin", years: "1920–1958", born: 1920,
-  region: "europe", topic: "biology",
+  region: "europe", topic: "biology", gender: "women",
   country: {"en":"England","sw":"Uingereza","fr":"Angleterre"},
   title: {"en":"The Girl Who Took the Famous Photo","sw":"Msichana Aliyepiga Picha Maarufu","fr":"La fille qui a pris la photo célèbre"},
   hook: {"en":"One careful photograph revealed the shape of life itself.","sw":"Picha moja iliyopigwa kwa uangalifu ilifunua umbo la uhai wenyewe.","fr":"Une photo soigneuse a révélé la forme de la vie elle-même."},
@@ -1254,7 +1263,7 @@ const STORIES = [
 },
 {
   id: "sagan", emoji: "🪐", name: "Carl Sagan", years: "1934–1996", born: 1934,
-  region: "americas", topic: "space",
+  region: "americas", topic: "space", gender: "men",
   country: {"en":"United States","sw":"Marekani","fr":"États-Unis"},
   title: {"en":"The Boy Who Wondered About the Stars","sw":"Mvulana Aliyeshangaa Kuhusu Nyota","fr":"Le garçon qui rêvait aux étoiles"},
   hook: {"en":"We are all made of star-stuff, twinkling far, far away.","sw":"Sote tumeundwa kwa vumbi la nyota, zing'aazo mbali sana.","fr":"Nous sommes tous faits de poussière d'étoiles, là-haut."},
@@ -1281,7 +1290,7 @@ const STORIES = [
 },
 {
   id: "kalam", emoji: "🚀", name: "A.P.J. Abdul Kalam", years: "1931–2015", born: 1931,
-  region: "asia", topic: "space",
+  region: "asia", topic: "space", gender: "men",
   country: {"en":"India","sw":"India","fr":"Inde"},
   title: {"en":"The Newspaper Boy Who Reached the Sky","sw":"Mvulana wa Magazeti Aliyefikia Anga","fr":"Le garçon aux journaux qui a touché le ciel"},
   hook: {"en":"Dream big, work hard, and the sky becomes your friend.","sw":"Ota ndoto kubwa, fanya kazi kwa bidii, na anga litakuwa rafiki yako.","fr":"Rêve grand, travaille dur, et le ciel devient ton ami."},
@@ -1308,7 +1317,7 @@ const STORIES = [
 },
 {
   id: "hypatia", emoji: "🌠", name: "Hypatia of Alexandria", years: "c. 355–415", born: 355,
-  region: "africa", topic: "space",
+  region: "africa", topic: "space", gender: "women",
   country: { en: "Egypt", sw: "Misri", fr: "Égypte" },
   title: { en: "The Teacher Who Read the Stars",
            sw: "Mwalimu Aliyesoma Nyota",
@@ -1339,7 +1348,7 @@ const STORIES = [
 },
 {
   id: "wu", emoji: "⚖️", name: "Chien-Shiung Wu", years: "1912–1997", born: 1912,
-  region: "asia", topic: "physics",
+  region: "asia", topic: "physics", gender: "women",
   country: { en: "China", sw: "China", fr: "Chine" },
   title: { en: "The First Lady of Physics",
            sw: "Bibi wa Kwanza wa Fizikia",
@@ -1370,7 +1379,7 @@ const STORIES = [
 },
 {
   id: "west", emoji: "🛰️", name: "Gladys West", years: "1930–", born: 1930,
-  region: "americas", topic: "space",
+  region: "americas", topic: "space", gender: "women",
   country: { en: "United States", sw: "Marekani", fr: "États-Unis" },
   title: { en: "The Girl Whose Maths Guide the Whole World",
            sw: "Msichana Ambaye Hesabu Zake Zinaongoza Dunia Nzima",
@@ -1401,7 +1410,7 @@ const STORIES = [
 },
 {
   id: "goodall", emoji: "🐒", name: "Jane Goodall", years: "1934–", born: 1934,
-  region: "europe", topic: "biology",
+  region: "europe", topic: "biology", gender: "women",
   country: { en: "England", sw: "Uingereza", fr: "Angleterre" },
   title: { en: "The Girl Who Listened to the Chimpanzees",
            sw: "Msichana Aliyewasikiliza Sokwe",
@@ -1432,7 +1441,7 @@ const STORIES = [
 },
 {
   id: "hawking", emoji: "🌌", name: "Stephen Hawking", years: "1942–2018", born: 1942,
-  region: "europe", topic: "physics",
+  region: "europe", topic: "physics", gender: "men",
   country: { en: "England", sw: "Uingereza", fr: "Angleterre" },
   title: { en: "The Man Who Raced Through the Stars in His Chair",
            sw: "Mwanamume Aliyekimbia Kati ya Nyota Akiwa Kwenye Kiti Chake",
@@ -1463,7 +1472,7 @@ const STORIES = [
 },
 {
   id: "bernerslee", emoji: "🌐", name: "Tim Berners-Lee", years: "1955–", born: 1955,
-  region: "europe", topic: "computing",
+  region: "europe", topic: "computing", gender: "men",
   country: { en: "England", sw: "Uingereza", fr: "Angleterre" },
   title: { en: "The Man Who Gave the Web to Everyone",
            sw: "Mwanamume Aliyeipa Dunia Wavuti Bure",
@@ -1494,7 +1503,7 @@ const STORIES = [
 },
 {
   id: "kariko", emoji: "💉", name: "Katalin Karikó", years: "1955–", born: 1955,
-  region: "europe", topic: "medicine",
+  region: "europe", topic: "medicine", gender: "women",
   country: { en: "Hungary", sw: "Hungaria", fr: "Hongrie" },
   title: { en: "The Scientist Nobody Believed",
            sw: "Mwanasayansi Ambaye Hakuna Aliyemwamini",
@@ -1525,7 +1534,7 @@ const STORIES = [
 },
 {
   id: "jemison", emoji: "👩🏾‍🚀", name: "Mae Jemison", years: "1956–", born: 1956,
-  region: "americas", topic: "space",
+  region: "americas", topic: "space", gender: "women",
   country: { en: "United States", sw: "Marekani", fr: "États-Unis" },
   title: { en: "The Dancer Who Flew to the Stars",
            sw: "Mchezaji Ngoma Aliyeruka Hadi Nyota",
@@ -1556,7 +1565,7 @@ const STORIES = [
 },
 {
   id: "kelemu", emoji: "🌾", name: "Segenet Kelemu", years: "1957–", born: 1957,
-  region: "africa", topic: "farming",
+  region: "africa", topic: "farming", gender: "women",
   country: { en: "Ethiopia", sw: "Ethiopia", fr: "Éthiopie" },
   title: { en: "The Girl Who Made the Grass Strong",
            sw: "Msichana Aliyeifanya Nyasi Kuwa Imara",
@@ -1587,7 +1596,7 @@ const STORIES = [
 },
 {
   id: "kamkwamba", emoji: "💨", name: "William Kamkwamba", years: "1987–", born: 1987,
-  region: "africa", topic: "inventions",
+  region: "africa", topic: "inventions", gender: "men",
   country: { en: "Malawi", sw: "Malawi", fr: "Malawi" },
   title: { en: "The Boy Who Harnessed the Wind",
            sw: "Mvulana Aliyeufuga Upepo",
@@ -1622,6 +1631,7 @@ const STORIES = [
 let lang = "en";
 let regionFilter = "all";
 let topicFilter = "all";
+let genderFilter = "all";
 
 /* ---------- stars ---------- */
 (function makeStars() {
@@ -1659,6 +1669,7 @@ function render() {
   document.getElementById("siteSubtitle").textContent = t.subtitle;
   document.getElementById("regionLabel").textContent = t.region;
   document.getElementById("topicLabel").textContent = t.topic;
+  document.getElementById("genderLabel").textContent = t.gender;
   document.getElementById("footerLine").textContent = t.footer;
   updateMusicBtn();
 
@@ -1678,10 +1689,17 @@ function render() {
       chipHtml(k, `${TOPICS[k].emoji} ${TOPICS[k][lang]}`, topicFilter === k, "topic", null,
         STORIES.filter(s => s.topic === k).length)).join("");
 
+  document.getElementById("genderChips").innerHTML =
+    chipHtml("all", t.all, genderFilter === "all", "gender", null, STORIES.length) +
+    Object.keys(GENDERS).map(k =>
+      chipHtml(k, `${GENDERS[k].emoji} ${GENDERS[k][lang]}`, genderFilter === k, "gender", null,
+        STORIES.filter(s => s.gender === k).length)).join("");
+
   const bornYear = s => s.born ?? parseInt((s.years.match(/\d{4}/) || ["9999"])[0], 10);
   const visible = STORIES.filter(s =>
     (regionFilter === "all" || s.region === regionFilter) &&
-    (topicFilter === "all" || s.topic === topicFilter)
+    (topicFilter === "all" || s.topic === topicFilter) &&
+    (genderFilter === "all" || s.gender === genderFilter)
   ).sort((a, b) => bornYear(a) - bornYear(b));
 
   document.getElementById("countLine").textContent = t.showing(visible.length);
@@ -1886,6 +1904,7 @@ document.addEventListener("click", e => {
   const chip = e.target.closest(".chip");
   if (chip) {
     if (chip.dataset.kind === "region") regionFilter = chip.dataset.key;
+    else if (chip.dataset.kind === "gender") genderFilter = chip.dataset.key;
     else topicFilter = chip.dataset.key;
     render(); return;
   }
