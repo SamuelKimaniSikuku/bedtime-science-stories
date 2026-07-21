@@ -1824,7 +1824,7 @@ function pickVoice(code) {
 
    Customer voice packs: opening the site as  ?voice=TOKEN  loads that family's audio
    from Supabase storage instead (see supabase/SETUP.md). */
-const VOICEPACK_BASE = "";  // e.g. "https://YOUR-PROJECT.supabase.co/storage/v1/object/public/voicepacks"
+const VOICEPACK_BASE = "https://yyvvbqggwkkncbistzzv.supabase.co/storage/v1/object/public/voicepacks";
 const packToken = new URLSearchParams(location.search).get("voice");
 let packFiles = null;       // Set of "id-lang" keys available for this customer
 if (packToken && VOICEPACK_BASE) {

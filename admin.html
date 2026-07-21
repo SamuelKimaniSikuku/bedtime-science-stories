@@ -63,7 +63,7 @@
 const $ = id => document.getElementById(id);
 let orders = [];
 
-$("fnBase").value = localStorage.getItem("adm-fn") || "";
+$("fnBase").value = localStorage.getItem("adm-fn") || "https://yyvvbqggwkkncbistzzv.supabase.co/functions/v1";
 $("adminKey").value = localStorage.getItem("adm-key") || "";
 
 function toast(msg, ok) { const t = $("toast"); t.textContent = msg; t.className = "toast " + (ok ? "ok" : ok === false ? "bad" : ""); }
