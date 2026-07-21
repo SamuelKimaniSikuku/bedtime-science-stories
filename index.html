@@ -1836,7 +1836,7 @@ const packToken = explicitVoiceParam || DEFAULT_VOICE_PACK;
 
 /* Narrator picker (default site only; customer ?voice= links always use their own voice).
    "samuel" = the default cloned voice pack; others are stock voices generated on demand. */
-const HOUSE_VOICES = { samuel: "Samuel 💛", sarah: "Sarah", george: "George" };
+const HOUSE_VOICES = { samuel: "Samuel 💛", sarah: "Sarah", william: "William" };
 let narrator = localStorage.getItem("narrator") || "samuel";
 if (!HOUSE_VOICES[narrator]) narrator = "samuel";
 let packFiles = null;       // Set of "id-lang" keys available for this customer

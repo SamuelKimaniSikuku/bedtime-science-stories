@@ -13,8 +13,8 @@ const STORIES_URL = "https://malakaistory.com/stories.json";
 // account's voice list at runtime (IDs of stock voices change over time); the hardcoded id
 // is only a fallback. To offer a different voice, change the name and redeploy.
 const VOICES: Record<string, { name: string; id: string }> = {
-  sarah:  { name: "Sarah",  id: "EXAVITQu4vr4xnSDxMaL" },  // warm female
-  george: { name: "George", id: "JBFqnCBsd6RMkjVDRZzb" },  // warm male
+  sarah:   { name: "Sarah",   id: "EXAVITQu4vr4xnSDxMaL" },  // warm female
+  william: { name: "William", id: "" },  // "William - Deep, Engaging Storyteller" from My Voices
 };
 
 let voiceListCache: { name: string; voice_id: string }[] | null = null;
@@ -25,7 +25,10 @@ async function resolveVoiceId(key: string, xiKey: string): Promise<string> {
       const r = await fetch(`${XI}/voices`, { headers: { "xi-api-key": xiKey } });
       if (r.ok) voiceListCache = (await r.json()).voices ?? [];
     }
-    const hit = voiceListCache?.find((v) => v.name?.toLowerCase() === want.name.toLowerCase());
+    const wantName = want.name.toLowerCase();
+    const hit = voiceListCache?.find((v) => v.name?.toLowerCase() === wantName) ??
+                voiceListCache?.find((v) => v.name?.toLowerCase().startsWith(wantName)) ??
+                voiceListCache?.find((v) => v.name?.toLowerCase().includes(wantName));
     if (hit) return hit.voice_id;
   } catch { /* fall through to hardcoded id */ }
   return want.id;
