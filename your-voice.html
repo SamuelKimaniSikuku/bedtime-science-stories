@@ -134,7 +134,21 @@
     </div>
 
     <label>Your name<br><input type="text" id="parentName" placeholder="e.g. Amina"></label><br>
+    <label>Your email<br><input type="text" id="parentEmail" placeholder="e.g. amina@gmail.com"></label><br>
     <label>Your child's name (optional — we use it to personalise our reply)<br><input type="text" id="childName" placeholder="e.g. Malakai"></label>
+
+    <div style="margin:12px 0 4px">
+      <label style="display:block; margin-bottom:6px">Package</label>
+      <label style="margin-right:14px"><input type="radio" name="pkg" value="one" checked> One language</label>
+      <label style="margin-right:14px"><input type="radio" name="pkg" value="all"> All three</label>
+      <label><input type="radio" name="pkg" value="two-voices"> Two voices</label>
+    </div>
+    <div id="langPick" style="margin:6px 0 4px">
+      <label style="display:block; margin-bottom:6px">Language</label>
+      <label style="margin-right:14px"><input type="radio" name="lng" value="en" checked> English</label>
+      <label style="margin-right:14px"><input type="radio" name="lng" value="sw"> Kiswahili</label>
+      <label><input type="radio" name="lng" value="fr"> Français</label>
+    </div>
 
     <div class="consent">
       <input type="checkbox" id="consent">
@@ -147,6 +161,7 @@
     </div>
     <audio id="recPreview" controls style="display:none"></audio>
     <div class="row" id="sendRow" style="display:none">
+      <button id="sendNowBtn" style="display:none">💛 Send my recording</button>
       <button id="dlBtn">⬇ 1 · Download my recording</button>
       <button class="ghost" id="mailBtn">📧 2 · Email it to us</button>
     </div>
@@ -169,8 +184,51 @@
 </div>
 
 <script>
+/* When the Supabase backend is connected, recordings upload directly from this page.
+   Set to "https://YOUR-PROJECT.supabase.co/functions/v1" — leave "" for the email-only flow. */
+const SUPABASE_FN_BASE = "";
+
 const $ = id => document.getElementById(id);
 let mediaRec = null, chunks = [], recBlob = null, recStart = 0, timerInt = null, recExt = "webm";
+
+const picked = name => document.querySelector(`input[name=${name}]:checked`)?.value;
+document.querySelectorAll("input[name=pkg]").forEach(r => r.addEventListener("change", () => {
+  $("langPick").style.display = picked("pkg") === "one" ? "" : "none";
+}));
+
+$("sendNowBtn").addEventListener("click", async () => {
+  if (!recBlob) return;
+  const parent = $("parentName").value.trim(), email = $("parentEmail").value.trim();
+  if (!parent || !/.+@.+\..+/.test(email)) {
+    $("recStatus").textContent = "Please fill in your name and a valid email first.";
+    $("recStatus").className = "status err"; return;
+  }
+  const pkg = picked("pkg") || "one";
+  const langs = pkg === "one" ? (picked("lng") || "en") : "en,sw,fr";
+  const fd = new FormData();
+  fd.append("parent_name", parent);
+  fd.append("child_name", $("childName").value.trim());
+  fd.append("email", email);
+  fd.append("package", pkg);
+  fd.append("langs", langs);
+  fd.append("consent", "true");
+  fd.append("sample", recBlob, `sample.${recExt}`);
+  $("sendNowBtn").disabled = true;
+  $("recStatus").textContent = "Sending your recording…"; $("recStatus").className = "status";
+  try {
+    const r = await fetch(`${SUPABASE_FN_BASE}/submit-order`, { method: "POST", body: fd });
+    const j = await r.json();
+    if (!r.ok || j.error) throw new Error(j.error || ("HTTP " + r.status));
+    $("recStatus").innerHTML = `We received your recording! 💛 Your reference is <strong>${j.token}</strong>. We'll email you at ${email} with payment details, and your voice pack will be ready within a few days.`;
+    $("recStatus").className = "status ok";
+    $("sendHelp").style.display = "none";
+    $("dlBtn").style.display = "none"; $("mailBtn").style.display = "none";
+  } catch (e) {
+    $("sendNowBtn").disabled = false;
+    $("recStatus").textContent = "Could not send: " + e.message + " — you can use the download + email buttons instead.";
+    $("recStatus").className = "status err";
+  }
+});
 
 $("consent").addEventListener("change", () => { $("recBtn").disabled = !$("consent").checked; });
 
@@ -189,7 +247,11 @@ $("recBtn").addEventListener("click", async () => {
       $("recPreview").src = URL.createObjectURL(recBlob);
       $("recPreview").style.display = "";
       $("sendRow").style.display = "";
-      $("sendHelp").style.display = "";
+      const direct = !!SUPABASE_FN_BASE;
+      $("sendNowBtn").style.display = direct ? "" : "none";
+      $("dlBtn").style.display = direct ? "none" : "";
+      $("mailBtn").style.display = direct ? "none" : "";
+      $("sendHelp").style.display = direct ? "none" : "";
       $("recBtn").textContent = "● Record again";
       $("recBtn").classList.remove("rec");
       const secs = Math.round((Date.now() - recStart) / 1000);

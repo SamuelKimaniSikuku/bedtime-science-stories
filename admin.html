@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Orders · Malakai Stories</title>
+<style>
+  :root { --night:#0f1630; --night-deep:#0a0f22; --card:#1a2244; --ink:#f2f0e9; --ink-soft:#b8bdd4; --gold:#f5c664; --green:#6ecf8e; --red:#f08f7f; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { background:var(--night-deep); }
+  body { background:linear-gradient(180deg,var(--night-deep),var(--night)); color:var(--ink);
+    font-family:"Avenir Next","Segoe UI",system-ui,sans-serif; min-height:100vh; line-height:1.6; }
+  .wrap { max-width:980px; margin:0 auto; padding:30px 20px 80px; }
+  h1 { color:var(--gold); font-size:24px; margin-bottom:4px; }
+  .muted { color:var(--ink-soft); font-size:13.5px; }
+  .card { background:var(--card); border:1px solid #2b3560; border-radius:16px; padding:18px 20px; margin:14px 0; }
+  input { background:#131a38; border:1.5px solid #323d68; color:var(--ink); padding:9px 13px;
+    border-radius:10px; font-size:13.5px; font-family:inherit; width:100%; max-width:420px; }
+  label { font-size:13px; color:var(--ink-soft); display:block; margin-top:8px; }
+  button { background:var(--gold); border:none; color:#241d07; font-weight:700; padding:8px 16px;
+    border-radius:999px; font-size:13px; cursor:pointer; font-family:inherit; margin:2px; }
+  button.ghost { background:transparent; border:1.5px solid #3a466f; color:var(--ink-soft); font-weight:600; }
+  button.danger { background:transparent; border:1.5px solid rgba(240,143,127,.5); color:var(--red); font-weight:600; }
+  button:disabled { opacity:.4; cursor:default; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; }
+  th, td { text-align:left; padding:9px 8px; border-bottom:1px solid rgba(255,255,255,.07); vertical-align:top; }
+  th { color:var(--gold); font-size:11.5px; text-transform:uppercase; letter-spacing:.1em; }
+  .status-new { color:var(--ink-soft); } .status-paid { color:var(--gold); }
+  .status-generating { color:#7fa8f0; } .status-done { color:var(--green); }
+  .err { color:var(--red); font-size:12px; }
+  progress { width:130px; height:8px; accent-color:var(--gold); }
+  .toast { font-size:13px; margin-top:8px; min-height:18px; }
+  .toast.ok { color:var(--green); } .toast.bad { color:var(--red); }
+  audio.sample { width:150px; height:30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🗂 Voice-pack orders</h1>
+  <p class="muted">Private admin page. Nothing works without your admin key — safe even though the page itself is public.</p>
+
+  <div class="card">
+    <label>Functions URL (Supabase → Settings → API → Project URL, plus <code>/functions/v1</code>)
+      <input id="fnBase" placeholder="https://yourproject.supabase.co/functions/v1"></label>
+    <label>Admin key (the ADMIN_KEY secret you set in Supabase)
+      <input id="adminKey" type="password" placeholder="••••••••"></label>
+    <div style="margin-top:10px">
+      <button id="loadBtn">Load orders</button>
+      <span class="toast" id="toast"></span>
+    </div>
+  </div>
+
+  <div class="card" id="listCard" style="display:none">
+    <table>
+      <thead><tr><th>Customer</th><th>Package</th><th>Status</th><th>Progress</th><th>Actions</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let orders = [];
+
+$("fnBase").value = localStorage.getItem("adm-fn") || "";
+$("adminKey").value = localStorage.getItem("adm-key") || "";
+
+function toast(msg, ok) { const t = $("toast"); t.textContent = msg; t.className = "toast " + (ok ? "ok" : ok === false ? "bad" : ""); }
+
+async function api(payload) {
+  const base = $("fnBase").value.trim().replace(/\/+$/, "");
+  const r = await fetch(base + "/process-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-admin-key": $("adminKey").value.trim() },
+    body: JSON.stringify(payload)
+  });
+  const j = await r.json().catch(() => ({ error: "bad response " + r.status }));
+  if (!r.ok || j.error) throw new Error(j.error || ("HTTP " + r.status));
+  return j;
+}
+
+$("loadBtn").addEventListener("click", load);
+async function load() {
+  localStorage.setItem("adm-fn", $("fnBase").value.trim());
+  localStorage.setItem("adm-key", $("adminKey").value.trim());
+  toast("Loading…");
+  try {
+    const j = await api({ action: "list" });
+    orders = j.orders || [];
+    renderRows();
+    $("listCard").style.display = "";
+    toast(orders.length + " order(s) loaded", true);
+  } catch (e) { toast("Could not load: " + e.message, false); }
+}
+
+function totalFor(o) {
+  const perLang = 47; // approximate; real total comes back from the backend during generation
+  return (o.langs?.length || 1) * perLang;
+}
+
+function renderRows() {
+  $("rows").innerHTML = orders.map(o => `
+    <tr id="row-${o.token}">
+      <td><strong>${esc(o.parent_name)}</strong>${o.child_name ? " · " + esc(o.child_name) : ""}<br>
+          <span class="muted">${esc(o.email)}</span><br>
+          <span class="muted">${new Date(o.created_at).toLocaleString()} · <code>${o.token}</code></span></td>
+      <td>${esc(o.package)}<br><span class="muted">${(o.langs || []).join(", ")}</span></td>
+      <td><span class="status-${esc(o.status)}">${esc(o.status)}</span>
+          ${o.error ? `<div class="err">${esc(o.error)}</div>` : ""}</td>
+      <td><span id="prog-${o.token}">${(o.done_keys || []).length ? (o.done_keys.length + " files") : "—"}</span><br>
+          <progress id="bar-${o.token}" value="${(o.done_keys || []).length}" max="${totalFor(o)}" style="display:${o.status === "generating" || (o.done_keys||[]).length ? "" : "none"}"></progress></td>
+      <td>
+        ${o.status === "new" ? `<button onclick="markPaid('${o.token}')">Mark paid</button>` : ""}
+        ${(o.status === "paid" || o.status === "generating") ? `<button onclick="generate('${o.token}')">Generate</button>` : ""}
+        ${o.status === "done" ? `<button onclick="copyLink('${o.token}')">Copy link</button>` : ""}
+        ${o.voice_id ? `<button class="danger" onclick="freeSlot('${o.token}')">Free voice slot</button>` : ""}
+      </td>
+    </tr>`).join("") || `<tr><td colspan="5" class="muted">No orders yet.</td></tr>`;
+}
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+window.markPaid = async token => {
+  try { await api({ action: "mark_paid", token }); toast("Marked paid", true); load(); }
+  catch (e) { toast(e.message, false); }
+};
+
+window.generate = async token => {
+  const prog = $("prog-" + token), bar = $("bar-" + token);
+  bar.style.display = "";
+  try {
+    prog.textContent = "cloning voice…";
+    await api({ action: "clone", token });
+    let finished = false, guard = 0;
+    while (!finished && guard++ < 200) {
+      const j = await api({ action: "batch", token, batch_size: 3 });
+      prog.textContent = `${j.done}/${j.total} files`;
+      bar.value = j.done; bar.max = j.total;
+      finished = j.finished;
+    }
+    prog.textContent = "✓ all done";
+    await load();
+    toast("Voice pack complete — copy the link and send it to the customer!", true);
+  } catch (e) {
+    prog.textContent = "stopped";
+    toast("Generation stopped: " + e.message + " — press Generate again to resume (finished files are kept).", false);
+    load();
+  }
+};
+
+window.copyLink = token => {
+  const url = `https://malakaistory.com/?voice=${token}`;
+  navigator.clipboard.writeText(url).then(() => toast("Copied: " + url, true));
+};
+
+window.freeSlot = async token => {
+  if (!confirm("Delete this customer's clone from ElevenLabs? (Their generated audio stays; the slot is freed. You can re-clone from the stored sample later.)")) return;
+  try { await api({ action: "delete_voice", token }); toast("Voice slot freed", true); load(); }
+  catch (e) { toast(e.message, false); }
+};
+</script>
+</body>
+</html>

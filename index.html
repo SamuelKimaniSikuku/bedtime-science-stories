@@ -1820,12 +1820,28 @@ function pickVoice(code) {
 
 /* Parent-voice recordings: audio/voice/{storyId}-{lang}.mp3 (generated in the Voice Studio).
    If a recording exists for this story+language it is preferred; otherwise we fall
-   back to the browser's built-in read-aloud voice. */
+   back to the browser's built-in read-aloud voice.
+
+   Customer voice packs: opening the site as  ?voice=TOKEN  loads that family's audio
+   from Supabase storage instead (see supabase/SETUP.md). */
+const VOICEPACK_BASE = "";  // e.g. "https://YOUR-PROJECT.supabase.co/storage/v1/object/public/voicepacks"
+const packToken = new URLSearchParams(location.search).get("voice");
+let packFiles = null;       // Set of "id-lang" keys available for this customer
+if (packToken && VOICEPACK_BASE) {
+  fetch(`${VOICEPACK_BASE}/${packToken}/manifest.json`)
+    .then(r => r.ok ? r.json() : null)
+    .then(m => { if (m && Array.isArray(m.files)) packFiles = new Set(m.files); })
+    .catch(() => {});
+}
+
 const parentVoice = new Audio();
 let parentVoicePlaying = false;
 const voiceFileCache = new Map();
 async function voiceFileFor(id, l) {
   const key = `${id}-${l}`;
+  if (packToken && VOICEPACK_BASE) {
+    return (packFiles && packFiles.has(key)) ? `${VOICEPACK_BASE}/${packToken}/${key}.mp3` : null;
+  }
   if (!voiceFileCache.has(key)) {
     try {
       const r = await fetch(`audio/voice/${key}.mp3`, { method: "HEAD" });
