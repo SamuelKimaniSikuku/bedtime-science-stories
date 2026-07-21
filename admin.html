@@ -57,6 +57,25 @@
       <tbody id="rows"></tbody>
     </table>
   </div>
+
+  <div class="card">
+    <h2 style="color:var(--gold); font-size:17px; margin-bottom:8px">🎧 Pre-generate house voices</h2>
+    <p class="muted">Sarah and William normally generate story-by-story as people listen (~1,000 credits per story, once).
+    This fills the whole catalogue upfront instead. Already-generated stories are skipped for free, so it's safe to stop and resume anytime.</p>
+    <div style="margin:10px 0">
+      <label style="margin-right:14px"><input type="checkbox" class="hvVoice" value="sarah" checked> Sarah</label>
+      <label style="margin-right:20px"><input type="checkbox" class="hvVoice" value="william" checked> William</label>
+      <label style="margin-right:14px"><input type="checkbox" class="hvLang" value="en" checked> English</label>
+      <label style="margin-right:14px"><input type="checkbox" class="hvLang" value="sw"> Kiswahili</label>
+      <label><input type="checkbox" class="hvLang" value="fr"> Français</label>
+    </div>
+    <div style="margin:8px 0">
+      <button id="hvStart">Start</button>
+      <button class="ghost" id="hvStop" style="display:none">Stop</button>
+      <span class="muted" id="hvStatus"></span>
+    </div>
+    <progress id="hvBar" value="0" max="1" style="display:none; width:100%"></progress>
+  </div>
 </div>
 
 <script>
@@ -165,6 +184,46 @@ window.deleteOrder = async token => {
   try { await api({ action: "delete_order", token }); toast("Order deleted", true); load(); }
   catch (e) { toast(e.message, false); }
 };
+
+/* ---- pre-generate house voices (calls the public narrate function per story) ---- */
+let hvRunning = false;
+$("hvStop").addEventListener("click", () => { hvRunning = false; });
+$("hvStart").addEventListener("click", async () => {
+  const voices = [...document.querySelectorAll(".hvVoice:checked")].map(c => c.value);
+  const langs = [...document.querySelectorAll(".hvLang:checked")].map(c => c.value);
+  if (!voices.length || !langs.length) { $("hvStatus").textContent = "Pick at least one voice and language."; return; }
+  const base = $("fnBase").value.trim().replace(/\/+$/, "");
+  $("hvStart").disabled = true; $("hvStop").style.display = ""; hvRunning = true;
+  try {
+    const stories = await (await fetch("https://malakaistory.com/stories.json")).json();
+    const jobs = [];
+    for (const v of voices) for (const s of stories) for (const l of langs) jobs.push({ v, id: s.id, l });
+    $("hvBar").style.display = ""; $("hvBar").max = jobs.length; $("hvBar").value = 0;
+    let done = 0, generated = 0, skipped = 0, failed = 0;
+    for (const j of jobs) {
+      if (!hvRunning) break;
+      $("hvStatus").textContent = `${done + 1}/${jobs.length}: ${j.id} (${j.l}, ${j.v})…`;
+      try {
+        const r = await fetch(base + "/narrate", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ story: j.id, lang: j.l, voice: j.v })
+        });
+        const res = await r.json();
+        if (!r.ok || res.error) throw new Error(res.error || ("HTTP " + r.status));
+        res.cached ? skipped++ : generated++;
+      } catch (e) {
+        failed++;
+        $("hvStatus").textContent = `Failed on ${j.id} (${j.l}, ${j.v}): ${e.message}`;
+        if (/quota|credit|limit/i.test(e.message)) { hvRunning = false; break; }
+      }
+      done++; $("hvBar").value = done;
+    }
+    $("hvStatus").textContent = (hvRunning ? "Finished: " : "Stopped: ") +
+      `${generated} generated, ${skipped} already existed` + (failed ? `, ${failed} failed` : "") +
+      ". Safe to run again anytime — existing files are skipped.";
+  } catch (e) { $("hvStatus").textContent = "Error: " + e.message; }
+  hvRunning = false; $("hvStart").disabled = false; $("hvStop").style.display = "none";
+});
 
 window.freeSlot = async token => {
   if (!confirm("Delete this customer's clone from ElevenLabs? (Their generated audio stays; the slot is freed. You can re-clone from the stored sample later.)")) return;
