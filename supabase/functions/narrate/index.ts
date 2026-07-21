@@ -9,12 +9,27 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 const XI = "https://api.elevenlabs.io/v1";
 const STORIES_URL = "https://malakaistory.com/stories.json";
 
-// ElevenLabs premade voices offered on the site. To change a voice: elevenlabs.io →
-// Voices → open a voice → copy its ID, replace it here, and redeploy this function.
-const VOICES: Record<string, string> = {
-  sarah:  "EXAVITQu4vr4xnSDxMaL",  // warm female
-  george: "JBFqnCBsd6RMkjVDRZzb",  // warm male
+// ElevenLabs premade voices offered on the site. Each entry is resolved by NAME from the
+// account's voice list at runtime (IDs of stock voices change over time); the hardcoded id
+// is only a fallback. To offer a different voice, change the name and redeploy.
+const VOICES: Record<string, { name: string; id: string }> = {
+  sarah:  { name: "Sarah",  id: "EXAVITQu4vr4xnSDxMaL" },  // warm female
+  george: { name: "George", id: "JBFqnCBsd6RMkjVDRZzb" },  // warm male
 };
+
+let voiceListCache: { name: string; voice_id: string }[] | null = null;
+async function resolveVoiceId(key: string, xiKey: string): Promise<string> {
+  const want = VOICES[key];
+  try {
+    if (!voiceListCache) {
+      const r = await fetch(`${XI}/voices`, { headers: { "xi-api-key": xiKey } });
+      if (r.ok) voiceListCache = (await r.json()).voices ?? [];
+    }
+    const hit = voiceListCache?.find((v) => v.name?.toLowerCase() === want.name.toLowerCase());
+    if (hit) return hit.voice_id;
+  } catch { /* fall through to hardcoded id */ }
+  return want.id;
+}
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -50,7 +65,8 @@ Deno.serve(async (req) => {
     if (!pack) return json({ error: "story not found" }, 404);
     const text = [pack.title, ...pack.text].join("\n\n");
 
-    const r = await fetch(`${XI}/text-to-speech/${VOICES[voice]}?output_format=mp3_44100_128`, {
+    const voiceId = await resolveVoiceId(voice, xiKey);
+    const r = await fetch(`${XI}/text-to-speech/${voiceId}?output_format=mp3_44100_128`, {
       method: "POST",
       headers: { "xi-api-key": xiKey, "Content-Type": "application/json" },
       body: JSON.stringify({ text, model_id: "eleven_v3" }),
