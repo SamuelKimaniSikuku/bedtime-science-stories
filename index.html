@@ -1840,7 +1840,16 @@ const voiceFileCache = new Map();
 async function voiceFileFor(id, l) {
   const key = `${id}-${l}`;
   if (packToken && VOICEPACK_BASE) {
-    return (packFiles && packFiles.has(key)) ? `${VOICEPACK_BASE}/${packToken}/${key}.mp3` : null;
+    const url = `${VOICEPACK_BASE}/${packToken}/${key}.mp3`;
+    if (packFiles) return packFiles.has(key) ? url : null;
+    // No manifest yet (pack still generating) — probe for the individual file.
+    if (!voiceFileCache.has(key)) {
+      try {
+        const r = await fetch(url, { method: "HEAD" });
+        voiceFileCache.set(key, r.ok ? url : null);
+      } catch { voiceFileCache.set(key, null); }
+    }
+    return voiceFileCache.get(key);
   }
   if (!voiceFileCache.has(key)) {
     try {
