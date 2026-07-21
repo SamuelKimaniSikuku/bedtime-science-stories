@@ -1747,6 +1747,10 @@ function openReader(id) {
       <span class="badge region-${s.region}">${REGIONS[s.region][lang]}</span>
       <span class="badge topic">${TOPICS[s.topic].emoji} ${TOPICS[s.topic][lang]}</span>
     </div>
+    ${!explicitVoiceParam ? `<div class="chip-row" style="margin:6px 0 10px">${
+      Object.entries(HOUSE_VOICES).map(([k, label]) =>
+        `<button class="chip ${k === narrator ? "active" : ""}" data-narrator="${k}">${label}</button>`).join("")
+    }</div>` : ""}
     <button class="narrate-btn" id="narrateBtn"><span class="ico">🔊</span><span id="narrateLabel">${t.listen}</span></button>
     ${s.text[lang].map(p => `<p>${p}</p>`).join("")}
     <div class="goodnight">${t.goodnight}</div>`;
@@ -1825,8 +1829,16 @@ function pickVoice(code) {
    Customer voice packs: opening the site as  ?voice=TOKEN  loads that family's audio
    from Supabase storage instead (see supabase/SETUP.md). */
 const VOICEPACK_BASE = "https://yyvvbqggwkkncbistzzv.supabase.co/storage/v1/object/public/voicepacks";
+const NARRATE_BASE = "https://yyvvbqggwkkncbistzzv.supabase.co/functions/v1";
 const DEFAULT_VOICE_PACK = "a22aa1d5da30";  // Samuel's cloned voice — used when no ?voice= link is given
-const packToken = new URLSearchParams(location.search).get("voice") || DEFAULT_VOICE_PACK;
+const explicitVoiceParam = new URLSearchParams(location.search).get("voice");
+const packToken = explicitVoiceParam || DEFAULT_VOICE_PACK;
+
+/* Narrator picker (default site only; customer ?voice= links always use their own voice).
+   "samuel" = the default cloned voice pack; others are stock voices generated on demand. */
+const HOUSE_VOICES = { samuel: "Samuel 💛", sarah: "Sarah", george: "George" };
+let narrator = localStorage.getItem("narrator") || "samuel";
+if (!HOUSE_VOICES[narrator]) narrator = "samuel";
 let packFiles = null;       // Set of "id-lang" keys available for this customer
 if (packToken && VOICEPACK_BASE) {
   fetch(`${VOICEPACK_BASE}/${packToken}/manifest.json`)
@@ -1878,8 +1890,53 @@ function stopNarration() {
   musicDucked = false;
 }
 
+const PREPARING = { en: "Preparing the story…", sw: "Inaandaa hadithi…", fr: "Préparation de l'histoire…" };
+const houseUrlCache = new Map();
+
+// If a stock voice can't be generated (backend down, credits out), quietly fall back
+// to the default narration path for this one play, keeping the user's chip selection.
+function narratorFallback(storyId) {
+  const saved = narrator;
+  narrator = "samuel";
+  Promise.resolve(startNarration()).finally(() => { narrator = saved; });
+}
+
 async function startNarration() {
   const storyId = document.getElementById("reader").dataset.story;
+
+  // Stock narrator chosen (default site only): fetch/generate via the narrate function.
+  if (!explicitVoiceParam && narrator !== "samuel" && storyId) {
+    narrating = true;
+    parentVoicePlaying = true;
+    const btn = document.getElementById("narrateBtn");
+    btn.classList.add("speaking");
+    document.getElementById("narrateLabel").textContent = PREPARING[lang] || PREPARING.en;
+    if (!music.paused) { music.volume = 0.07; musicDucked = true; }
+    const cacheKey = `${narrator}/${storyId}-${lang}`;
+    try {
+      let url = houseUrlCache.get(cacheKey);
+      if (!url) {
+        const r = await fetch(`${NARRATE_BASE}/narrate`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ story: storyId, lang, voice: narrator })
+        });
+        const j = await r.json();
+        if (!r.ok || j.error) throw new Error(j.error || ("HTTP " + r.status));
+        url = j.url;
+        houseUrlCache.set(cacheKey, url);
+      }
+      if (!narrating) return;  // user pressed stop while we were preparing
+      document.getElementById("narrateLabel").textContent = UI[lang].listenStop;
+      parentVoice.src = url;
+      parentVoice.play().catch(() => stopNarration());
+    } catch (e) {
+      console.warn("narrate failed, falling back to device voice:", e);
+      stopNarration();
+      narratorFallback(storyId);
+    }
+    return;
+  }
+
   const recorded = storyId ? await voiceFileFor(storyId, lang) : null;
 
   if (recorded) {
@@ -1960,6 +2017,16 @@ document.addEventListener("click", e => {
     lang = readerLang.dataset.readerLang;
     render();
     openReader(document.getElementById("reader").dataset.story);
+    return;
+  }
+
+  const narrBtn = e.target.closest("[data-narrator]");
+  if (narrBtn) {
+    stopNarration();
+    narrator = narrBtn.dataset.narrator;
+    try { localStorage.setItem("narrator", narrator); } catch {}
+    document.querySelectorAll("[data-narrator]").forEach(b =>
+      b.classList.toggle("active", b.dataset.narrator === narrator));
     return;
   }
 
