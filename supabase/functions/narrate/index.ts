@@ -20,16 +20,21 @@ const VOICES: Record<string, { name: string; id: string }> = {
 let voiceListCache: { name: string; voice_id: string }[] | null = null;
 async function resolveVoiceId(key: string, xiKey: string): Promise<string> {
   const want = VOICES[key];
+  const wantName = want.name.toLowerCase();
   try {
-    if (!voiceListCache) {
-      const r = await fetch(`${XI}/voices`, { headers: { "xi-api-key": xiKey } });
-      if (r.ok) voiceListCache = (await r.json()).voices ?? [];
+    // Two attempts: if the cached list doesn't contain the voice (e.g. it was added
+    // to My Voices a moment ago), refetch the list once before giving up.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (!voiceListCache) {
+        const r = await fetch(`${XI}/voices`, { headers: { "xi-api-key": xiKey } });
+        if (r.ok) voiceListCache = (await r.json()).voices ?? [];
+      }
+      const hit = voiceListCache?.find((v) => v.name?.toLowerCase() === wantName) ??
+                  voiceListCache?.find((v) => v.name?.toLowerCase().startsWith(wantName)) ??
+                  voiceListCache?.find((v) => v.name?.toLowerCase().includes(wantName));
+      if (hit) return hit.voice_id;
+      voiceListCache = null;  // stale? refetch on second pass
     }
-    const wantName = want.name.toLowerCase();
-    const hit = voiceListCache?.find((v) => v.name?.toLowerCase() === wantName) ??
-                voiceListCache?.find((v) => v.name?.toLowerCase().startsWith(wantName)) ??
-                voiceListCache?.find((v) => v.name?.toLowerCase().includes(wantName));
-    if (hit) return hit.voice_id;
   } catch { /* fall through to hardcoded id */ }
   return want.id;
 }
