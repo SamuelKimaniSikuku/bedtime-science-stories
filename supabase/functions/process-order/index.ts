@@ -119,6 +119,21 @@ Deno.serve(async (req) => {
       return json({ ok: true, done: done.length, total: wanted.length, finished });
     }
 
+    if (action === "delete_order") {
+      // remove ElevenLabs clone, all stored audio, and the order row
+      if (order.voice_id) {
+        await fetch(`${XI}/voices/${order.voice_id}`, { method: "DELETE", headers: { "xi-api-key": xiKey } }).catch(() => {});
+      }
+      for (const bucket of ["samples", "voicepacks"]) {
+        const { data: files } = await supabase.storage.from(bucket).list(order.token, { limit: 1000 });
+        if (files?.length) {
+          await supabase.storage.from(bucket).remove(files.map((f: { name: string }) => `${order.token}/${f.name}`));
+        }
+      }
+      await supabase.from("orders").delete().eq("id", order.id);
+      return json({ ok: true });
+    }
+
     if (action === "delete_voice") {
       if (order.voice_id) {
         await fetch(`${XI}/voices/${order.voice_id}`, { method: "DELETE", headers: { "xi-api-key": xiKey } });

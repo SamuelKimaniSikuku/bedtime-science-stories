@@ -189,6 +189,27 @@
 const SUPABASE_FN_BASE = "https://yyvvbqggwkkncbistzzv.supabase.co/functions/v1";
 
 const $ = id => document.getElementById(id);
+const REDO_TOKEN = new URLSearchParams(location.search).get("redo") || "";
+if (REDO_TOKEN) {
+  // Redo mode: this link re-records the voice for an existing order.
+  document.querySelector("header .subtitle").innerHTML =
+    `You're <strong style="color:var(--moon)">re-recording your voice</strong> for order
+     <strong style="color:var(--moon)">${REDO_TOKEN.replace(/[^a-z0-9]/gi,"")}</strong>.
+     Take your time: 2–3 minutes, quiet room, warm storytelling voice. The new recording replaces the old one,
+     and your stories will be regenerated with the improved voice.`;
+  // hide the sections that don't apply
+  document.querySelectorAll(".card").forEach(c => {
+    const h = c.querySelector("h2");
+    if (h && (h.textContent.includes("Packages") || h.textContent.includes("How it works"))) c.style.display = "none";
+  });
+  addEventListener("DOMContentLoaded", () => {
+    $("parentName").parentElement.style.display = "none";
+    $("parentEmail").parentElement.style.display = "none";
+    $("childName").parentElement.style.display = "none";
+    document.querySelectorAll("input[name=pkg]").forEach(r => r.closest("div").style.display = "none");
+    $("langPick").style.display = "none";
+  });
+}
 let mediaRec = null, chunks = [], recBlob = null, recStart = 0, timerInt = null, recExt = "webm";
 
 const picked = name => document.querySelector(`input[name=${name}]:checked`)?.value;
@@ -199,13 +220,14 @@ document.querySelectorAll("input[name=pkg]").forEach(r => r.addEventListener("ch
 $("sendNowBtn").addEventListener("click", async () => {
   if (!recBlob) return;
   const parent = $("parentName").value.trim(), email = $("parentEmail").value.trim();
-  if (!parent || !/.+@.+\..+/.test(email)) {
+  if (!REDO_TOKEN && (!parent || !/.+@.+\..+/.test(email))) {
     $("recStatus").textContent = "Please fill in your name and a valid email first.";
     $("recStatus").className = "status err"; return;
   }
   const pkg = picked("pkg") || "one";
   const langs = pkg === "one" ? (picked("lng") || "en") : "en,sw,fr";
   const fd = new FormData();
+  if (REDO_TOKEN) fd.append("redo_token", REDO_TOKEN);
   fd.append("parent_name", parent);
   fd.append("child_name", $("childName").value.trim());
   fd.append("email", email);
@@ -219,7 +241,9 @@ $("sendNowBtn").addEventListener("click", async () => {
     const r = await fetch(`${SUPABASE_FN_BASE}/submit-order`, { method: "POST", body: fd });
     const j = await r.json();
     if (!r.ok || j.error) throw new Error(j.error || ("HTTP " + r.status));
-    $("recStatus").innerHTML = `We received your recording! 💛 Your reference is <strong>${j.token}</strong>. We'll email you at ${email} with payment details, and your voice pack will be ready within a few days.`;
+    $("recStatus").innerHTML = j.redo
+      ? `Your new recording is in! 💛 We'll regenerate the stories with your improved voice and let you know when they're ready.`
+      : `We received your recording! 💛 Your reference is <strong>${j.token}</strong>. We'll email you at ${email} with payment details, and your voice pack will be ready within a few days.`;
     $("recStatus").className = "status ok";
     $("sendHelp").style.display = "none";
     $("dlBtn").style.display = "none"; $("mailBtn").style.display = "none";

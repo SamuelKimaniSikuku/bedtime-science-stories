@@ -114,7 +114,9 @@ function renderRows() {
         ${o.status === "new" ? `<button onclick="markPaid('${o.token}')">Mark paid</button>` : ""}
         ${(o.status === "paid" || o.status === "generating") ? `<button onclick="generate('${o.token}')">Generate</button>` : ""}
         ${o.status === "done" ? `<button onclick="copyLink('${o.token}')">Copy link</button>` : ""}
+        <button class="ghost" onclick="copyRedo('${o.token}')">Redo link</button>
         ${o.voice_id ? `<button class="danger" onclick="freeSlot('${o.token}')">Free voice slot</button>` : ""}
+        <button class="danger" onclick="deleteOrder('${o.token}')">Delete</button>
       </td>
     </tr>`).join("") || `<tr><td colspan="5" class="muted">No orders yet.</td></tr>`;
 }
@@ -151,6 +153,17 @@ window.generate = async token => {
 window.copyLink = token => {
   const url = `https://malakaistory.com/?voice=${token}`;
   navigator.clipboard.writeText(url).then(() => toast("Copied: " + url, true));
+};
+
+window.copyRedo = token => {
+  const url = `https://malakaistory.com/your-voice.html?redo=${token}`;
+  navigator.clipboard.writeText(url).then(() => toast("Redo link copied — send it to the customer (or open it yourself) to re-record the voice: " + url, true));
+};
+
+window.deleteOrder = async token => {
+  if (!confirm("Delete this order COMPLETELY? Removes the voice clone, the recording, all generated audio, and the order itself. Cannot be undone.")) return;
+  try { await api({ action: "delete_order", token }); toast("Order deleted", true); load(); }
+  catch (e) { toast(e.message, false); }
 };
 
 window.freeSlot = async token => {

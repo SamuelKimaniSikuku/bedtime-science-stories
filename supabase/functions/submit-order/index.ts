@@ -27,7 +27,11 @@ Deno.serve(async (req) => {
     const consent = String(form.get("consent")) === "true";
     const sample = form.get("sample");
 
-    if (!parent || !email || !consent || !(sample instanceof File) || !langs.length) {
+    const isRedo = String(form.get("redo_token") ?? "").trim() !== "";
+    if (!consent || !(sample instanceof File)) {
+      return json({ error: "Missing consent or recording." }, 400);
+    }
+    if (!isRedo && (!parent || !email || !langs.length)) {
       return json({ error: "Missing name, email, consent or recording." }, 400);
     }
     if (sample.size < 20_000) return json({ error: "Recording too short — please record again." }, 400);
@@ -37,6 +41,39 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+
+    // ---- REDO: replace the recording on an existing order ----
+    const redoToken = String(form.get("redo_token") ?? "").trim();
+    if (redoToken) {
+      const { data: order } = await supabase.from("orders").select("*").eq("token", redoToken).single();
+      if (!order) return json({ error: "We couldn't find that order — check your redo link." }, 404);
+
+      // delete the old ElevenLabs clone so a fresh one is made from the new sample
+      const xiKey = Deno.env.get("ELEVENLABS_API_KEY");
+      if (order.voice_id && xiKey) {
+        await fetch(`https://api.elevenlabs.io/v1/voices/${order.voice_id}`, {
+          method: "DELETE", headers: { "xi-api-key": xiKey },
+        }).catch(() => {});
+      }
+
+      const rext = (sample.type.includes("mp4") || sample.type.includes("aac")) ? "m4a"
+        : sample.type.includes("mpeg") ? "mp3" : "webm";
+      const newPath = `${redoToken}/sample.${rext}`;
+      const { error: rUpErr } = await supabase.storage.from("samples")
+        .upload(newPath, sample, { contentType: sample.type || "audio/webm", upsert: true });
+      if (rUpErr) return json({ error: "Could not store recording: " + rUpErr.message }, 500);
+
+      // stale manifest would make the player use old-voice files — remove it
+      await supabase.storage.from("voicepacks").remove([`${redoToken}/manifest.json`]).catch(() => {});
+
+      const { error: rDbErr } = await supabase.from("orders").update({
+        sample_path: newPath, voice_id: null, done_keys: [], error: null,
+        status: order.status === "new" ? "new" : "paid",
+      }).eq("id", order.id);
+      if (rDbErr) return json({ error: "Could not update order: " + rDbErr.message }, 500);
+      return json({ ok: true, token: redoToken, redo: true });
+    }
+    // ---- normal new order ----
 
     const token = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
     const ext = (sample.type.includes("mp4") || sample.type.includes("aac")) ? "m4a"
