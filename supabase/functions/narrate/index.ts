@@ -51,13 +51,15 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "POST only" }, 405);
   try {
-    const { story, lang, voice } = await req.json();
+    const { story, lang, voice, length } = await req.json();
     if (!VOICES[voice]) return json({ error: "unknown voice" }, 400);
     if (!["en", "sw", "fr"].includes(lang)) return json({ error: "unknown language" }, 400);
     if (typeof story !== "string" || !/^[a-z0-9-]{1,40}$/.test(story)) return json({ error: "bad story id" }, 400);
+    const len = ["m", "l"].includes(length) ? length : "short";
+    const suffix = len === "m" ? "-m" : len === "l" ? "-l" : "";
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const path = `house-${voice}/${story}-${lang}.mp3`;
+    const path = `house-${voice}/${story}-${lang}${suffix}.mp3`;
     const publicUrl = `${supabaseUrl}/storage/v1/object/public/voicepacks/${path}`;
 
     // already generated? serve the cached file
@@ -71,7 +73,9 @@ Deno.serve(async (req) => {
     const s = stories.find((x: { id: string }) => x.id === story);
     const pack = s?.langs?.[lang];
     if (!pack) return json({ error: "story not found" }, 404);
-    const text = [pack.title, ...pack.text].join("\n\n");
+    const paragraphs = len === "m" ? pack.textM : len === "l" ? pack.textL : pack.text;
+    if (!paragraphs) return json({ error: "this length is not available for this story" }, 404);
+    const text = [pack.title, ...paragraphs].join("\n\n");
 
     const voiceId = await resolveVoiceId(voice, xiKey);
     const r = await fetch(`${XI}/text-to-speech/${voiceId}?output_format=mp3_44100_128`, {
