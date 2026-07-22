@@ -1830,15 +1830,15 @@ function pickVoice(code) {
    from Supabase storage instead (see supabase/SETUP.md). */
 const VOICEPACK_BASE = "https://yyvvbqggwkkncbistzzv.supabase.co/storage/v1/object/public/voicepacks";
 const NARRATE_BASE = "https://yyvvbqggwkkncbistzzv.supabase.co/functions/v1";
-const DEFAULT_VOICE_PACK = "a22aa1d5da30";  // Samuel's cloned voice — used when no ?voice= link is given
+const DEFAULT_VOICE_PACK = "";  // set to a pack token (e.g. Samuel's) to make a cloned voice the site default
 const explicitVoiceParam = new URLSearchParams(location.search).get("voice");
 const packToken = explicitVoiceParam || DEFAULT_VOICE_PACK;
 
 /* Narrator picker (default site only; customer ?voice= links always use their own voice).
-   "samuel" = the default cloned voice pack; others are stock voices generated on demand. */
-const HOUSE_VOICES = { samuel: "Samuel 💛", sarah: "Sarah", william: "William" };
-let narrator = localStorage.getItem("narrator") || "samuel";
-if (!HOUSE_VOICES[narrator]) narrator = "samuel";
+   Stock voices are generated on demand via the narrate function. */
+const HOUSE_VOICES = { sarah: "Sarah", william: "William" };
+let narrator = localStorage.getItem("narrator") || "sarah";
+if (!HOUSE_VOICES[narrator]) narrator = "sarah";
 let packFiles = null;       // Set of "id-lang" keys available for this customer
 if (packToken && VOICEPACK_BASE) {
   fetch(`${VOICEPACK_BASE}/${packToken}/manifest.json`)
