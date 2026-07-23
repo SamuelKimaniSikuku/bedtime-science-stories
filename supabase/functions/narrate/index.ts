@@ -21,11 +21,16 @@ const ALLOWED_LENGTHS = ["m"];  // in addition to the default "short"; add "l" t
 
 // ElevenLabs premade voices offered on the site. Each entry is resolved by NAME from the
 // account's voice list at runtime (IDs of stock voices change over time); the hardcoded id
-// is only a fallback. To offer a different voice, change the name and redeploy.
+// is used as a fallback if the name lookup fails. To offer a different voice, change the name.
 // Both voices are enabled; the per-IP daily cap still bounds total spend either way.
+//
+// IMPORTANT: give every voice a real fallback id. If the id is empty AND the name lookup
+// fails, the function now refuses to generate (see the guard below) rather than producing
+// the wrong voice — but a correct fallback id avoids that failure entirely. Paste William's
+// id from ElevenLabs → Voices → William → copy ID.
 const VOICES: Record<string, { name: string; id: string }> = {
   sarah:   { name: "Sarah",   id: "EXAVITQu4vr4xnSDxMaL" },  // warm female
-  william: { name: "William", id: "" },  // "William - Deep, Engaging Storyteller" from My Voices
+  william: { name: "William", id: "" },  // ← paste William's voice ID here (e.g. "abc123...")
 };
 
 let voiceListCache: { name: string; voice_id: string }[] | null = null;
@@ -107,6 +112,12 @@ Deno.serve(async (req) => {
     const text = [pack.title, ...paragraphs].join("\n\n");
 
     const voiceId = await resolveVoiceId(voice, xiKey);
+    // Safety guard: never call ElevenLabs with an empty/unresolved id — doing so is what
+    // silently produced the wrong voice before. If we can't resolve it, fail loudly and
+    // cache nothing, so a mis-voiced mp3 can never be baked into the bucket again.
+    if (!voiceId) {
+      return json({ error: `voice "${voice}" is not available in the ElevenLabs account (name not found and no fallback id set)` }, 502);
+    }
     const r = await fetch(`${XI}/text-to-speech/${voiceId}?output_format=mp3_44100_128`, {
       method: "POST",
       headers: { "xi-api-key": xiKey, "Content-Type": "application/json" },
