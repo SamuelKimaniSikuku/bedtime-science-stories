@@ -9,12 +9,23 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 const XI = "https://api.elevenlabs.io/v1";
 const STORIES_URL = "https://malakaistory.com/stories.json";
 
+// Max NEW (uncached) generations one visitor (IP) may trigger per rolling 24h.
+// Cached replays are free and never counted. Raise/lower this one number to taste.
+const DAILY_LIMIT = 3;
+
+// Lengths a public visitor is allowed to GENERATE. The 10-minute ("l") length is the
+// most expensive per generation, so it is disabled for the public trial. Any request
+// for it quietly falls back to the 2-minute version. (Already-cached 10-min files, if
+// any exist, still play — they're served from cache before this ever applies.)
+const ALLOWED_LENGTHS = ["m"];  // in addition to the default "short"; add "l" to re-enable 10-min
+
 // ElevenLabs premade voices offered on the site. Each entry is resolved by NAME from the
 // account's voice list at runtime (IDs of stock voices change over time); the hardcoded id
 // is only a fallback. To offer a different voice, change the name and redeploy.
+// William is disabled for the public trial to bound spend — uncomment the line to re-enable.
 const VOICES: Record<string, { name: string; id: string }> = {
   sarah:   { name: "Sarah",   id: "EXAVITQu4vr4xnSDxMaL" },  // warm female
-  william: { name: "William", id: "" },  // "William - Deep, Engaging Storyteller" from My Voices
+  // william: { name: "William", id: "" },  // "William - Deep, Engaging Storyteller" from My Voices
 };
 
 let voiceListCache: { name: string; voice_id: string }[] | null = null;
@@ -55,16 +66,34 @@ Deno.serve(async (req) => {
     if (!VOICES[voice]) return json({ error: "unknown voice" }, 400);
     if (!["en", "sw", "fr"].includes(lang)) return json({ error: "unknown language" }, 400);
     if (typeof story !== "string" || !/^[a-z0-9-]{1,40}$/.test(story)) return json({ error: "bad story id" }, 400);
-    const len = ["m", "l"].includes(length) ? length : "short";
+    const len = ALLOWED_LENGTHS.includes(length) ? length : "short";
     const suffix = len === "m" ? "-m" : len === "l" ? "-l" : "";
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const path = `house-${voice}/${story}-${lang}${suffix}.mp3`;
     const publicUrl = `${supabaseUrl}/storage/v1/object/public/voicepacks/${path}`;
 
-    // already generated? serve the cached file
+    // already generated? serve the cached file (never rate-limited — replays are free)
     const head = await fetch(publicUrl, { method: "HEAD" });
     if (head.ok) return json({ url: publicUrl, cached: true });
+
+    // --- Rate limit: only reached on a cache MISS, i.e. a real (paid) generation. ---
+    const supabase = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count, error: cntErr } = await supabase
+      .from("narrate_log")
+      .select("id", { count: "exact", head: true })
+      .eq("ip", ip)
+      .gte("created_at", since);
+    // Fail open on a counting error (don't block a listener over a logging hiccup),
+    // but enforce the cap whenever the count is available.
+    if (!cntErr && (count ?? 0) >= DAILY_LIMIT) {
+      return json({
+        error: "daily limit reached",
+        detail: `You can start up to ${DAILY_LIMIT} new narrations per day. Stories that are already made still play for free — try one of those, or come back tomorrow.`,
+      }, 429);
+    }
 
     const xiKey = Deno.env.get("ELEVENLABS_API_KEY");
     if (!xiKey) return json({ error: "ELEVENLABS_API_KEY secret is not set" }, 500);
@@ -90,10 +119,12 @@ Deno.serve(async (req) => {
     }
     const audio = await r.blob();
 
-    const supabase = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const { error: upErr } = await supabase.storage.from("voicepacks")
       .upload(path, audio, { contentType: "audio/mpeg", upsert: true });
     if (upErr) return json({ error: "store failed: " + upErr.message }, 500);
+
+    // Count this generation against the visitor's daily allowance.
+    await supabase.from("narrate_log").insert({ ip, story, lang, voice });
 
     return json({ url: publicUrl, cached: false });
   } catch (e) {

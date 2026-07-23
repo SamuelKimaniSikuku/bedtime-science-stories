@@ -5,7 +5,11 @@ One-time setup, all in the Supabase Dashboard (about 10 minutes). No command lin
 ## 1 · Database & storage
 
 Dashboard → **SQL Editor** → *New query* → paste the whole contents of `schema.sql` → **Run**.
-This creates the `orders` table and two storage buckets (`samples` private, `voicepacks` public).
+This creates the `orders` table, the `narrate_log` table (used to rate-limit free trials),
+and two storage buckets (`samples` private, `voicepacks` public).
+
+> Already ran an older `schema.sql`? Just re-run it — it only *adds* `narrate_log`
+> (everything uses `create ... if not exists`, so nothing existing is touched).
 
 ## 2 · Edge functions
 
@@ -13,8 +17,22 @@ Dashboard → **Edge Functions** → *Deploy a new function* (via Editor):
 
 1. Name it exactly `submit-order`, paste the contents of `functions/submit-order/index.ts`, deploy.
 2. Repeat with `process-order` and `functions/process-order/index.ts`.
-3. For **both** functions: open the function → **Details** → turn **Enforce JWT verification OFF**.
-   (submit-order is meant to be public; process-order protects itself with your admin key.)
+3. Also deploy `narrate` from `functions/narrate/index.ts` (the public read-aloud voices).
+4. For **all three** functions: open the function → **Details** → turn **Enforce JWT verification OFF**.
+   (submit-order and narrate are meant to be public; process-order protects itself with your admin key.)
+
+### Free-trial limits (the `narrate` function)
+
+The public read-aloud feature is bounded so visitors can't run up your ElevenLabs bill:
+
+- **One trial voice (Sarah).** William is commented out in `functions/narrate/index.ts` and
+  removed from `HOUSE_VOICES` in `index.html`. Uncomment both to bring William back.
+- **No 10-minute length in the trial.** Only 2-min and 5-min can be generated (`ALLOWED_LENGTHS`
+  in the narrate function; `lengthsFor` in `index.html`).
+- **3 new narrations per visitor per day.** Each *first-time* (uncached) generation is logged to
+  `narrate_log` by IP; the 4th within 24h gets a friendly "come back tomorrow" message. Replaying
+  a story that's already been made is free and never counted. Change the cap via `DAILY_LIMIT`
+  at the top of `functions/narrate/index.ts`, then redeploy.
 
 ## 3 · Secrets
 
