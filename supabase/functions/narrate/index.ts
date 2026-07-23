@@ -22,10 +22,10 @@ const ALLOWED_LENGTHS = ["m"];  // in addition to the default "short"; add "l" t
 // ElevenLabs premade voices offered on the site. Each entry is resolved by NAME from the
 // account's voice list at runtime (IDs of stock voices change over time); the hardcoded id
 // is only a fallback. To offer a different voice, change the name and redeploy.
-// William is disabled for the public trial to bound spend — uncomment the line to re-enable.
+// Both voices are enabled; the per-IP daily cap still bounds total spend either way.
 const VOICES: Record<string, { name: string; id: string }> = {
   sarah:   { name: "Sarah",   id: "EXAVITQu4vr4xnSDxMaL" },  // warm female
-  // william: { name: "William", id: "" },  // "William - Deep, Engaging Storyteller" from My Voices
+  william: { name: "William", id: "" },  // "William - Deep, Engaging Storyteller" from My Voices
 };
 
 let voiceListCache: { name: string; voice_id: string }[] | null = null;

@@ -2415,10 +2415,10 @@ const packToken = explicitVoiceParam || DEFAULT_VOICE_PACK;
 
 /* Narrator picker (default site only; customer ?voice= links always use their own voice).
    Stock voices are generated on demand via the narrate function. */
-/* Public trial is limited to one stock voice to bound ElevenLabs spend.
-   To re-enable William, add  william: "William"  back to HOUSE_VOICES
-   (and uncomment william in supabase/functions/narrate/index.ts). */
-const HOUSE_VOICES = { sarah: "Sarah" };
+/* Both stock voices are offered; spend is bounded by the per-IP daily cap in the
+   narrate function, not by hiding voices. To limit to one voice again, drop the
+   other from this object (and comment it out in supabase/functions/narrate/index.ts). */
+const HOUSE_VOICES = { sarah: "Sarah", william: "William" };
 let narrator = localStorage.getItem("narrator") || "sarah";
 if (!HOUSE_VOICES[narrator]) narrator = "sarah";
 
