@@ -10,8 +10,10 @@ const XI = "https://api.elevenlabs.io/v1";
 const STORIES_URL = "https://malakaistory.com/stories.json";
 
 // Max NEW (uncached) generations one visitor (IP) may trigger per rolling 24h.
-// Cached replays are free and never counted. Raise/lower this one number to taste.
-const DAILY_LIMIT = 3;
+// Cached replays are free and never counted.
+// 0 (the default) = NO LIMIT. To re-enable a cap later WITHOUT redeploying, add a
+// "DAILY_LIMIT" secret in Supabase → Edge Functions → Secrets (e.g. set it to 20).
+const DAILY_LIMIT = Number(Deno.env.get("DAILY_LIMIT") ?? "0");
 
 // Lengths a public visitor is allowed to GENERATE. The 10-minute ("l") length is the
 // most expensive per generation, so it is disabled for the public trial. Any request
@@ -82,22 +84,26 @@ Deno.serve(async (req) => {
     const head = await fetch(publicUrl, { method: "HEAD" });
     if (head.ok) return json({ url: publicUrl, cached: true });
 
-    // --- Rate limit: only reached on a cache MISS, i.e. a real (paid) generation. ---
+    // Only reached on a cache MISS, i.e. a real (paid) generation.
     const supabase = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
-    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { count, error: cntErr } = await supabase
-      .from("narrate_log")
-      .select("id", { count: "exact", head: true })
-      .eq("ip", ip)
-      .gte("created_at", since);
-    // Fail open on a counting error (don't block a listener over a logging hiccup),
-    // but enforce the cap whenever the count is available.
-    if (!cntErr && (count ?? 0) >= DAILY_LIMIT) {
-      return json({
-        error: "daily limit reached",
-        detail: `You can start up to ${DAILY_LIMIT} new narrations per day. Stories that are already made still play for free — try one of those, or come back tomorrow.`,
-      }, 429);
+
+    // --- Optional rate limit: OFF unless a DAILY_LIMIT secret > 0 is set (see top of file). ---
+    if (DAILY_LIMIT > 0) {
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { count, error: cntErr } = await supabase
+        .from("narrate_log")
+        .select("id", { count: "exact", head: true })
+        .eq("ip", ip)
+        .gte("created_at", since);
+      // Fail open on a counting error (don't block a listener over a logging hiccup),
+      // but enforce the cap whenever the count is available.
+      if (!cntErr && (count ?? 0) >= DAILY_LIMIT) {
+        return json({
+          error: "daily limit reached",
+          detail: `You can start up to ${DAILY_LIMIT} new narrations per day. Stories that are already made still play for free — try one of those, or come back tomorrow.`,
+        }, 429);
+      }
     }
 
     const xiKey = Deno.env.get("ELEVENLABS_API_KEY");
