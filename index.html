@@ -2271,13 +2271,18 @@ let genderFilter = "all";
 // languages below fall back to French for the interface, audio, and any story
 // text not yet translated — drop a `wo` / `bbj` / `fmp` key into a story's
 // title/hook/text/country to make that translation appear automatically.
+// Wolof (wo), Ghomála’ (bbj) and Feʼefeʼe/Fussap (fmp) are hidden until native
+// translations exist — no engine supports bbj/fmp, and machine-drafted heritage
+// language would teach a child invented grammar. To bring one back, simply
+// re-add its line below; the effLang()/pick() fallback machinery is still here,
+// so a story shows its real translation as soon as a wo/bbj/fmp key is added.
 const LANGS = [
   { code: "en",  label: "English",   short: "EN", group: "world"  },
   { code: "fr",  label: "Français",  short: "FR", group: "world"  },
-  { code: "sw",  label: "Kiswahili", short: "SW", group: "africa" },
-  { code: "wo",  label: "Wolof",     short: "Wo", group: "africa" },
-  { code: "bbj", label: "Ghomála’ (Bandjoun)",          short: "Gh", group: "africa" },
-  { code: "fmp", label: "Feʼefeʼe / Fussap (Bafoussam)", short: "Fè", group: "africa" }
+  { code: "sw",  label: "Kiswahili", short: "SW", group: "africa" }
+  // { code: "wo",  label: "Wolof",                          short: "Wo", group: "africa" },
+  // { code: "bbj", label: "Ghomála’ (Bandjoun)",            short: "Gh", group: "africa" },
+  // { code: "fmp", label: "Feʼefeʼe / Fussap (Bafoussam)",  short: "Fè", group: "africa" }
 ];
 const LANG_LABEL = Object.fromEntries(LANGS.map(l => [l.code, l.label]));
 const UI_LANGS = ["en", "sw", "fr"];               // languages with real UI + content
@@ -2327,12 +2332,16 @@ function render() {
 
   const langBtnHtml = l =>
     `<button class="lang-btn ${l.code === lang ? "active" : ""}" data-lang="${l.code}">${l.label}</button>`;
-  document.getElementById("langSwitch").innerHTML =
-    `<div class="lang-row">${LANGS.filter(l => l.group === "world").map(langBtnHtml).join("")}</div>` +
-    `<div class="lang-africa">` +
-      `<span class="lang-africa-label">${effLang() === "fr" && lang !== "fr" ? "Langues africaines" : "African languages"}</span>` +
-      `<div class="lang-row">${LANGS.filter(l => l.group === "africa").map(langBtnHtml).join("")}</div>` +
-    `</div>`;
+  const africaLangs = LANGS.filter(l => l.group === "africa");
+  // Only show the "African languages" grouping once there are several of them;
+  // with a single one it reads better as a plain row.
+  document.getElementById("langSwitch").innerHTML = africaLangs.length > 1
+    ? `<div class="lang-row">${LANGS.filter(l => l.group === "world").map(langBtnHtml).join("")}</div>` +
+      `<div class="lang-africa">` +
+        `<span class="lang-africa-label">${effLang() === "fr" && lang !== "fr" ? "Langues africaines" : "African languages"}</span>` +
+        `<div class="lang-row">${africaLangs.map(langBtnHtml).join("")}</div>` +
+      `</div>`
+    : `<div class="lang-row">${LANGS.map(langBtnHtml).join("")}</div>`;
 
   document.getElementById("regionChips").innerHTML =
     chipHtml("all", t.all, regionFilter === "all", "region", null, STORIES.length) +
