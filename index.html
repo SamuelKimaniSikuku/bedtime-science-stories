@@ -46,7 +46,7 @@
   .subtitle { color: var(--ink-soft); font-size: 16px; max-width: 640px; margin: 0 auto; }
 
   /* --- language switcher --- */
-  .lang-switch { display: flex; justify-content: center; gap: 8px; margin: 22px 0 8px; }
+  .lang-switch { display: flex; flex-direction: column; align-items: center; gap: 14px; margin: 22px 0 8px; }
   .lang-btn {
     background: transparent; border: 1.5px solid #3a466f; color: var(--ink-soft);
     padding: 8px 20px; border-radius: 999px; font-size: 15px; font-weight: 600;
@@ -138,8 +138,20 @@
   .reader p { font-size: 17.5px; margin-bottom: 16px; color: #e9e7de; }
   .reader p strong { color: var(--moon); }
   .goodnight { text-align: center; color: var(--gold); font-size: 16px; margin-top: 26px; }
-  .reader-langs { display: flex; gap: 6px; margin-bottom: 18px; }
-  .reader-langs .lang-btn { padding: 5px 14px; font-size: 13px; }
+  .reader-langs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+  .reader-langs .lang-btn { padding: 5px 12px; font-size: 13px; }
+
+  /* grouped language switcher */
+  .lang-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .lang-africa { margin-top: 12px; }
+  .lang-africa-label {
+    display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .12em;
+    color: var(--gold); font-weight: 700; margin-bottom: 8px; opacity: .85;
+  }
+  .xlate-note {
+    background: rgba(127,168,240,.12); border: 1px solid rgba(127,168,240,.35);
+    color: #cdd9f5; font-size: 13px; border-radius: 12px; padding: 9px 13px; margin-bottom: 16px;
+  }
 
   /* --- narrate (read aloud) --- */
   .narrate-btn {
@@ -2255,6 +2267,23 @@ let regionFilter = "all";
 let topicFilter = "all";
 let genderFilter = "all";
 
+// Languages. Full UI + content exist for en/sw/fr. The African heritage
+// languages below fall back to French for the interface, audio, and any story
+// text not yet translated — drop a `wo` / `bbj` / `fmp` key into a story's
+// title/hook/text/country to make that translation appear automatically.
+const LANGS = [
+  { code: "en",  label: "English",   short: "EN", group: "world"  },
+  { code: "fr",  label: "Français",  short: "FR", group: "world"  },
+  { code: "sw",  label: "Kiswahili", short: "SW", group: "africa" },
+  { code: "wo",  label: "Wolof",     short: "Wo", group: "africa" },
+  { code: "bbj", label: "Ghomála’ (Bandjoun)",          short: "Gh", group: "africa" },
+  { code: "fmp", label: "Feʼefeʼe / Fussap (Bafoussam)", short: "Fè", group: "africa" }
+];
+const LANG_LABEL = Object.fromEntries(LANGS.map(l => [l.code, l.label]));
+const UI_LANGS = ["en", "sw", "fr"];               // languages with real UI + content
+function effLang() { return UI_LANGS.includes(lang) ? lang : "fr"; }   // fallback for UI, audio, untranslated text
+function pick(o) { return o ? (o[lang] != null ? o[lang] : o[effLang()]) : ""; }  // story field, supports drop-in translations
+
 /* ---------- stars ---------- */
 (function makeStars() {
   const holder = document.getElementById("stars");
@@ -2285,7 +2314,7 @@ function chipHtml(key, label, active, kind, dot, count) {
 }
 
 function render() {
-  const t = UI[lang];
+  const t = UI[effLang()];
   document.documentElement.lang = lang;
   document.getElementById("siteTitle").textContent = t.title;
   document.getElementById("siteSubtitle").textContent = t.subtitle;
@@ -2296,26 +2325,31 @@ function render() {
   updateMusicBtn();
   renderFeedback();
 
-  document.getElementById("langSwitch").innerHTML = ["en", "sw", "fr"].map(l =>
-    `<button class="lang-btn ${l === lang ? "active" : ""}" data-lang="${l}">${{en:"English",sw:"Kiswahili",fr:"Français"}[l]}</button>`
-  ).join("");
+  const langBtnHtml = l =>
+    `<button class="lang-btn ${l.code === lang ? "active" : ""}" data-lang="${l.code}">${l.label}</button>`;
+  document.getElementById("langSwitch").innerHTML =
+    `<div class="lang-row">${LANGS.filter(l => l.group === "world").map(langBtnHtml).join("")}</div>` +
+    `<div class="lang-africa">` +
+      `<span class="lang-africa-label">${effLang() === "fr" && lang !== "fr" ? "Langues africaines" : "African languages"}</span>` +
+      `<div class="lang-row">${LANGS.filter(l => l.group === "africa").map(langBtnHtml).join("")}</div>` +
+    `</div>`;
 
   document.getElementById("regionChips").innerHTML =
     chipHtml("all", t.all, regionFilter === "all", "region", null, STORIES.length) +
     Object.keys(REGIONS).map(k =>
-      chipHtml(k, REGIONS[k][lang], regionFilter === k, "region", REGION_COLORS[k],
+      chipHtml(k, pick(REGIONS[k]), regionFilter === k, "region", REGION_COLORS[k],
         STORIES.filter(s => s.region === k).length)).join("");
 
   document.getElementById("topicChips").innerHTML =
     chipHtml("all", t.all, topicFilter === "all", "topic", null, STORIES.length) +
     Object.keys(TOPICS).map(k =>
-      chipHtml(k, `${TOPICS[k].emoji} ${TOPICS[k][lang]}`, topicFilter === k, "topic", null,
+      chipHtml(k, `${TOPICS[k].emoji} ${pick(TOPICS[k])}`, topicFilter === k, "topic", null,
         STORIES.filter(s => s.topic === k).length)).join("");
 
   document.getElementById("genderChips").innerHTML =
     chipHtml("all", t.all, genderFilter === "all", "gender", null, STORIES.length) +
     Object.keys(GENDERS).map(k =>
-      chipHtml(k, `${GENDERS[k].emoji} ${GENDERS[k][lang]}`, genderFilter === k, "gender", null,
+      chipHtml(k, `${GENDERS[k].emoji} ${pick(GENDERS[k])}`, genderFilter === k, "gender", null,
         STORIES.filter(s => s.gender === k).length)).join("");
 
   const bornYear = s => s.born ?? parseInt((s.years.match(/\d{4}/) || ["9999"])[0], 10);
@@ -2336,14 +2370,14 @@ function render() {
           <div class="avatar">${s.emoji}</div>
           <div>
             <h2>${s.name}</h2>
-            <div class="years">${s.years} · ${s.country[lang]}</div>
+            <div class="years">${s.years} · ${pick(s.country)}</div>
           </div>
         </div>
-        <div class="card-title">${s.title[lang]}</div>
-        <div class="hook">${s.hook[lang]}</div>
+        <div class="card-title">${pick(s.title)}</div>
+        <div class="hook">${pick(s.hook)}</div>
         <div class="badges">
-          <span class="badge region-${s.region}">${REGIONS[s.region][lang]}</span>
-          <span class="badge topic">${TOPICS[s.topic].emoji} ${TOPICS[s.topic][lang]}</span>
+          <span class="badge region-${s.region}">${pick(REGIONS[s.region])}</span>
+          <span class="badge topic">${TOPICS[s.topic].emoji} ${pick(TOPICS[s.topic])}</span>
         </div>
         <div class="read-hint">${t.read}</div>
       </div>`).join("");
@@ -2353,21 +2387,22 @@ function openReader(id) {
   const s = STORIES.find(x => x.id === id);
   if (!s) return;
   if (typeof stopNarration === "function") stopNarration();
-  const t = UI[lang];
+  const t = UI[effLang()];
   const reader = document.getElementById("reader");
   reader.innerHTML = `
     <button class="close-btn" id="closeReader" aria-label="Close">✕</button>
-    <div class="reader-langs">${["en","sw","fr"].map(l =>
-      `<button class="lang-btn ${l === lang ? "active" : ""}" data-reader-lang="${l}">${{en:"EN",sw:"SW",fr:"FR"}[l]}</button>`).join("")}
+    <div class="reader-langs">${LANGS.map(l =>
+      `<button class="lang-btn ${l.code === lang ? "active" : ""}" data-reader-lang="${l.code}">${l.short}</button>`).join("")}
     </div>
     <div class="avatar">${s.emoji}</div>
     <h2>${s.name}</h2>
-    <div class="story-title">${s.title[lang]}</div>
-    <div class="meta">${s.years} · ${t.born} ${s.country[lang]}</div>
+    <div class="story-title">${pick(s.title)}</div>
+    <div class="meta">${s.years} · ${t.born} ${pick(s.country)}</div>
     <div class="badges">
-      <span class="badge region-${s.region}">${REGIONS[s.region][lang]}</span>
-      <span class="badge topic">${TOPICS[s.topic].emoji} ${TOPICS[s.topic][lang]}</span>
+      <span class="badge region-${s.region}">${pick(REGIONS[s.region])}</span>
+      <span class="badge topic">${TOPICS[s.topic].emoji} ${pick(TOPICS[s.topic])}</span>
     </div>
+    ${(!UI_LANGS.includes(lang) && s.title[lang] == null) ? `<div class="xlate-note">🌍 Histoire bientôt disponible en ${LANG_LABEL[lang]} — affichée en français pour le moment.</div>` : ""}
     ${!explicitVoiceParam ? `<div class="chip-row" style="margin:6px 0 10px">${
       Object.entries(HOUSE_VOICES).map(([k, label]) =>
         `<button class="chip ${k === narrator ? "active" : ""}" data-narrator="${k}">${label}</button>`).join("")
@@ -2377,7 +2412,7 @@ function openReader(id) {
         `<button class="chip ${len === (lengthsFor(s).includes(storyLen) ? storyLen : "short") ? "active" : ""}" data-len="${len}">${LENGTHS[len]}</button>`).join("")
     }</div>` : ""}
     <button class="narrate-btn" id="narrateBtn"><span class="ico">🔊</span><span id="narrateLabel">${t.listen}</span></button>
-    ${textFor(s, lengthsFor(s).includes(storyLen) ? storyLen : "short")[lang].map(p => `<p>${p}</p>`).join("")}
+    ${pick(textFor(s, lengthsFor(s).includes(storyLen) ? storyLen : "short")).map(p => `<p>${p}</p>`).join("")}
     <div class="goodnight">${t.goodnight}</div>`;
   document.getElementById("overlay").classList.add("open");
   reader.dataset.story = id;
@@ -2394,7 +2429,7 @@ const music = document.getElementById("bgMusic");
 music.volume = 0.35;
 
 function updateMusicBtn() {
-  const t = UI[lang];
+  const t = UI[effLang()];
   const playing = !music.paused;
   const btn = document.getElementById("musicBtn");
   btn.classList.toggle("playing", playing);
@@ -2523,7 +2558,7 @@ function stopNarration() {
   if (btn) {
     btn.classList.remove("speaking");
     const lbl = document.getElementById("narrateLabel");
-    if (lbl) lbl.textContent = UI[lang].listen;
+    if (lbl) lbl.textContent = UI[effLang()].listen;
   }
   if (musicDucked && !music.paused) music.volume = 0.35;
   musicDucked = false;
@@ -2551,15 +2586,15 @@ async function startNarration() {
     parentVoicePlaying = true;
     const btn = document.getElementById("narrateBtn");
     btn.classList.add("speaking");
-    document.getElementById("narrateLabel").textContent = PREPARING[lang] || PREPARING.en;
+    document.getElementById("narrateLabel").textContent = PREPARING[effLang()] || PREPARING.en;
     if (!music.paused) { music.volume = 0.07; musicDucked = true; }
-    const cacheKey = `${narrator}/${storyId}-${lang}${lenSuffix(effLen)}`;
+    const cacheKey = `${narrator}/${storyId}-${effLang()}${lenSuffix(effLen)}`;
     try {
       let url = houseUrlCache.get(cacheKey);
       if (!url) {
         const r = await fetch(`${NARRATE_BASE}/narrate`, {
           method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ story: storyId, lang, voice: narrator, length: effLen })
+          body: JSON.stringify({ story: storyId, lang: effLang(), voice: narrator, length: effLen })
         });
         const j = await r.json();
         if (!r.ok || j.error) throw new Error(j.error || ("HTTP " + r.status));
@@ -2567,7 +2602,7 @@ async function startNarration() {
         houseUrlCache.set(cacheKey, url);
       }
       if (!narrating) return;  // user pressed stop while we were preparing
-      document.getElementById("narrateLabel").textContent = UI[lang].listenStop;
+      document.getElementById("narrateLabel").textContent = UI[effLang()].listenStop;
       parentVoice.src = url;
       parentVoice.play().catch(() => stopNarration());
     } catch (e) {
@@ -2580,14 +2615,14 @@ async function startNarration() {
 
   // Cloned-voice packs only exist for the 2-minute versions; longer versions
   // fall through to the built-in reader below.
-  const recorded = (storyId && effLen === "short") ? await voiceFileFor(storyId, lang) : null;
+  const recorded = (storyId && effLen === "short") ? await voiceFileFor(storyId, effLang()) : null;
 
   if (recorded) {
     narrating = true;
     parentVoicePlaying = true;
     const btn = document.getElementById("narrateBtn");
     btn.classList.add("speaking");
-    document.getElementById("narrateLabel").textContent = UI[lang].listenStop;
+    document.getElementById("narrateLabel").textContent = UI[effLang()].listenStop;
     if (!music.paused) { music.volume = 0.07; musicDucked = true; }
     parentVoice.src = recorded;
     parentVoice.play().catch(() => { parentVoicePlaying = false; stopNarration(); });
@@ -2600,12 +2635,12 @@ async function startNarration() {
   narrating = true;
   const btn = document.getElementById("narrateBtn");
   btn.classList.add("speaking");
-  document.getElementById("narrateLabel").textContent = UI[lang].listenStop;
+  document.getElementById("narrateLabel").textContent = UI[effLang()].listenStop;
   if (!music.paused) { music.volume = 0.07; musicDucked = true; }
 
-  const cfg = VOICE_STYLE[lang] || VOICE_STYLE.en;
+  const cfg = VOICE_STYLE[effLang()] || VOICE_STYLE.en;
   const voice = pickVoice(lang);
-  const langTag = { en: "en-US", sw: "sw-KE", fr: "fr-FR" }[lang];
+  const langTag = { en: "en-US", sw: "sw-KE", fr: "fr-FR" }[effLang()];
 
   // Break each paragraph into sentences so we can add gentle pauses and a
   // soft melodic pitch curve — the rhythm that captivates a small child.
@@ -2656,7 +2691,7 @@ let fbRating = 0, fbSent = false, fbName = "", fbComment = "";
 function renderFeedback() {
   const el = document.getElementById("feedback");
   if (!el) return;
-  const t = UI[lang];
+  const t = UI[effLang()];
   if (fbSent) { el.innerHTML = `<div class="fb-thanks">${t.fbThanks}</div>`; return; }
   el.innerHTML = `
     <h3 class="fb-title">${t.fbTitle}</h3>
@@ -2676,7 +2711,7 @@ function fbCapture() {
 function submitFeedback() {
   fbCapture();
   const comment = fbComment.trim();
-  if (!fbRating && !comment) { alert(UI[lang].fbNeed); return; }
+  if (!fbRating && !comment) { alert(UI[effLang()].fbNeed); return; }
   const payload = { rating: fbRating || null, name: fbName.trim(), comment, language: lang, url: location.hostname };
   if (SUPABASE_ANON_KEY) {
     fetch(`${SUPABASE_URL}/rest/v1/feedback`, {
