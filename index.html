@@ -206,8 +206,17 @@
   .fb-thanks { font-size: 18px; color: var(--gold); padding: 14px 0; line-height: 1.5; }
 
   /* --- music toggle --- */
-  .music-btn {
+  .music-dock {
     position: fixed; bottom: 22px; right: 22px; z-index: 8;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 7px;
+  }
+  .now-playing {
+    font-size: 12px; color: var(--ink-soft); max-width: 230px; text-align: right;
+    background: rgba(15,22,48,.82); border-radius: 10px; padding: 4px 10px;
+    line-height: 1.35;
+  }
+  .now-playing:empty { display: none; }
+  .music-btn {
     background: var(--card); border: 1.5px solid #3a466f; color: var(--ink);
     padding: 10px 18px; border-radius: 999px; font-size: 15px; font-weight: 600;
     cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 8px;
@@ -252,14 +261,17 @@
 
   <footer>
     <div id="footerLine"></div>
-    <div class="credit">♪ Erik Satie — Gymnopédie No. 1 · Robin Alciatore (public domain)</div>
+    <div class="credit">🎵 Lullabies: Brahms · Satie · Debussy · Chopin · Bach — public domain recordings (Wikimedia Commons)</div>
     <div class="credit"><a href="your-voice.html" style="color:inherit">💛 Get the stories read in YOUR voice — record 2 minutes, we do the rest</a></div>
     <div class="credit"><a href="voice-studio.html" style="color:inherit">🎙️ Voice Studio</a></div>
   </footer>
 </div>
 
-<button class="music-btn" id="musicBtn"><span class="note">🎵</span><span id="musicLabel"></span></button>
-<audio id="bgMusic" loop preload="none" src="audio/gymnopedie-1.mp3"></audio>
+<div class="music-dock">
+  <div id="nowPlaying" class="now-playing"></div>
+  <button class="music-btn" id="musicBtn"><span class="note">🎵</span><span id="musicLabel"></span></button>
+</div>
+<audio id="bgMusic" preload="none"></audio>
 
 <div class="overlay" id="overlay">
   <div class="reader" id="reader"></div>
@@ -2433,9 +2445,26 @@ function closeReader() {
   document.getElementById("overlay").classList.remove("open");
 }
 
-/* ---------- music ---------- */
+/* ---------- music: gentle classical lullaby playlist ---------- */
+// All recordings are public domain (Wikimedia Commons) — free to use forever.
+const PLAYLIST = [
+  { file: "audio/brahms-lullaby.mp3",        title: "Brahms — Lullaby (Wiegenlied, Op. 49 No. 4)" },
+  { file: "audio/gymnopedie-1.mp3",          title: "Satie — Gymnopédie No. 1" },
+  { file: "audio/debussy-clair-de-lune.mp3", title: "Debussy — Clair de Lune" },
+  { file: "audio/chopin-nocturne.mp3",       title: "Chopin — Nocturne Op. 9 No. 2" },
+  { file: "audio/bach-air.mp3",              title: "Bach — Air on the G String" }
+];
 const music = document.getElementById("bgMusic");
 music.volume = 0.35;
+music.loop = false;                 // one piece flows into the next instead
+let trackIdx = 0;
+
+function loadTrack(i, autoplay) {
+  trackIdx = (i + PLAYLIST.length) % PLAYLIST.length;
+  music.src = PLAYLIST[trackIdx].file;
+  if (autoplay) music.play().catch(() => {});
+  updateMusicBtn();
+}
 
 function updateMusicBtn() {
   const t = UI[effLang()];
@@ -2443,10 +2472,18 @@ function updateMusicBtn() {
   const btn = document.getElementById("musicBtn");
   btn.classList.toggle("playing", playing);
   document.getElementById("musicLabel").textContent = playing ? t.musicPause : t.music;
+  btn.title = PLAYLIST[trackIdx].title;   // hover shows the piece now playing
+  const now = document.getElementById("nowPlaying");
+  if (now) now.textContent = playing ? "♪ " + PLAYLIST[trackIdx].title : "";
 }
+
+// when a piece ends, drift softly into the next one
+music.addEventListener("ended", () => loadTrack(trackIdx + 1, true));
 
 document.getElementById("musicBtn").addEventListener("click", () => {
   if (music.paused) {
+    // start on a different piece each night so bedtime never feels repetitive
+    if (!music.src) loadTrack(Math.floor(Math.random() * PLAYLIST.length), false);
     music.play().then(updateMusicBtn).catch(updateMusicBtn);
   } else {
     music.pause();
