@@ -162,6 +162,37 @@
   footer { text-align: center; color: var(--ink-soft); margin-top: 56px; font-size: 14px; }
   .credit { font-size: 12px; margin-top: 8px; opacity: .75; }
 
+  /* --- feedback --- */
+  .feedback {
+    background: rgba(255,255,255,.03); border: 1px solid #2b3560; border-radius: 20px;
+    padding: 26px 24px; margin: 44px 0 0; text-align: center;
+  }
+  .fb-title { font-size: 21px; color: var(--moon); margin-bottom: 6px; }
+  .fb-sub { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 18px; }
+  .fb-stars { display: flex; justify-content: center; gap: 6px; margin-bottom: 18px; }
+  .fb-star {
+    background: none; border: none; cursor: pointer; font-size: 34px; line-height: 1;
+    color: #3b466f; padding: 2px 4px;
+    transition: transform .12s, color .12s; font-family: inherit;
+  }
+  .fb-star:hover { transform: scale(1.15); }
+  .fb-star.on { color: var(--gold); }
+  .fb-input, .fb-text {
+    width: 100%; background: #141b38; border: 1.5px solid #323d68; color: var(--ink);
+    border-radius: 12px; padding: 12px 14px; font-size: 15px; font-family: inherit;
+    margin-bottom: 12px; resize: vertical;
+  }
+  .fb-input:focus, .fb-text:focus { outline: none; border-color: var(--gold); }
+  .fb-input::placeholder, .fb-text::placeholder { color: #6b74a0; }
+  .fb-send {
+    background: var(--gold); border: none; color: #201a08; font-weight: 700;
+    padding: 12px 28px; border-radius: 999px; font-size: 15.5px; cursor: pointer;
+    font-family: inherit; transition: transform .12s, box-shadow .2s;
+    box-shadow: 0 4px 14px rgba(245,198,100,.28);
+  }
+  .fb-send:hover { transform: translateY(-2px); }
+  .fb-thanks { font-size: 18px; color: var(--gold); padding: 14px 0; line-height: 1.5; }
+
   /* --- music toggle --- */
   .music-btn {
     position: fixed; bottom: 22px; right: 22px; z-index: 8;
@@ -205,6 +236,8 @@
   <p class="count-line" id="countLine"></p>
   <div class="grid" id="grid"></div>
 
+  <section class="feedback" id="feedback"></section>
+
   <footer>
     <div id="footerLine"></div>
     <div class="credit">♪ Erik Satie — Gymnopédie No. 1 · Robin Alciatore (public domain)</div>
@@ -230,7 +263,11 @@ const UI = {
         music: "Music", musicPause: "Pause",
         listen: "Read to me", listenStop: "Stop reading",
         footer: "Made with love, for one curious little dreamer.",
-        empty: "No stories here yet — try another filter." },
+        empty: "No stories here yet — try another filter.",
+        fbTitle: "Did you enjoy a story?", fbSub: "Tap a star and leave a note — we'd love to hear from you.",
+        fbName: "Your name (optional)", fbComment: "Your comment, an idea, or which scientist we should add next…",
+        fbSend: "Send feedback", fbThanks: "Thank you! 💛 Your feedback means the world to us.",
+        fbNeed: "Please tap a star or write a little note first." },
   sw: { title: "Malakai Stories",
         subtitle: "Hadithi fupi za usiku zenye funzo — kuhusu watu waliobadilisha dunia: walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
         region: "Kanda", topic: "Mada", gender: "Jinsia", all: "Zote",
@@ -239,7 +276,11 @@ const UI = {
         music: "Muziki", musicPause: "Simamisha",
         listen: "Nisomee", listenStop: "Acha kusoma",
         footer: "Imetengenezwa kwa upendo, kwa ajili ya mwotaji mdogo mdadisi.",
-        empty: "Hakuna hadithi hapa bado — jaribu kichujio kingine." },
+        empty: "Hakuna hadithi hapa bado — jaribu kichujio kingine.",
+        fbTitle: "Umefurahia hadithi?", fbSub: "Gusa nyota na uache ujumbe — tungependa kusikia kutoka kwako.",
+        fbName: "Jina lako (si lazima)", fbComment: "Maoni yako, wazo, au mwanasayansi tumwongeze baadaye…",
+        fbSend: "Tuma maoni", fbThanks: "Asante! 💛 Maoni yako ni ya thamani kubwa kwetu.",
+        fbNeed: "Tafadhali gusa nyota au andika ujumbe mfupi kwanza." },
   fr: { title: "Malakai Stories",
         subtitle: "De courtes histoires du soir qui enseignent — sur les gens qui ont changé le monde : où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
         region: "Région", topic: "Sujet", gender: "Genre", all: "Tout",
@@ -248,7 +289,11 @@ const UI = {
         music: "Musique", musicPause: "Pause",
         listen: "Lis-moi l'histoire", listenStop: "Arrête la lecture",
         footer: "Fait avec amour, pour un petit rêveur curieux.",
-        empty: "Pas encore d'histoire ici — essayez un autre filtre." }
+        empty: "Pas encore d'histoire ici — essayez un autre filtre.",
+        fbTitle: "Avez-vous aimé une histoire ?", fbSub: "Touchez une étoile et laissez un mot — votre avis compte beaucoup.",
+        fbName: "Votre nom (facultatif)", fbComment: "Votre commentaire, une idée, ou quel scientifique ajouter…",
+        fbSend: "Envoyer", fbThanks: "Merci ! 💛 Votre avis compte énormément pour nous.",
+        fbNeed: "Veuillez toucher une étoile ou écrire un petit mot." }
 };
 
 const REGIONS = {
@@ -2249,6 +2294,7 @@ function render() {
   document.getElementById("genderLabel").textContent = t.gender;
   document.getElementById("footerLine").textContent = t.footer;
   updateMusicBtn();
+  renderFeedback();
 
   document.getElementById("langSwitch").innerHTML = ["en", "sw", "fr"].map(l =>
     `<button class="lang-btn ${l === lang ? "active" : ""}" data-lang="${l}">${{en:"English",sw:"Kiswahili",fr:"Français"}[l]}</button>`
@@ -2598,10 +2644,75 @@ async function startNarration() {
   speakNext();
 }
 
+/* ---------- feedback ---------- */
+// Feedback is stored in Supabase. Paste the project's PUBLIC anon key below to
+// turn on silent, dashboard-collected storage (the anon key is safe to embed —
+// NEVER paste the secret service_role key). While empty, the form falls back to
+// opening a pre-filled email so it still works.
+const SUPABASE_URL = "https://yyvvbqggwkkncbistzzv.supabase.co";
+const SUPABASE_ANON_KEY = "";
+let fbRating = 0, fbSent = false, fbName = "", fbComment = "";
+
+function renderFeedback() {
+  const el = document.getElementById("feedback");
+  if (!el) return;
+  const t = UI[lang];
+  if (fbSent) { el.innerHTML = `<div class="fb-thanks">${t.fbThanks}</div>`; return; }
+  el.innerHTML = `
+    <h3 class="fb-title">${t.fbTitle}</h3>
+    <p class="fb-sub">${t.fbSub}</p>
+    <div class="fb-stars" id="fbStars">${[1,2,3,4,5].map(n =>
+      `<button class="fb-star${n <= fbRating ? " on" : ""}" data-star="${n}" aria-label="${n} / 5">★</button>`).join("")}</div>
+    <input class="fb-input" id="fbName" placeholder="${t.fbName}" value="${fbName.replace(/"/g, "&quot;")}">
+    <textarea class="fb-text" id="fbComment" rows="3" placeholder="${t.fbComment}">${fbComment.replace(/</g, "&lt;")}</textarea>
+    <button class="fb-send" id="fbSend">${t.fbSend}</button>`;
+}
+
+function fbCapture() {
+  const n = document.getElementById("fbName"); if (n) fbName = n.value;
+  const c = document.getElementById("fbComment"); if (c) fbComment = c.value;
+}
+
+function submitFeedback() {
+  fbCapture();
+  const comment = fbComment.trim();
+  if (!fbRating && !comment) { alert(UI[lang].fbNeed); return; }
+  const payload = { rating: fbRating || null, name: fbName.trim(), comment, language: lang, url: location.hostname };
+  if (SUPABASE_ANON_KEY) {
+    fetch(`${SUPABASE_URL}/rest/v1/feedback`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify(payload)
+    }).then(() => { fbSent = true; renderFeedback(); })
+      .catch(() => { fbSent = true; renderFeedback(); });
+  } else {
+    const to = ["samuel.kimani.sikuku", "gmail.com"].join("@");
+    const subject = "Malakai Stories feedback" + (fbRating ? ` (${fbRating}★)` : "");
+    const body = `Rating: ${fbRating || "-"}/5\nName: ${fbName.trim() || "-"}\nLanguage: ${lang}\n\n${comment}`;
+    window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    fbSent = true; renderFeedback();
+  }
+}
+
 /* ---------- events (delegated) ---------- */
 document.addEventListener("click", e => {
   const langBtn = e.target.closest("[data-lang]");
   if (langBtn) { lang = langBtn.dataset.lang; render(); return; }
+
+  const star = e.target.closest(".fb-star");
+  if (star) {
+    fbCapture();
+    fbRating = +star.dataset.star;
+    document.querySelectorAll("#fbStars .fb-star").forEach(b =>
+      b.classList.toggle("on", +b.dataset.star <= fbRating));
+    return;
+  }
+  if (e.target.closest("#fbSend")) { submitFeedback(); return; }
 
   if (e.target.closest("#narrateBtn")) {
     if (narrating) stopNarration(); else startNarration();
