@@ -66,7 +66,9 @@
     display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .14em;
     color: var(--gold); font-weight: 700; margin-bottom: 10px;
   }
-  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* align-items/align-content keep the pills at their natural height instead of
+     stretching to fill the row when it wraps. */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; align-content: flex-start; }
   .chip {
     background: transparent; border: 1.5px solid #323d68; color: var(--ink-soft);
     padding: 8px 16px; border-radius: 999px; font-size: 14px; cursor: pointer;
@@ -74,6 +76,9 @@
     display: inline-flex; align-items: center; gap: 8px; line-height: 1.1;
   }
   .chip:hover { color: var(--ink); border-color: #56639a; background: rgba(255,255,255,.05); }
+  /* NB: not ".empty" — that class already styles the no-stories message (padding: 50px). */
+  .chip.zero { opacity: .3; cursor: default; }
+  .chip.zero:hover { color: var(--ink-soft); border-color: #323d68; background: transparent; }
   .chip.active {
     background: var(--gold); border-color: var(--gold); color: #241d07; font-weight: 700;
     box-shadow: 0 4px 14px rgba(245,198,100,.28);
@@ -4190,6 +4195,12 @@ const UI_LANGS = ["en", "sw", "fr"];               // languages with a full inte
 function effLang() { return UI_LANGS.includes(lang) ? lang : LANG_FALLBACK[lang]; }
 function pick(o) { return o ? (o[lang] != null ? o[lang] : o[effLang()]) : ""; }  // story field, supports drop-in translations
 
+// Stories available in the chosen language. Full-interface languages have every
+// story; a partially translated one (Gĩkũyũ today) lists only what really exists.
+function inLang() {
+  return UI_LANGS.includes(lang) ? STORIES : STORIES.filter(s => s.text?.[lang]);
+}
+
 // Shown when a story has no translation yet in the chosen language, worded in
 // whichever language we are actually falling back to.
 function xlateNote() {
@@ -4221,7 +4232,9 @@ const REGION_COLORS = {
 };
 
 function chipHtml(key, label, active, kind, dot, count) {
-  return `<button class="chip ${active ? "active" : ""}" data-kind="${kind}" data-key="${key}">` +
+  // A chip with nothing behind it would be a dead end — dim it and switch it off.
+  const zero = count === 0 && !active ? " zero" : "";
+  return `<button class="chip${active ? " active" : ""}${zero}" data-kind="${kind}" data-key="${key}"${zero ? " disabled" : ""}>` +
     (dot ? `<span class="dot" style="background:${dot}"></span>` : "") +
     label +
     (count != null ? `<span class="cnt">${count}</span>` : "") +
@@ -4253,26 +4266,30 @@ function render() {
       `</div>`
     : `<div class="lang-row">${LANGS.map(langBtnHtml).join("")}</div>`;
 
+  // For a partially translated language (e.g. Gĩkũyũ) show only the stories that
+  // actually exist in it, so the library never pretends a translation is there.
+  const pool = inLang();
+
   document.getElementById("regionChips").innerHTML =
-    chipHtml("all", t.all, regionFilter === "all", "region", null, STORIES.length) +
+    chipHtml("all", t.all, regionFilter === "all", "region", null, pool.length) +
     Object.keys(REGIONS).map(k =>
       chipHtml(k, pick(REGIONS[k]), regionFilter === k, "region", REGION_COLORS[k],
-        STORIES.filter(s => s.region === k).length)).join("");
+        pool.filter(s => s.region === k).length)).join("");
 
   document.getElementById("topicChips").innerHTML =
-    chipHtml("all", t.all, topicFilter === "all", "topic", null, STORIES.length) +
+    chipHtml("all", t.all, topicFilter === "all", "topic", null, pool.length) +
     Object.keys(TOPICS).map(k =>
       chipHtml(k, `${TOPICS[k].emoji} ${pick(TOPICS[k])}`, topicFilter === k, "topic", null,
-        STORIES.filter(s => s.topic === k).length)).join("");
+        pool.filter(s => s.topic === k).length)).join("");
 
   document.getElementById("genderChips").innerHTML =
-    chipHtml("all", t.all, genderFilter === "all", "gender", null, STORIES.length) +
+    chipHtml("all", t.all, genderFilter === "all", "gender", null, pool.length) +
     Object.keys(GENDERS).map(k =>
       chipHtml(k, `${GENDERS[k].emoji} ${pick(GENDERS[k])}`, genderFilter === k, "gender", null,
-        STORIES.filter(s => s.gender === k).length)).join("");
+        pool.filter(s => s.gender === k).length)).join("");
 
   const bornYear = s => s.born ?? parseInt((s.years.match(/\d{4}/) || ["9999"])[0], 10);
-  const visible = STORIES.filter(s =>
+  const visible = pool.filter(s =>
     (regionFilter === "all" || s.region === regionFilter) &&
     (topicFilter === "all" || s.topic === topicFilter) &&
     (genderFilter === "all" || s.gender === genderFilter)
