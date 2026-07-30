@@ -29,11 +29,13 @@ try {
   process.exit(1);
 }
 
-const LANGS = ["en", "sw", "fr"];
+const CORE_LANGS = ["en", "sw", "fr"];   // every story must have these
+const EXTRA_LANGS = ["ki"];              // partial translations: included only where present
 const out = stories.map(s => {
   const langs = {};
-  for (const l of LANGS) {
-    const pack = { title: s.title?.[l], text: s.text?.[l] };
+  for (const l of [...CORE_LANGS, ...EXTRA_LANGS]) {
+    if (!s.text?.[l]) continue;          // skip languages this story lacks
+    const pack = { title: s.title?.[l] || s.title?.en, text: s.text[l] };
     if (s.textM?.[l]) pack.textM = s.textM[l];
     if (s.textL?.[l]) pack.textL = s.textL[l];
     langs[l] = pack;
@@ -44,7 +46,8 @@ const out = stories.map(s => {
 // Fail loudly rather than shipping a half-built file the narrator would choke on.
 const problems = [];
 for (const s of out) {
-  for (const l of LANGS) {
+  for (const l of CORE_LANGS) {
+    if (!s.langs[l]) { problems.push(`${s.id}: missing ${l} entirely`); continue; }
     if (!s.langs[l].title) problems.push(`${s.id}: missing ${l} title`);
     if (!Array.isArray(s.langs[l].text) || !s.langs[l].text.length)
       problems.push(`${s.id}: missing ${l} text`);
