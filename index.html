@@ -76,6 +76,26 @@
     display: inline-flex; align-items: center; gap: 8px; line-height: 1.1;
   }
   .chip:hover { color: var(--ink); border-color: #56639a; background: rgba(255,255,255,.05); }
+  /* --- search --- */
+  .search-group { padding-bottom: 2px; }
+  .search-box { position: relative; display: flex; align-items: center; }
+  .search-ico { position: absolute; left: 15px; font-size: 15px; opacity: .6; pointer-events: none; }
+  #searchInput {
+    width: 100%; background: #141b38; border: 1.5px solid #323d68; color: var(--ink);
+    border-radius: 999px; padding: 11px 42px 11px 42px; font-size: 15px; font-family: inherit;
+    transition: border-color .18s;
+    -webkit-appearance: none; appearance: none;
+  }
+  #searchInput:focus { outline: none; border-color: var(--gold); }
+  #searchInput::placeholder { color: #6b74a0; }
+  #searchInput::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+  .search-clear {
+    position: absolute; right: 10px; background: #2a355f; border: none; color: var(--ink);
+    width: 26px; height: 26px; border-radius: 50%; font-size: 13px; cursor: pointer;
+    font-family: inherit; line-height: 1; transition: background .18s;
+  }
+  .search-clear:hover { background: #3c4a80; }
+
   /* NB: not ".empty" — that class already styles the no-stories message (padding: 50px). */
   .chip.zero { opacity: .3; cursor: default; }
   .chip.zero:hover { color: var(--ink-soft); border-color: #323d68; background: transparent; }
@@ -245,6 +265,13 @@
   </header>
 
   <div class="filters">
+    <div class="filter-group search-group">
+      <div class="search-box">
+        <span class="search-ico" aria-hidden="true">🔍</span>
+        <input type="search" id="searchInput" autocomplete="off" spellcheck="false">
+        <button class="search-clear" id="searchClear" type="button" aria-label="Clear" hidden>✕</button>
+      </div>
+    </div>
     <div class="filter-group">
       <span class="filter-label" id="regionLabel"></span>
       <div class="chip-row" id="regionChips"></div>
@@ -293,6 +320,7 @@ const UI = {
         listen: "Read to me", listenStop: "Stop reading",
         footer: "Made with love, for one curious little dreamer.",
         empty: "No stories here yet — try another filter.",
+        search: "Search a name, place or idea…", noMatch: q => `Nothing found for “${q}”.`,
         fbTitle: "Did you enjoy a story?", fbSub: "Tap a star and leave a note — we'd love to hear from you.",
         fbName: "Your name (optional)", fbComment: "Your comment, an idea, or which scientist we should add next…",
         fbSend: "Send feedback", fbThanks: "Thank you! 💛 Your feedback means the world to us.",
@@ -306,6 +334,7 @@ const UI = {
         listen: "Nisomee", listenStop: "Acha kusoma",
         footer: "Imetengenezwa kwa upendo, kwa ajili ya mwotaji mdogo mdadisi.",
         empty: "Hakuna hadithi hapa bado — jaribu kichujio kingine.",
+        search: "Tafuta jina, mahali au wazo…", noMatch: q => `Hakuna kilichopatikana kwa “${q}”.`,
         fbTitle: "Umefurahia hadithi?", fbSub: "Gusa nyota na uache ujumbe — tungependa kusikia kutoka kwako.",
         fbName: "Jina lako (si lazima)", fbComment: "Maoni yako, wazo, au mwanasayansi tumwongeze baadaye…",
         fbSend: "Tuma maoni", fbThanks: "Asante! 💛 Maoni yako ni ya thamani kubwa kwetu.",
@@ -319,6 +348,7 @@ const UI = {
         listen: "Lis-moi l'histoire", listenStop: "Arrête la lecture",
         footer: "Fait avec amour, pour un petit rêveur curieux.",
         empty: "Pas encore d'histoire ici — essayez un autre filtre.",
+        search: "Cherchez un nom, un lieu ou une idée…", noMatch: q => `Aucun résultat pour « ${q} ».`,
         fbTitle: "Avez-vous aimé une histoire ?", fbSub: "Touchez une étoile et laissez un mot — votre avis compte beaucoup.",
         fbName: "Votre nom (facultatif)", fbComment: "Votre commentaire, une idée, ou quel scientifique ajouter…",
         fbSend: "Envoyer", fbThanks: "Merci ! 💛 Votre avis compte énormément pour nous.",
@@ -4165,6 +4195,36 @@ let lang = "en";
 let regionFilter = "all";
 let topicFilter = "all";
 let genderFilter = "all";
+let searchQuery = "";
+
+// Fold accents so "Ngugi" finds "Ngũgĩ" and "Francais" finds "Français".
+const fold = s => (s || "").toString().toLowerCase()
+  .normalize("NFD").replace(/[̀-ͯ]/g, "")
+  .replace(/[’']/g, "'");
+
+// A story matches if every word typed appears somewhere in it — the person, the
+// title, the teaser, country, era, categories, and the story text itself, so
+// "ants", "windmill" or "gorillas" find the right bedtime story.
+const searchIndex = new Map();
+function haystack(s) {
+  const key = s.id + ":" + lang;
+  let hay = searchIndex.get(key);
+  if (hay === undefined) {
+    hay = fold([
+      s.name, s.years, pick(s.title), pick(s.hook), pick(s.country),
+      pick(REGIONS[s.region]), pick(TOPICS[s.topic]),
+      REGIONS[s.region]?.en, TOPICS[s.topic]?.en, s.country?.en,
+      (pick(s.text) || []).join(" ")
+    ].join(" ")).replace(/<[^>]+>/g, " ");
+    searchIndex.set(key, hay);
+  }
+  return hay;
+}
+function matchesSearch(s) {
+  if (!searchQuery) return true;
+  const hay = haystack(s);
+  return fold(searchQuery).split(/\s+/).filter(Boolean).every(w => hay.includes(w));
+}
 
 // Languages. Full UI + content exist for en/sw/fr. The African heritage
 // languages below fall back to French for the interface, audio, and any story
@@ -4256,6 +4316,11 @@ function render() {
   document.getElementById("footerLine").textContent = t.footer;
   updateMusicBtn();
   renderFeedback();
+  // Set properties rather than rebuilding the input, so typing keeps focus.
+  const searchEl = document.getElementById("searchInput");
+  searchEl.placeholder = t.search;
+  if (searchEl.value !== searchQuery) searchEl.value = searchQuery;
+  document.getElementById("searchClear").hidden = !searchQuery;
 
   const langBtnHtml = l =>
     `<button class="lang-btn ${l.code === lang ? "active" : ""}" data-lang="${l.code}">${l.label}</button>`;
@@ -4272,7 +4337,9 @@ function render() {
 
   // For a partially translated language (e.g. Gĩkũyũ) show only the stories that
   // actually exist in it, so the library never pretends a translation is there.
-  const pool = inLang();
+  // Counts follow the search too, so a category never promises stories the
+  // current search has already ruled out.
+  const pool = inLang().filter(matchesSearch);
 
   document.getElementById("regionChips").innerHTML =
     chipHtml("all", t.all, regionFilter === "all", "region", null, pool.length) +
@@ -4303,7 +4370,7 @@ function render() {
 
   const grid = document.getElementById("grid");
   grid.innerHTML = visible.length === 0
-    ? `<div class="empty">${t.empty}</div>`
+    ? `<div class="empty">${searchQuery ? t.noMatch(searchQuery) : t.empty}</div>`
     : visible.map(s => `
       <div class="card" data-story="${s.id}">
         <div class="card-top">
@@ -4701,6 +4768,20 @@ function submitFeedback() {
     fbSent = true; renderFeedback();
   }
 }
+
+/* ---------- search ---------- */
+document.getElementById("searchInput").addEventListener("input", e => {
+  searchQuery = e.target.value.trim();
+  render();
+});
+document.getElementById("searchClear").addEventListener("click", () => {
+  searchQuery = "";
+  render();
+  document.getElementById("searchInput").focus();
+});
+document.getElementById("searchInput").addEventListener("keydown", e => {
+  if (e.key === "Escape" && searchQuery) { e.stopPropagation(); searchQuery = ""; render(); }
+});
 
 /* ---------- events (delegated) ---------- */
 document.addEventListener("click", e => {
