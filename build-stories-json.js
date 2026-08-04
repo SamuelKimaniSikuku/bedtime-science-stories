@@ -30,7 +30,7 @@ try {
 }
 
 const CORE_LANGS = ["en", "sw", "fr"];   // every story must have these
-const EXTRA_LANGS = ["ki"];              // partial translations: included only where present
+const EXTRA_LANGS = ["ki", "sv"];        // partial translations: included only where present
 const out = stories.map(s => {
   const langs = {};
   for (const l of [...CORE_LANGS, ...EXTRA_LANGS]) {
