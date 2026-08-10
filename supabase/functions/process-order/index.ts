@@ -55,11 +55,21 @@ Deno.serve(async (req) => {
 
     if (action === "clone") {
       if (order.voice_id) return json({ ok: true, voice_id: order.voice_id, note: "already cloned" });
-      const { data: file, error: dlErr } = await supabase.storage.from("samples").download(order.sample_path);
-      if (dlErr || !file) return json({ error: "cannot read sample: " + (dlErr?.message ?? "missing") }, 500);
+      // Build the clone from every take the parent recorded. Orders made before
+      // multi-take existed only have sample_path, so fall back to that.
+      const paths: string[] = Array.isArray(order.sample_paths) && order.sample_paths.length
+        ? order.sample_paths
+        : [order.sample_path];
       const fd = new FormData();
       fd.append("name", `${order.parent_name} · ${order.token}`);
-      fd.append("files", file, order.sample_path.split("/").pop() ?? "sample.webm");
+      let attached = 0;
+      for (const p of paths) {
+        const { data: file, error: dlErr } = await supabase.storage.from("samples").download(p);
+        if (dlErr || !file) continue;          // skip a missing take rather than failing the whole clone
+        fd.append("files", file, p.split("/").pop() ?? "sample.webm");
+        attached++;
+      }
+      if (!attached) return json({ error: "cannot read any voice sample for this order" }, 500);
       const r = await fetch(`${XI}/voices/add`, { method: "POST", headers: { "xi-api-key": xiKey }, body: fd });
       if (!r.ok) {
         const msg = await xiError(r);

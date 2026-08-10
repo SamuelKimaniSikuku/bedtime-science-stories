@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0a0f22">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your Voice · Malakai Stories — bedtime stories read in YOUR voice</title>
-<meta name="description" content="Record 2 minutes of your voice and we turn it into a full library of bedtime science stories, read to your child in your own voice — in English, Kiswahili or Français.">
+<meta name="description" content="Record three short passages in your voice and we turn them into a full library of bedtime science stories, read to your child in your own voice — in English, Kiswahili or Français.">
 <style>
   :root {
     --night: #0f1630; --night-deep: #0a0f22; --card: #1a2244;
@@ -85,7 +85,7 @@
   <header>
     <div style="font-size:48px">💛</div>
     <h1>Bedtime stories, read in <em>your</em> voice</h1>
-    <p class="subtitle">You record just <strong style="color:var(--moon)">2 minutes</strong>. We turn it into a whole library —
+    <p class="subtitle">You record <strong style="color:var(--moon)">three short passages</strong> — about three minutes in all. We turn them into a whole library —
     every Malakai story read aloud to your child in your own warm voice, in English, Kiswahili or Français.
     Even when you're away, travelling, or working late… your voice tucks them in.</p>
     <p style="margin-top:10px"><a class="back" href="index.html">← Back to the stories</a></p>
@@ -94,7 +94,7 @@
   <div class="card">
     <h2>How it works</h2>
     <div class="steps">
-      <div class="stepbox"><div class="big">🎙️</div><b>1 · Record</b><span>Read our 2-minute sample script below, right here on this page. No app, no account.</span></div>
+      <div class="stepbox"><div class="big">🎙️</div><b>1 · Record</b><span>Read our three short passages below, right here on this page. No app, no account.</span></div>
       <div class="stepbox"><div class="big">📧</div><b>2 · Send</b><span>Email us your recording with one click. We confirm your package and payment (M-Pesa or card).</span></div>
       <div class="stepbox"><div class="big">🌙</div><b>3 · Listen</b><span>Within a few days, the “Read to me” button plays the stories in YOUR voice for your child.</span></div>
     </div>
@@ -106,13 +106,13 @@
       <div class="price">
         <h3>One language</h3>
         <div class="amt">KSh 1,500 <small>≈ $12</small></div>
-        <small>All 60 stories in your voice, in English, Kiswahili or Français</small>
+        <small>All 118 stories in your voice, in English, Kiswahili or Français</small>
       </div>
       <div class="price best">
         <div class="tag">MOST LOVED</div>
         <h3>All three languages</h3>
         <div class="amt">KSh 3,500 <small>≈ $27</small></div>
-        <small>The full library — 180 recordings in your voice</small>
+        <small>The full library — 354 recordings in your voice</small>
       </div>
       <div class="price">
         <h3>Two voices</h3>
@@ -124,18 +124,9 @@
   </div>
 
   <div class="card">
-    <h2>Record your voice</h2>
-    <p>Find a quiet room. Hold your phone about 20&nbsp;cm from your mouth. Speak slowly, warmly — like you're tucking your little one in. You may read in any language you're comfortable with:</p>
-    <div class="script-box">
-      Hello, my darling. Tonight I want to tell you a story about the stars.
-      Long ago, people looked up at the night sky and wondered what those little lights could be.
-      Some thought they were tiny holes in a great dark blanket. Others believed they were faraway fires.
-      Slowly, patiently, curious people began to measure and count, to draw maps of the sky, and to ask
-      why the moon changes shape and why the sun rises every morning. Every question they asked opened
-      a little door, and behind every door there was another wonderful question. Close your eyes now,
-      take a deep breath, and imagine you are floating gently among those stars, warm and safe,
-      while the whole universe hums you a lullaby. Goodnight, my love. Sleep well, and dream big dreams.
-    </div>
+    <h2>Record your voice — three short takes</h2>
+    <p>Find a quiet room. Hold your phone about 20&nbsp;cm from your mouth. Speak slowly, warmly — like you're tucking your little one in. You may read in any language you're comfortable with.</p>
+    <p class="muted" style="margin-bottom:10px">Three different passages give a much better voice than one: a calm one, a curious one, and a playful one. Each takes about a minute.</p>
 
     <label>Your name<br><input type="text" id="parentName" placeholder="e.g. Amina"></label><br>
     <label>Your email<br><input type="text" id="parentEmail" placeholder="e.g. amina@gmail.com"></label><br>
@@ -159,19 +150,16 @@
       <label for="consent">This is <strong>my own voice</strong>, and I give my consent for it to be digitally cloned for the sole purpose of narrating Malakai Stories for my family. I can ask for it to be deleted at any time.</label>
     </div>
 
-    <div class="row">
-      <button id="recBtn" disabled>● Start recording</button>
-      <span class="muted" id="recTimer"></span>
-    </div>
-    <audio id="recPreview" controls style="display:none"></audio>
+    <div id="takes"></div>
+
     <div class="row" id="sendRow" style="display:none">
-      <button id="sendNowBtn" style="display:none">💛 Send my recording</button>
-      <button id="dlBtn">⬇ 1 · Download my recording</button>
-      <button class="ghost" id="mailBtn">📧 2 · Email it to us</button>
+      <button id="sendNowBtn" style="display:none">💛 Send my recordings</button>
+      <button id="dlBtn">⬇ 1 · Download my recordings</button>
+      <button class="ghost" id="mailBtn">📧 2 · Email them to us</button>
     </div>
     <div class="status" id="recStatus"></div>
     <p class="muted" id="sendHelp" style="display:none">
-      The email opens pre-filled — just <strong>attach the recording file you downloaded</strong> (check your Downloads folder) and press send.
+      The email opens pre-filled — just <strong>attach the recording files you downloaded</strong> (check your Downloads folder) and press send.
       We'll reply with payment details and have your voice pack ready within a few days.
     </p>
   </div>
@@ -180,7 +168,7 @@
     <h2>Questions parents ask</h2>
     <p><strong style="color:var(--ink)">Is my voice safe?</strong> Yes. Your recording is used only to create your family's story narrations, is never shared, and is deleted on request.</p>
     <p style="margin-top:8px"><strong style="color:var(--ink)">Do I need any app or account?</strong> No — just this page, your voice, and an email.</p>
-    <p style="margin-top:8px"><strong style="color:var(--ink)">What if I speak only one of the languages?</strong> No problem. Your 2-minute recording can be in any language — the stories can still be generated in all three, in your voice.</p>
+    <p style="margin-top:8px"><strong style="color:var(--ink)">What if I speak only one of the languages?</strong> No problem. Your recordings can be in any language — the stories can still be generated in all three, in your voice.</p>
     <p style="margin-top:8px"><strong style="color:var(--ink)">How do I pay?</strong> After you send your recording, we reply with M-Pesa or card payment options. You pay only when you're ready.</p>
   </div>
 
@@ -199,7 +187,7 @@ if (REDO_TOKEN) {
   document.querySelector("header .subtitle").innerHTML =
     `You're <strong style="color:var(--moon)">re-recording your voice</strong> for order
      <strong style="color:var(--moon)">${REDO_TOKEN.replace(/[^a-z0-9]/gi,"")}</strong>.
-     Take your time: 2–3 minutes, quiet room, warm storytelling voice. The new recording replaces the old one,
+     Take your time: three short passages, quiet room, warm storytelling voice. The new takes replace the old ones,
      and your stories will be regenerated with the improved voice.`;
   // hide the sections that don't apply
   document.querySelectorAll(".card").forEach(c => {
@@ -214,7 +202,74 @@ if (REDO_TOKEN) {
     $("langPick").style.display = "none";
   });
 }
-let mediaRec = null, chunks = [], recBlob = null, recStart = 0, timerInt = null, recExt = "webm";
+/* Three short takes, each a different kind of passage. ElevenLabs builds a
+   noticeably better voice from varied material — a calm read, a curious one
+   with questions, and a playful one with names and numbers — than from the
+   same paragraph three times. */
+const TAKES = [
+  { n: 1, label: "Calm — a bedtime voice", script:
+    `Hello, my darling. Tonight I want to tell you a story about the stars.
+     Long ago, people looked up at the night sky and wondered what those little lights could be.
+     Some thought they were tiny holes in a great dark blanket. Others believed they were faraway fires.
+     Slowly, patiently, curious people began to measure and count, to draw maps of the sky, and to ask
+     why the moon changes shape and why the sun rises every morning. Close your eyes now,
+     take a deep breath, and imagine you are floating gently among those stars, warm and safe,
+     while the whole universe hums you a lullaby. Goodnight, my love. Sleep well, and dream big dreams.` },
+  { n: 2, label: "Curious — questions and wondering", script:
+    `Have you ever wondered why the sea is salty? Or how a tiny seed knows which way is up?
+     Why do birds fly in a V? How does a bee find its way home in the dark?
+     Long ago, a girl in Kenya asked why her river had stopped running. A boy in Malawi asked
+     whether the wind could light a lamp. Nobody handed them the answer — so they went and found it
+     themselves. That is what a question is, my love: a little door. Push it open, and see what is behind.
+     And behind it, if you are lucky, there is always another door.` },
+  { n: 3, label: "Playful — a lighter, warmer read", script:
+    `Once upon a time — yes, this time really — there were three friends: Amina, Kofi and Malakai.
+     On Monday they counted forty-two stars. On Tuesday it rained, so they built a boat out of a
+     cardboard box. On Wednesday, Kofi shouted, "Look! A rainbow!" and everybody ran outside,
+     laughing and splashing through the puddles. Zebra. Jaguar. Quail. Fox. Sing a little, whisper a
+     little, and yawn a great big yawn. Now then, my love — it really is time to sleep.` }
+];
+
+let mediaRec = null, chunks = [], recStart = 0, timerInt = null, activeTake = null;
+const takeData = {};   // n -> { blob, ext, secs }
+
+function renderTakes() {
+  $("takes").innerHTML = TAKES.map(t => {
+    const d = takeData[t.n];
+    return `<div class="card" style="background:rgba(255,255,255,.03); margin:14px 0; padding:16px 16px 12px">
+      <div class="row" style="justify-content:space-between; align-items:baseline">
+        <strong style="color:var(--moon)">Take ${t.n} of 3 — ${t.label}</strong>
+        <span class="muted" id="mark${t.n}">${d ? `✓ recorded (${fmt(d.secs)})` : "not recorded yet"}</span>
+      </div>
+      <div class="script-box" style="margin:10px 0">${t.script}</div>
+      <div class="row">
+        <button class="takeBtn" data-take="${t.n}" ${$("consent").checked ? "" : "disabled"}>
+          ${d ? "● Record take " + t.n + " again" : "● Record take " + t.n}
+        </button>
+        <span class="muted" id="timer${t.n}"></span>
+      </div>
+      ${d ? `<audio controls src="${d.url}" style="margin-top:10px"></audio>` : ""}
+    </div>`;
+  }).join("");
+  const done = Object.keys(takeData).length;
+  $("sendRow").style.display = done ? "" : "none";
+  const direct = !!SUPABASE_FN_BASE;
+  $("sendNowBtn").style.display = direct ? "" : "none";
+  $("dlBtn").style.display = direct ? "none" : "";
+  $("mailBtn").style.display = direct ? "none" : "";
+  $("sendHelp").style.display = direct ? "none" : (done ? "" : "none");
+  $("sendNowBtn").textContent = done === 3
+    ? "💛 Send my 3 recordings"
+    : `💛 Send my recordings (${done} of 3)`;
+  if (done && done < 3) {
+    $("recStatus").textContent = `${done} of 3 recorded. You can send now, but all three takes make a noticeably better voice.`;
+    $("recStatus").className = "status";
+  } else if (done === 3) {
+    $("recStatus").textContent = "All three takes recorded — listen back, then send them to us. 💛";
+    $("recStatus").className = "status ok";
+  }
+}
+const fmt = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
 
 const picked = name => document.querySelector(`input[name=${name}]:checked`)?.value;
 document.querySelectorAll("input[name=pkg]").forEach(r => r.addEventListener("change", () => {
@@ -222,7 +277,8 @@ document.querySelectorAll("input[name=pkg]").forEach(r => r.addEventListener("ch
 }));
 
 $("sendNowBtn").addEventListener("click", async () => {
-  if (!recBlob) return;
+  const takes = Object.entries(takeData).sort((a, b) => a[0] - b[0]);
+  if (!takes.length) return;
   const parent = $("parentName").value.trim(), email = $("parentEmail").value.trim();
   if (!REDO_TOKEN && (!parent || !/.+@.+\..+/.test(email))) {
     $("recStatus").textContent = "Please fill in your name and a valid email first.";
@@ -238,9 +294,13 @@ $("sendNowBtn").addEventListener("click", async () => {
   fd.append("package", pkg);
   fd.append("langs", langs);
   fd.append("consent", "true");
-  fd.append("sample", recBlob, `sample.${recExt}`);
+  // "sample" stays the first take so older backends keep working; every take is
+  // also sent as "samples" so the clone can be built from all of them.
+  fd.append("sample", takes[0][1].blob, `sample.${takes[0][1].ext}`);
+  for (const [n, d] of takes) fd.append("samples", d.blob, `take-${n}.${d.ext}`);
   $("sendNowBtn").disabled = true;
-  $("recStatus").textContent = "Sending your recording…"; $("recStatus").className = "status";
+  $("recStatus").textContent = `Sending your ${takes.length} recording${takes.length > 1 ? "s" : ""}…`;
+  $("recStatus").className = "status";
   try {
     const r = await fetch(`${SUPABASE_FN_BASE}/submit-order`, { method: "POST", body: fd });
     const j = await r.json();
@@ -258,59 +318,67 @@ $("sendNowBtn").addEventListener("click", async () => {
   }
 });
 
-$("consent").addEventListener("change", () => { $("recBtn").disabled = !$("consent").checked; });
+$("consent").addEventListener("change", () => {
+  document.querySelectorAll(".takeBtn").forEach(b => b.disabled = !$("consent").checked);
+});
 
-$("recBtn").addEventListener("click", async () => {
+$("takes").addEventListener("click", async e => {
+  const btn = e.target.closest(".takeBtn");
+  if (!btn) return;
+  const n = +btn.dataset.take;
   if (mediaRec && mediaRec.state === "recording") { mediaRec.stop(); return; }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
-    chunks = [];
+    chunks = []; activeTake = n;
     mediaRec = new MediaRecorder(stream);
-    mediaRec.ondataavailable = e => chunks.push(e.data);
+    mediaRec.ondataavailable = ev => chunks.push(ev.data);
     mediaRec.onstop = () => {
       stream.getTracks().forEach(t => t.stop());
       clearInterval(timerInt);
-      recBlob = new Blob(chunks, { type: mediaRec.mimeType });
-      recExt = (mediaRec.mimeType.includes("mp4") || mediaRec.mimeType.includes("aac")) ? "m4a" : "webm";
-      $("recPreview").src = URL.createObjectURL(recBlob);
-      $("recPreview").style.display = "";
-      $("sendRow").style.display = "";
-      const direct = !!SUPABASE_FN_BASE;
-      $("sendNowBtn").style.display = direct ? "" : "none";
-      $("dlBtn").style.display = direct ? "none" : "";
-      $("mailBtn").style.display = direct ? "none" : "";
-      $("sendHelp").style.display = direct ? "none" : "";
-      $("recBtn").textContent = "● Record again";
-      $("recBtn").classList.remove("rec");
       const secs = Math.round((Date.now() - recStart) / 1000);
-      $("recStatus").textContent = secs < 45
-        ? "That was quite short — 1 to 2 minutes gives a much better voice. You can record again, or send it anyway."
-        : "Lovely! Listen back — happy with it? Then download and email it to us.";
-      $("recStatus").className = "status " + (secs < 45 ? "err" : "ok");
+      const blob = new Blob(chunks, { type: mediaRec.mimeType });
+      const ext = (mediaRec.mimeType.includes("mp4") || mediaRec.mimeType.includes("aac")) ? "m4a" : "webm";
+      if (secs < 15) {
+        $("recStatus").textContent = `Take ${n} was only ${secs} seconds — too short to be useful. Please record it again.`;
+        $("recStatus").className = "status err";
+      } else {
+        if (takeData[n]) URL.revokeObjectURL(takeData[n].url);   // re-recording replaces the old take
+        takeData[n] = { blob, ext, secs, url: URL.createObjectURL(blob) };
+      }
+      activeTake = null;
+      renderTakes();
+      if (secs >= 15 && secs < 40) {
+        $("recStatus").textContent = `Take ${n} saved, but it was quite short (${fmt(secs)}). About a minute each works best.`;
+        $("recStatus").className = "status";
+      }
     };
     mediaRec.start();
     recStart = Date.now();
-    $("recBtn").textContent = "■ Stop recording";
-    $("recBtn").classList.add("rec");
+    btn.textContent = "■ Stop recording";
+    btn.classList.add("rec");
     $("recStatus").textContent = "";
     timerInt = setInterval(() => {
       const s = Math.floor((Date.now() - recStart) / 1000);
-      $("recTimer").textContent = `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")} — aim for 1:00–2:00`;
+      const el = $("timer" + n);
+      if (el) el.textContent = `${fmt(s)} — aim for about 1:00`;
       if (s >= 150) mediaRec.stop();
     }, 250);
-  } catch (e) {
-    $("recStatus").textContent = "Microphone error: " + e.message + " — please allow microphone access and try again.";
+  } catch (err) {
+    $("recStatus").textContent = "Microphone error: " + err.message + " — please allow microphone access and try again.";
     $("recStatus").className = "status err";
   }
 });
 
 $("dlBtn").addEventListener("click", () => {
-  if (!recBlob) return;
   const name = ($("parentName").value.trim() || "my").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(recBlob);
-  a.download = `${name}-voice-sample.${recExt}`;
-  a.click();
+  Object.entries(takeData).forEach(([n, d], i) => {
+    setTimeout(() => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(d.blob);
+      a.download = `${name}-voice-take-${n}.${d.ext}`;
+      a.click();
+    }, i * 400);   // browsers block rapid-fire downloads; stagger them
+  });
 });
 
 $("mailBtn").addEventListener("click", () => {
@@ -326,12 +394,14 @@ My name: ${parent}
 ${child ? "My child's name: " + child + "\n" : ""}Package I'm interested in: (one language / all three / two voices)
 Language(s): (English / Kiswahili / Français)
 
-I have ATTACHED my 2-minute voice recording to this email (downloaded from your-voice page).
-I confirm the recording is my own voice and I consent to it being cloned for my family's story narrations.
+I have ATTACHED my voice recordings to this email (downloaded from the your-voice page).
+I confirm the recordings are my own voice and I consent to them being cloned for my family's story narrations.
 
 Thank you!`);
   location.href = `mailto:samuel.kimani.sikuku@gmail.com?subject=${subject}&body=${body}`;
 });
+
+renderTakes();
 </script>
 </body>
 </html>

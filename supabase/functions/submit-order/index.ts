@@ -25,7 +25,30 @@ Deno.serve(async (req) => {
     const langs = String(form.get("langs") ?? "en")
       .split(",").map((s) => s.trim()).filter((l) => ["en", "sw", "fr"].includes(l));
     const consent = String(form.get("consent")) === "true";
+    // The page sends up to three takes as "samples"; "sample" is kept as the
+    // first one so an older page still works against this function.
     const sample = form.get("sample");
+    const extras = form.getAll("samples").filter((f): f is File => f instanceof File);
+    const allSamples = (extras.length ? extras : (sample instanceof File ? [sample] : [])).slice(0, 3);
+    const extOf = (f: File) =>
+      (f.type.includes("mp4") || f.type.includes("aac")) ? "m4a"
+        : f.type.includes("mpeg") ? "mp3" : "webm";
+
+    // Store every take and return the paths; the first is the canonical one.
+    const storeTakes = async (
+      supabase: ReturnType<typeof createClient>, tok: string, upsert: boolean,
+    ) => {
+      const paths: string[] = [];
+      for (let i = 0; i < allSamples.length; i++) {
+        const f = allSamples[i];
+        const p = `${tok}/take-${i + 1}.${extOf(f)}`;
+        const { error } = await supabase.storage.from("samples")
+          .upload(p, f, { contentType: f.type || "audio/webm", upsert });
+        if (error) throw new Error(error.message);
+        paths.push(p);
+      }
+      return paths;
+    };
 
     const isRedo = String(form.get("redo_token") ?? "").trim() !== "";
     if (!consent || !(sample instanceof File)) {
@@ -34,8 +57,9 @@ Deno.serve(async (req) => {
     if (!isRedo && (!parent || !email || !langs.length)) {
       return json({ error: "Missing name, email, consent or recording." }, 400);
     }
-    if (sample.size < 20_000) return json({ error: "Recording too short — please record again." }, 400);
-    if (sample.size > 25_000_000) return json({ error: "Recording too large." }, 400);
+    const totalBytes = allSamples.reduce((n, f) => n + f.size, 0);
+    if (totalBytes < 20_000) return json({ error: "Recording too short — please record again." }, 400);
+    if (totalBytes > 60_000_000) return json({ error: "Recordings too large." }, 400);
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -56,18 +80,15 @@ Deno.serve(async (req) => {
         }).catch(() => {});
       }
 
-      const rext = (sample.type.includes("mp4") || sample.type.includes("aac")) ? "m4a"
-        : sample.type.includes("mpeg") ? "mp3" : "webm";
-      const newPath = `${redoToken}/sample.${rext}`;
-      const { error: rUpErr } = await supabase.storage.from("samples")
-        .upload(newPath, sample, { contentType: sample.type || "audio/webm", upsert: true });
-      if (rUpErr) return json({ error: "Could not store recording: " + rUpErr.message }, 500);
+      let rPaths: string[];
+      try { rPaths = await storeTakes(supabase, redoToken, true); }
+      catch (e) { return json({ error: "Could not store recording: " + String(e) }, 500); }
 
       // stale manifest would make the player use old-voice files — remove it
       await supabase.storage.from("voicepacks").remove([`${redoToken}/manifest.json`]).catch(() => {});
 
       const { error: rDbErr } = await supabase.from("orders").update({
-        sample_path: newPath, voice_id: null, done_keys: [], error: null,
+        sample_path: rPaths[0], sample_paths: rPaths, voice_id: null, done_keys: [], error: null,
         status: order.status === "new" ? "new" : "paid",
       }).eq("id", order.id);
       if (rDbErr) return json({ error: "Could not update order: " + rDbErr.message }, 500);
@@ -76,17 +97,13 @@ Deno.serve(async (req) => {
     // ---- normal new order ----
 
     const token = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
-    const ext = (sample.type.includes("mp4") || sample.type.includes("aac")) ? "m4a"
-      : sample.type.includes("mpeg") ? "mp3" : "webm";
-    const samplePath = `${token}/sample.${ext}`;
-
-    const { error: upErr } = await supabase.storage.from("samples")
-      .upload(samplePath, sample, { contentType: sample.type || "audio/webm" });
-    if (upErr) return json({ error: "Could not store recording: " + upErr.message }, 500);
+    let paths: string[];
+    try { paths = await storeTakes(supabase, token, false); }
+    catch (e) { return json({ error: "Could not store recording: " + String(e) }, 500); }
 
     const { error: dbErr } = await supabase.from("orders").insert({
       token, parent_name: parent, child_name: child || null, email,
-      package: pkg, langs, sample_path: samplePath,
+      package: pkg, langs, sample_path: paths[0], sample_paths: paths,
     });
     if (dbErr) return json({ error: "Could not create order: " + dbErr.message }, 500);
 
