@@ -130,11 +130,13 @@ function renderRows() {
           <span class="muted">${new Date(o.created_at).toLocaleString()} · <code>${o.token}</code></span></td>
       <td>${esc(o.package)}<br><span class="muted">${(o.langs || []).join(", ")}</span></td>
       <td><span class="status-${esc(o.status)}">${esc(o.status)}</span>
+          ${o.voice_id ? `<div class="muted">🎙️ voice cloned</div>` : ""}
           ${o.error ? `<div class="err">${esc(o.error)}</div>` : ""}</td>
       <td><span id="prog-${o.token}">${(o.done_keys || []).length ? (o.done_keys.length + " files") : "—"}</span><br>
           <progress id="bar-${o.token}" value="${(o.done_keys || []).length}" max="${totalFor(o)}" style="display:${o.status === "generating" || (o.done_keys||[]).length ? "" : "none"}"></progress></td>
       <td>
         ${o.status === "new" ? `<button onclick="markPaid('${o.token}')">Mark paid</button>` : ""}
+        ${!o.voice_id ? `<button class="ghost" onclick="cloneNow('${o.token}')">Clone now</button>` : ""}
         ${(o.status === "paid" || o.status === "generating") ? `<button onclick="generate('${o.token}')">Generate</button>` : ""}
         ${o.status === "done" ? `<button onclick="copyLink('${o.token}')">Copy link</button>` : ""}
         <button class="ghost" onclick="copyRedo('${o.token}')">Redo link</button>
@@ -148,6 +150,27 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&l
 window.markPaid = async token => {
   try { await api({ action: "mark_paid", token }); toast("Marked paid", true); load(); }
   catch (e) { toast(e.message, false); }
+};
+
+/* Clone only — quick and cheap. Lets you hear the voice before committing to
+   generating hundreds of story files. "Generate" then skips cloning because the
+   backend returns the existing voice_id. */
+window.cloneNow = async token => {
+  const prog = $("prog-" + token);
+  const before = prog.textContent;
+  prog.textContent = "cloning voice…";
+  try {
+    const j = await api({ action: "clone", token });
+    prog.textContent = j.note === "already cloned" ? "voice already cloned" : "✓ voice cloned";
+    toast(j.note === "already cloned"
+      ? "This order already has a cloned voice."
+      : "Voice cloned. Listen to it in ElevenLabs, then press Generate to make the stories.", true);
+    await load();
+  } catch (e) {
+    prog.textContent = before;
+    toast("Clone failed: " + e.message, false);
+    load();
+  }
 };
 
 window.generate = async token => {
