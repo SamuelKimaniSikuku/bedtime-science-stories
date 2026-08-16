@@ -76,6 +76,59 @@
     display: inline-flex; align-items: center; gap: 8px; line-height: 1.1;
   }
   .chip:hover { color: var(--ink); border-color: #56639a; background: rgba(255,255,255,.05); }
+  /* --- reading tracker --- */
+  .tracker {
+    background: linear-gradient(135deg, rgba(245,198,100,.10), rgba(255,255,255,.03));
+    border: 1px solid rgba(245,198,100,.30); border-radius: 20px;
+    padding: 18px 22px; margin: 26px 0 0;
+  }
+  .tracker-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .tracker-title { font-size: 15px; color: var(--moon); font-weight: 700; }
+  .tracker-count { font-size: 14px; color: var(--ink-soft); }
+  .tracker-bar {
+    height: 9px; background: rgba(255,255,255,.08); border-radius: 999px;
+    margin: 11px 0 4px; overflow: hidden;
+  }
+  .tracker-fill {
+    height: 100%; background: linear-gradient(90deg, var(--gold), var(--moon));
+    border-radius: 999px; transition: width .5s ease;
+  }
+  .tracker-next { font-size: 12.5px; color: var(--ink-soft); opacity: .85; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .mbadge {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px;
+    padding: 5px 12px; border-radius: 999px; border: 1.5px solid #323d68;
+    color: var(--ink-soft); background: transparent;
+  }
+  .mbadge.got {
+    border-color: var(--gold); color: var(--moon);
+    background: rgba(245,198,100,.13); font-weight: 700;
+  }
+  .mbadge .ico { font-size: 15px; filter: grayscale(1) opacity(.5); }
+  .mbadge.got .ico { filter: none; }
+  .unread-toggle {
+    background: transparent; border: 1.5px solid #323d68; color: var(--ink-soft);
+    padding: 6px 14px; border-radius: 999px; font-size: 13px; cursor: pointer;
+    font-family: inherit; margin-top: 12px; transition: all .18s;
+  }
+  .unread-toggle:hover { border-color: var(--gold); color: var(--ink); }
+  .unread-toggle.on { background: var(--gold); border-color: var(--gold); color: #241d07; font-weight: 700; }
+
+  .card.read { border-color: rgba(245,198,100,.35); }
+  .card .read-star {
+    position: absolute; top: 14px; right: 16px; font-size: 15px;
+  }
+  .card { position: relative; }
+
+  .mark-read {
+    display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 6px;
+    background: transparent; border: 1.5px solid #3a466f; color: var(--ink-soft);
+    padding: 10px 20px; border-radius: 999px; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: all .2s;
+  }
+  .mark-read:hover { border-color: var(--gold); color: var(--ink); }
+  .mark-read.done { background: var(--gold); border-color: var(--gold); color: #241d07; font-weight: 700; }
+
   /* --- search --- */
   .search-group { padding-bottom: 2px; }
   .search-box { position: relative; display: flex; align-items: center; }
@@ -264,6 +317,8 @@
     <div class="lang-switch" id="langSwitch"></div>
   </header>
 
+  <section class="tracker" id="tracker"></section>
+
   <div class="filters">
     <div class="filter-group search-group">
       <div class="search-box">
@@ -324,6 +379,10 @@ const UI = {
         footer: "Made with love, for one curious little dreamer.",
         empty: "No stories here yet — try another filter.",
         search: "Search a name, place or idea…", noMatch: q => `Nothing found for “${q}”.`,
+        trackTitle: "Our reading journey", starsRead: (n, total) => `${n} of ${total} stories read`,
+        markRead: "⭐ We read this tonight", markedRead: "⭐ Read — tap to undo",
+        unreadOnly: "Not read yet", allStories: "Show all",
+        nextBadge: n => `${n} more to the next badge`, allDone: "You have read them all! 🌟",
         fbTitle: "Did you enjoy a story?", fbSub: "Tap a star and leave a note — we'd love to hear from you.",
         fbName: "Your name (optional)", fbComment: "Your comment, an idea, or which scientist we should add next…",
         fbSend: "Send feedback", fbThanks: "Thank you! 💛 Your feedback means the world to us.",
@@ -338,6 +397,10 @@ const UI = {
         footer: "Imetengenezwa kwa upendo, kwa ajili ya mwotaji mdogo mdadisi.",
         empty: "Hakuna hadithi hapa bado — jaribu kichujio kingine.",
         search: "Tafuta jina, mahali au wazo…", noMatch: q => `Hakuna kilichopatikana kwa “${q}”.`,
+        trackTitle: "Safari yetu ya kusoma", starsRead: (n, total) => `Hadithi ${n} kati ya ${total} zimesomwa`,
+        markRead: "⭐ Tumesoma hii leo", markedRead: "⭐ Imesomwa — gusa kutendua",
+        unreadOnly: "Hazijasomwa", allStories: "Onyesha zote",
+        nextBadge: n => `Zimebaki ${n} kufikia beji ijayo`, allDone: "Umezisoma zote! 🌟",
         fbTitle: "Umefurahia hadithi?", fbSub: "Gusa nyota na uache ujumbe — tungependa kusikia kutoka kwako.",
         fbName: "Jina lako (si lazima)", fbComment: "Maoni yako, wazo, au mwanasayansi tumwongeze baadaye…",
         fbSend: "Tuma maoni", fbThanks: "Asante! 💛 Maoni yako ni ya thamani kubwa kwetu.",
@@ -352,6 +415,10 @@ const UI = {
         footer: "Fait avec amour, pour un petit rêveur curieux.",
         empty: "Pas encore d'histoire ici — essayez un autre filtre.",
         search: "Cherchez un nom, un lieu ou une idée…", noMatch: q => `Aucun résultat pour « ${q} ».`,
+        trackTitle: "Notre voyage de lecture", starsRead: (n, total) => `${n} histoires lues sur ${total}`,
+        markRead: "⭐ Nous l'avons lue ce soir", markedRead: "⭐ Lue — touchez pour annuler",
+        unreadOnly: "Pas encore lues", allStories: "Tout afficher",
+        nextBadge: n => `Encore ${n} avant le prochain badge`, allDone: "Vous les avez toutes lues ! 🌟",
         fbTitle: "Avez-vous aimé une histoire ?", fbSub: "Touchez une étoile et laissez un mot — votre avis compte beaucoup.",
         fbName: "Votre nom (facultatif)", fbComment: "Votre commentaire, une idée, ou quel scientifique ajouter…",
         fbSend: "Envoyer", fbThanks: "Merci ! 💛 Votre avis compte énormément pour nous.",
@@ -8229,6 +8296,45 @@ let topicFilter = "all";
 let genderFilter = "all";
 let searchQuery = "";
 
+/* ---------- reading tracker ----------
+   Which stories this family has read, kept on the device only — no account, no
+   sign-in, nothing sent anywhere. A parent marks a story read at the end of it. */
+let readMap = {};
+try { readMap = JSON.parse(localStorage.getItem("readStories") || "{}"); } catch { readMap = {}; }
+let unreadOnly = false;
+const isRead = id => !!readMap[id];
+const readCount = () => Object.keys(readMap).length;
+function saveRead() { try { localStorage.setItem("readStories", JSON.stringify(readMap)); } catch {} }
+function toggleRead(id) {
+  if (readMap[id]) delete readMap[id]; else readMap[id] = Date.now();
+  saveRead();
+}
+
+// Milestones a small child can see coming. The last one is the whole library.
+const MILESTONES = [
+  { n: 1,   emoji: "⭐", en: "First story",   sw: "Hadithi ya kwanza", fr: "Première histoire" },
+  { n: 5,   emoji: "🌙", en: "Five nights",   sw: "Usiku tano",        fr: "Cinq nuits" },
+  { n: 10,  emoji: "🚀", en: "Ten stories",   sw: "Hadithi kumi",      fr: "Dix histoires" },
+  { n: 25,  emoji: "🌍", en: "Twenty-five",   sw: "Ishirini na tano",  fr: "Vingt-cinq" },
+  { n: 50,  emoji: "🏆", en: "Fifty",         sw: "Hamsini",           fr: "Cinquante" },
+  { n: 100, emoji: "👑", en: "One hundred",   sw: "Mia moja",          fr: "Cent" }
+];
+// Reading widely matters more than reading a lot, so there is a badge for
+// visiting every region and one for trying every topic.
+function extraBadges() {
+  const read = STORIES.filter(s => isRead(s.id));
+  const regions = new Set(read.map(s => s.region));
+  const topics = new Set(read.map(s => s.topic));
+  return [
+    { key: "world", emoji: "🧭", got: regions.size >= Object.keys(REGIONS).length,
+      have: regions.size, need: Object.keys(REGIONS).length,
+      en: "Every continent", sw: "Kila bara", fr: "Chaque continent" },
+    { key: "curious", emoji: "🎒", got: topics.size >= Object.keys(TOPICS).length,
+      have: topics.size, need: Object.keys(TOPICS).length,
+      en: "Every subject", sw: "Kila somo", fr: "Chaque sujet" }
+  ];
+}
+
 // Fold accents so "Ngugi" finds "Ngũgĩ" and "Francais" finds "Français".
 const fold = s => (s || "").toString().toLowerCase()
   .normalize("NFD").replace(/[̀-ͯ]/g, "")
@@ -8330,6 +8436,31 @@ const REGION_COLORS = {
   americas: "var(--accent-americas)", asia: "var(--accent-asia)"
 };
 
+function renderTracker() {
+  const el = document.getElementById("tracker");
+  if (!el) return;
+  const t = UI[effLang()];
+  const total = STORIES.length, n = readCount();
+  const next = MILESTONES.find(m => m.n > n);
+  const pct = next ? Math.round((n / next.n) * 100) : 100;
+  const badges = [
+    ...MILESTONES.map(m => ({ emoji: m.emoji, label: m[effLang()] || m.en, got: n >= m.n, hint: `${m.n}` })),
+    ...extraBadges().map(b => ({ emoji: b.emoji, label: b[effLang()] || b.en, got: b.got, hint: `${b.have}/${b.need}` }))
+  ];
+  el.innerHTML = `
+    <div class="tracker-top">
+      <span class="tracker-title">⭐ ${t.trackTitle}</span>
+      <span class="tracker-count">${t.starsRead(n, total)}</span>
+    </div>
+    <div class="tracker-bar"><div class="tracker-fill" style="width:${Math.min(100, pct)}%"></div></div>
+    <div class="tracker-next">${next ? t.nextBadge(next.n - n) : t.allDone}</div>
+    <div class="badge-row">${badges.map(b =>
+      `<span class="mbadge${b.got ? " got" : ""}" title="${b.hint}"><span class="ico">${b.emoji}</span>${b.label}</span>`).join("")}</div>
+    <button class="unread-toggle${unreadOnly ? " on" : ""}" id="unreadToggle">
+      ${unreadOnly ? t.allStories : t.unreadOnly}
+    </button>`;
+}
+
 function chipHtml(key, label, active, kind, dot, count) {
   // A chip with nothing behind it would be a dead end — dim it and switch it off.
   const zero = count === 0 && !active ? " zero" : "";
@@ -8351,6 +8482,7 @@ function render() {
   document.getElementById("footerLine").textContent = t.footer;
   updateMusicBtn();
   renderFeedback();
+  renderTracker();
   // Set properties rather than rebuilding the input, so typing keeps focus.
   const searchEl = document.getElementById("searchInput");
   searchEl.placeholder = t.search;
@@ -8398,7 +8530,8 @@ function render() {
   const visible = pool.filter(s =>
     (regionFilter === "all" || s.region === regionFilter) &&
     (topicFilter === "all" || s.topic === topicFilter) &&
-    (genderFilter === "all" || s.gender === genderFilter)
+    (genderFilter === "all" || s.gender === genderFilter) &&
+    (!unreadOnly || !isRead(s.id))
   ).sort((a, b) => bornYear(a) - bornYear(b));
 
   document.getElementById("countLine").textContent = t.showing(visible.length);
@@ -8407,7 +8540,8 @@ function render() {
   grid.innerHTML = visible.length === 0
     ? `<div class="empty">${searchQuery ? t.noMatch(searchQuery) : t.empty}</div>`
     : visible.map(s => `
-      <div class="card" data-story="${s.id}">
+      <div class="card${isRead(s.id) ? " read" : ""}" data-story="${s.id}">
+        ${isRead(s.id) ? '<span class="read-star">⭐</span>' : ""}
         <div class="card-top">
           <div class="avatar">${s.emoji}</div>
           <div>
@@ -8455,6 +8589,9 @@ function openReader(id) {
     }</div>` : ""}
     <button class="narrate-btn" id="narrateBtn"><span class="ico">🔊</span><span id="narrateLabel">${t.listen}</span></button>
     ${pick(textFor(s, lengthsFor(s).includes(storyLen) ? storyLen : "short")).map(p => `<p>${p}</p>`).join("")}
+    <div style="text-align:center">
+      <button class="mark-read${isRead(s.id) ? " done" : ""}" id="markReadBtn">${isRead(s.id) ? t.markedRead : t.markRead}</button>
+    </div>
     <div class="goodnight">${LANG_GOODNIGHT[lang] || t.goodnight}</div>`;
   document.getElementById("overlay").classList.add("open");
   reader.dataset.story = id;
@@ -8830,6 +8967,18 @@ document.getElementById("searchInput").addEventListener("keydown", e => {
 document.addEventListener("click", e => {
   const langBtn = e.target.closest("[data-lang]");
   if (langBtn) { lang = langBtn.dataset.lang; render(); return; }
+
+  if (e.target.closest("#unreadToggle")) { unreadOnly = !unreadOnly; render(); return; }
+
+  if (e.target.closest("#markReadBtn")) {
+    const id = document.getElementById("reader").dataset.story;
+    toggleRead(id);
+    const t = UI[effLang()], btn = document.getElementById("markReadBtn");
+    btn.classList.toggle("done", isRead(id));
+    btn.textContent = isRead(id) ? t.markedRead : t.markRead;
+    render();                       // refresh the tracker and the card behind
+    return;
+  }
 
   const star = e.target.closest(".fb-star");
   if (star) {
