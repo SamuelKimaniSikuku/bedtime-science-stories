@@ -61,3 +61,26 @@ if (problems.length) {
 fs.writeFileSync(path.join(root, "stories.json"), JSON.stringify(out));
 const withM = out.filter(s => s.langs.en.textM).length;
 console.log(`stories.json written: ${out.length} stories, ${withM} with a 5-minute version`);
+
+// Keep the SEO ItemList (id="ld-storylist" in index.html's <head>) in sync so
+// every story is a discoverable, shareable https://malakaistory.com/#id link.
+const itemList = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Malakai Stories — bedtime stories that teach",
+  numberOfItems: stories.length,
+  itemListElement: stories.map((s, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    url: `https://malakaistory.com/#${s.id}`,
+    name: s.title?.en ? `${s.name} — ${s.title.en}` : s.name,
+  })),
+};
+const ldRe = /(<script type="application\/ld\+json" id="ld-storylist">\n)[\s\S]*?(\n<\/script>)/;
+if (ldRe.test(html)) {
+  const newHtml = html.replace(ldRe, (_, open, close) => open + JSON.stringify(itemList) + close);
+  fs.writeFileSync(path.join(root, "index.html"), newHtml);
+  console.log(`index.html updated: ld-storylist now lists ${stories.length} stories`);
+} else {
+  console.warn("Could not find the ld-storylist <script> block in index.html — SEO ItemList not updated.");
+}
