@@ -73,3 +73,44 @@ The service-role key and ElevenLabs key are **never** in the website; they live 
   to the site, that file is regenerated too, and you can re-run **Generate** on an old order
   to top it up with the new stories (existing files are kept, only missing ones are made).
 - Costs: one language ≈ 50k ElevenLabs credits per customer; all three ≈ 153k.
+
+## 6 · Community translation queue
+
+Adding a language (Lubukusu, Dholuo, …) no longer means editing `index.html`. Content now lives in
+`content/` and the site is assembled from it.
+
+```
+content/source.json               metadata + English text (the source of truth)
+content/translations/<lang>.json  one file per language
+       ↓  node build-stories-json.js
+index.html + stories.json         generated — never hand-edit the STORIES array
+```
+
+**One-time setup.** Dashboard → **SQL Editor** → paste `migrations/0003_translations.sql` → **Run**.
+It creates `languages`, `segments` (the English source cut into ~1,900 paragraph-sized tasks),
+`translations`, `votes`, and the `open_segments` / `review_queue` / `language_progress` views.
+RLS lets anyone read and propose; only the service role approves or publishes.
+
+Then load the source into the queue (the key is read from your shell, never stored in the repo):
+
+```
+node seed-translations.js                                    # dry run: shows the counts
+SUPABASE_URL=https://yyvvbqggwkkncbistzzv.supabase.co \
+SUPABASE_SERVICE_KEY=... node seed-translations.js --push
+```
+
+**Round trip, once translations come in.**
+
+```
+SUPABASE_URL=... SUPABASE_SERVICE_KEY=... node pull-translations.js   # approved rows → content/
+node build-stories-json.js                                           # content/ → site
+git commit -am "Lubukusu: first 10 stories" && git push              # deploys
+```
+
+`node build-stories-json.js --check` verifies the built site matches `content/` and writes nothing —
+useful before committing.
+
+**Adding a language.** Insert a row in `languages` with its ISO 639-3 code and `status='open'`.
+Use the specific variety, never the macro code: `bxk` Lubukusu, `rag` Maragoli — "Luhya" (`luy`)
+is a group of varieties that are not mutually intelligible, and mixing them corrupts the corpus.
+A language shows on the site once its `goal` (default 10 stories) is approved.
