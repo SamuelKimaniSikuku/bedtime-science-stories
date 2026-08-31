@@ -114,3 +114,35 @@ useful before committing.
 Use the specific variety, never the macro code: `bxk` Lubukusu, `rag` Maragoli — "Luhya" (`luy`)
 is a group of varieties that are not mutually intelligible, and mixing them corrupts the corpus.
 A language shows on the site once its `goal` (default 10 stories) is approved.
+
+## 7 · Family accounts (magic-link sign-in, cross-device sync)
+
+The site works fully with no account — reading progress, favourites, language and music choices
+all live in the browser's `localStorage`. Signing in just syncs that same state to a `profiles`
+row so it follows the family across phone, tablet, etc. There are no passwords anywhere.
+
+**One-time setup.**
+
+1. Dashboard → **SQL Editor** → paste `migrations/0004_profiles.sql` → **Run**. Creates the
+   `profiles` table (`read_map`, `favorites`, `fav_tracks`, `prefs` — one row per signed-in family)
+   with RLS so a family can only ever read or write its own row.
+2. Dashboard → **Authentication** → **Providers** → confirm **Email** is enabled (it is by default
+   on a new project). Nothing else needs configuring here — the site never asks for a password.
+3. Dashboard → **Authentication** → **URL Configuration**:
+   - **Site URL** → `https://malakaistory.com`
+   - **Redirect URLs** → add `https://malakaistory.com/*`
+   (Skipping this step is the one thing that actually breaks sign-in: without it, the magic-link
+   email sends people to `localhost` instead of back to the live site.)
+
+That's it — no edge function, no secret key. The browser calls Supabase Auth's REST API directly
+with the same public anon key already in `index.html` (`SUPABASE_ANON_KEY`); every request after
+sign-in carries the visitor's own session token, and RLS is what keeps one family's data away from
+another's — nothing server-side to deploy or maintain.
+
+**How it behaves.** Tap the account chip (top of the reading-journey panel) → enter an email → a
+sign-in link arrives → tapping it on any device adopts that session. The very first sign-in on a
+new device *merges* rather than overwrites: reading progress and favourites union together (nothing
+from either device is lost), and a language/narrator/track the device already had explicitly chosen
+locally wins over whatever the account had — only a device with no preference yet adopts the
+account's. From then on, every change (mark a story read, favourite one, switch language, pick a
+track) pushes up to Supabase a moment later, debounced so it doesn't chatter.

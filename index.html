@@ -347,6 +347,93 @@
   .music-btn.playing { background: var(--gold); border-color: var(--gold); color: #201a08; }
   .music-btn.playing .note { animation: sway 1.8s ease-in-out infinite; display: inline-block; }
   @keyframes sway { 0%,100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } }
+
+  /* --- music picker panel --- */
+  .music-row { display: flex; gap: 8px; align-items: center; }
+  .music-list-btn {
+    background: var(--card); border: 1.5px solid #3a466f; color: var(--ink);
+    width: 42px; height: 42px; border-radius: 50%; font-size: 16px; cursor: pointer;
+    font-family: inherit; box-shadow: 0 8px 24px rgba(0,0,0,.4); transition: all .2s;
+  }
+  .music-list-btn:hover, .music-list-btn.open { border-color: var(--gold); }
+  .music-panel {
+    background: var(--card); border: 1px solid #3a466f; border-radius: 16px;
+    padding: 12px 12px 8px; width: min(320px, calc(100vw - 44px));
+    box-shadow: 0 12px 34px rgba(0,0,0,.5); margin-bottom: 4px;
+  }
+  .music-panel[hidden] { display: none; }
+  .music-panel h4 { font-size: 13px; color: var(--moon); margin: 0 0 8px 4px; font-weight: 700; }
+  .track-row {
+    display: flex; align-items: center; gap: 8px; padding: 7px 6px; border-radius: 10px;
+    cursor: pointer; transition: background .15s;
+  }
+  .track-row:hover { background: rgba(255,255,255,.05); }
+  .track-row.current { background: rgba(245,198,100,.12); }
+  .track-row .t-title { flex: 1; font-size: 13px; color: var(--ink-soft); line-height: 1.3; }
+  .track-row.current .t-title { color: var(--moon); font-weight: 600; }
+  .track-row .t-play { font-size: 13px; width: 18px; text-align: center; }
+  .t-heart {
+    background: none; border: none; font-size: 15px; cursor: pointer; padding: 2px 4px;
+    filter: grayscale(1) opacity(.45); transition: filter .15s, transform .15s;
+  }
+  .t-heart.on { filter: none; }
+  .t-heart:hover { transform: scale(1.2); }
+
+  /* --- account / auth --- */
+  .account-chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: transparent; border: 1.5px solid #323d68; color: var(--ink-soft);
+    padding: 6px 14px; border-radius: 999px; font-size: 13px; cursor: pointer;
+    font-family: inherit; margin-top: 12px; margin-left: 8px; transition: all .18s;
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .account-chip:hover { border-color: var(--gold); color: var(--ink); }
+  .account-chip.on { border-color: rgba(110,207,142,.6); color: var(--accent-africa); }
+  .auth-modal {
+    position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center;
+    background: rgba(6,10,26,.8); padding: 20px;
+  }
+  .auth-modal[hidden] { display: none; }
+  .auth-card {
+    background: var(--card); border: 1px solid #3a466f; border-radius: 22px;
+    padding: 28px 26px; max-width: 430px; width: 100%; position: relative;
+    box-shadow: 0 18px 50px rgba(0,0,0,.55);
+  }
+  .auth-card h3 { color: var(--moon); font-size: 20px; margin-bottom: 8px; }
+  .auth-card p { color: var(--ink-soft); font-size: 14px; line-height: 1.55; margin-bottom: 16px; }
+  .auth-card input {
+    width: 100%; background: #141b38; border: 1.5px solid #323d68; color: var(--ink);
+    border-radius: 12px; padding: 12px 14px; font-size: 15px; font-family: inherit; margin-bottom: 12px;
+  }
+  .auth-card input:focus { outline: none; border-color: var(--gold); }
+  .auth-send {
+    width: 100%; background: var(--gold); border: none; color: #201a08; font-weight: 700;
+    padding: 12px 0; border-radius: 999px; font-size: 15px; cursor: pointer; font-family: inherit;
+  }
+  .auth-send:disabled { opacity: .5; cursor: default; }
+  .auth-close {
+    position: absolute; top: 14px; right: 16px; background: none; border: none;
+    color: var(--ink-soft); font-size: 18px; cursor: pointer; font-family: inherit;
+  }
+  .auth-status { font-size: 13.5px; margin-top: 10px; line-height: 1.5; }
+  .auth-status.ok { color: var(--accent-africa); }
+  .auth-status.err { color: #ff8a8a; }
+  .auth-signout {
+    background: none; border: none; color: var(--ink-soft); font-size: 13px;
+    cursor: pointer; font-family: inherit; text-decoration: underline; margin-top: 10px;
+  }
+
+  /* --- story favourites --- */
+  .card .fav-mark { position: absolute; top: 14px; left: 16px; font-size: 14px; }
+  .fav-btn {
+    display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 6px 8px;
+    background: transparent; border: 1.5px solid #3a466f; color: var(--ink-soft);
+    padding: 10px 20px; border-radius: 999px; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: all .2s;
+  }
+  .fav-btn:hover { border-color: var(--gold); color: var(--ink); }
+  .fav-btn.done { background: rgba(245,198,100,.15); border-color: var(--gold); color: var(--moon); }
+
   @media (max-width: 560px) { .reader { padding: 26px 20px 32px; } }
 </style>
 </head>
@@ -391,7 +478,7 @@
 
   <footer>
     <div id="footerLine"></div>
-    <div class="credit">🎵 Lullabies: Brahms · Satie · Debussy · Chopin · Bach — public domain recordings (Wikimedia Commons)</div>
+    <div class="credit">🎵 Lullabies: Brahms · Satie · Debussy · Chopin · Bach · Fauré · Schumann · Grieg — public domain recordings (Wikimedia Commons)</div>
     <div class="credit"><a href="your-voice.html" style="color:inherit">💛 Get the stories read in YOUR voice — record three short takes, we do the rest</a></div>
     <!-- Voice Studio is the bring-your-own-ElevenLabs-key route. It is deliberately not
          linked for parents: your-voice.html does the same thing without a key, because
@@ -401,10 +488,21 @@
 </div>
 
 <div class="music-dock">
+  <div class="music-panel" id="musicPanel" hidden></div>
   <div id="nowPlaying" class="now-playing"></div>
-  <button class="music-btn" id="musicBtn"><span class="note">🎵</span><span id="musicLabel"></span></button>
+  <div class="music-row">
+    <button class="music-list-btn" id="musicListBtn" aria-label="Choose music" title="Choose music">🎼</button>
+    <button class="music-btn" id="musicBtn"><span class="note">🎵</span><span id="musicLabel"></span></button>
+  </div>
 </div>
 <audio id="bgMusic" preload="none"></audio>
+
+<div class="auth-modal" id="authModal" hidden>
+  <div class="auth-card">
+    <button class="auth-close" id="authClose" aria-label="Close">✕</button>
+    <div id="authBody"></div>
+  </div>
+</div>
 
 <div class="overlay" id="overlay">
   <div class="reader" id="reader"></div>
@@ -429,7 +527,14 @@ const UI = {
         fbTitle: "Did you enjoy a story?", fbSub: "Tap a star and leave a note — we'd love to hear from you.",
         fbName: "Your name (optional)", fbComment: "Your comment, an idea, or which scientist we should add next…",
         fbSend: "Send feedback", fbThanks: "Thank you! 💛 Your feedback means the world to us.",
-        fbNeed: "Please tap a star or write a little note first." },
+        fbNeed: "Please tap a star or write a little note first.",
+        signIn: "Sign in to save across devices", signedInAs: e => `Synced · ${e}`, signOut: "Sign out",
+        authTitle: "Keep your journey everywhere", authSub: "Enter your email and we'll send a sign-in link — no password needed. Your reading progress, badges, favourites, language and music choices will follow you on every device.",
+        authEmail: "Your email", authSend: "Email me a sign-in link",
+        authSent: e => `Check your inbox! We sent a sign-in link to ${e}. Tap it on this device and you're in.`,
+        authErr: "Could not send the link — please check the email address and try again.",
+        favBtn: "💛 Favourite this story", favBtnOn: "💛 Favourited — tap to remove",
+        favOnly: "Favourites", trackPick: "Choose the music", syncedNote: "Saved to your family account." },
   sw: { title: "Malakai Stories",
         subtitle: "Hadithi fupi za usiku zenye funzo — kuhusu watu waliobadilisha dunia: walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
         region: "Kanda", topic: "Mada", gender: "Jinsia", all: "Zote",
@@ -447,7 +552,14 @@ const UI = {
         fbTitle: "Umefurahia hadithi?", fbSub: "Gusa nyota na uache ujumbe — tungependa kusikia kutoka kwako.",
         fbName: "Jina lako (si lazima)", fbComment: "Maoni yako, wazo, au mwanasayansi tumwongeze baadaye…",
         fbSend: "Tuma maoni", fbThanks: "Asante! 💛 Maoni yako ni ya thamani kubwa kwetu.",
-        fbNeed: "Tafadhali gusa nyota au andika ujumbe mfupi kwanza." },
+        fbNeed: "Tafadhali gusa nyota au andika ujumbe mfupi kwanza.",
+        signIn: "Ingia ili kuhifadhi kwenye kila kifaa", signedInAs: e => `Imesawazishwa · ${e}`, signOut: "Toka",
+        authTitle: "Beba safari yako kila mahali", authSub: "Andika barua pepe yako, tutakutumia kiungo cha kuingia — hakuna nenosiri. Maendeleo ya kusoma, beji, vipendwa, lugha na muziki vitakufuata kwenye kila kifaa.",
+        authEmail: "Barua pepe yako", authSend: "Nitumie kiungo cha kuingia",
+        authSent: e => `Angalia barua pepe yako! Tumetuma kiungo cha kuingia kwa ${e}. Kigusa kwenye kifaa hiki na umeingia.`,
+        authErr: "Imeshindwa kutuma kiungo — tafadhali hakikisha barua pepe na ujaribu tena.",
+        favBtn: "💛 Weka hadithi hii kipendwa", favBtnOn: "💛 Kipendwa — gusa kuondoa",
+        favOnly: "Vipendwa", trackPick: "Chagua muziki", syncedNote: "Imehifadhiwa kwenye akaunti ya familia." },
   fr: { title: "Malakai Stories",
         subtitle: "De courtes histoires du soir qui enseignent — sur les gens qui ont changé le monde : où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
         region: "Région", topic: "Sujet", gender: "Genre", all: "Tout",
@@ -465,7 +577,14 @@ const UI = {
         fbTitle: "Avez-vous aimé une histoire ?", fbSub: "Touchez une étoile et laissez un mot — votre avis compte beaucoup.",
         fbName: "Votre nom (facultatif)", fbComment: "Votre commentaire, une idée, ou quel scientifique ajouter…",
         fbSend: "Envoyer", fbThanks: "Merci ! 💛 Votre avis compte énormément pour nous.",
-        fbNeed: "Veuillez toucher une étoile ou écrire un petit mot." }
+        fbNeed: "Veuillez toucher une étoile ou écrire un petit mot.",
+        signIn: "Connectez-vous pour tout retrouver partout", signedInAs: e => `Synchronisé · ${e}`, signOut: "Se déconnecter",
+        authTitle: "Votre voyage vous suit partout", authSub: "Entrez votre email et nous vous envoyons un lien de connexion — sans mot de passe. Progrès de lecture, badges, favoris, langue et musique vous suivront sur chaque appareil.",
+        authEmail: "Votre email", authSend: "Envoyez-moi un lien de connexion",
+        authSent: e => `Regardez votre boîte mail ! Un lien de connexion a été envoyé à ${e}. Touchez-le sur cet appareil et c'est fait.`,
+        authErr: "Impossible d'envoyer le lien — vérifiez l'adresse email et réessayez.",
+        favBtn: "💛 Mettre en favori", favBtnOn: "💛 En favori — touchez pour retirer",
+        favOnly: "Favoris", trackPick: "Choisir la musique", syncedNote: "Enregistré sur le compte famille." }
 };
 
 const REGIONS = {
@@ -657,24 +776,48 @@ const STORIES = [
 ];
 
 /* ---------- state ---------- */
-let lang = "en";
+// The chosen language is part of the "better language experience": it now
+// survives reloads (and, signed in, follows the family across devices).
+let lang = (() => { try { return localStorage.getItem("lang") || "en"; } catch { return "en"; } })();
 let regionFilter = "all";
 let topicFilter = "all";
 let genderFilter = "all";
 let searchQuery = "";
 
-/* ---------- reading tracker ----------
-   Which stories this family has read, kept on the device only — no account, no
-   sign-in, nothing sent anywhere. A parent marks a story read at the end of it. */
+/* ---------- reading tracker + favourites ----------
+   Everything lives in localStorage so the site works fully with no account.
+   Signing in (see the account section below) syncs these same maps to the
+   family's profile row so they follow you across devices. */
 let readMap = {};
 try { readMap = JSON.parse(localStorage.getItem("readStories") || "{}"); } catch { readMap = {}; }
+let favStories = [];
+try { favStories = JSON.parse(localStorage.getItem("favStories") || "[]"); } catch { favStories = []; }
+let favTracks = [];
+try { favTracks = JSON.parse(localStorage.getItem("favTracks") || "[]"); } catch { favTracks = []; }
 let unreadOnly = false;
+let favOnly = false;
 const isRead = id => !!readMap[id];
 const readCount = () => Object.keys(readMap).length;
-function saveRead() { try { localStorage.setItem("readStories", JSON.stringify(readMap)); } catch {} }
+const isFav = id => favStories.includes(id);
+function saveRead() { try { localStorage.setItem("readStories", JSON.stringify(readMap)); } catch {} pushProfileSoon(); }
 function toggleRead(id) {
   if (readMap[id]) delete readMap[id]; else readMap[id] = Date.now();
   saveRead();
+}
+function toggleFav(id) {
+  favStories = isFav(id) ? favStories.filter(x => x !== id) : [...favStories, id];
+  try { localStorage.setItem("favStories", JSON.stringify(favStories)); } catch {}
+  pushProfileSoon();
+}
+function toggleFavTrack(file) {
+  favTracks = favTracks.includes(file) ? favTracks.filter(x => x !== file) : [...favTracks, file];
+  try { localStorage.setItem("favTracks", JSON.stringify(favTracks)); } catch {}
+  pushProfileSoon();
+}
+function setLang(l) {
+  lang = l;
+  try { localStorage.setItem("lang", l); } catch {}
+  pushProfileSoon();
 }
 
 // Milestones a small child can see coming. The last one is the whole library.
@@ -825,6 +968,12 @@ function renderTracker() {
       `<span class="mbadge${b.got ? " got" : ""}" title="${b.hint}"><span class="ico">${b.emoji}</span>${b.label}</span>`).join("")}</div>
     <button class="unread-toggle${unreadOnly ? " on" : ""}" id="unreadToggle">
       ${unreadOnly ? t.allStories : t.unreadOnly}
+    </button>
+    <button class="unread-toggle${favOnly ? " on" : ""}" id="favToggle" style="margin-left:8px">
+      💛 ${t.favOnly}${favStories.length ? ` · ${favStories.length}` : ""}
+    </button>
+    <button class="account-chip${session ? " on" : ""}" id="accountChip">
+      ${session ? "✓ " + t.signedInAs(session.email) : "☁️ " + t.signIn}
     </button>`;
 }
 
@@ -898,7 +1047,8 @@ function render() {
     (regionFilter === "all" || s.region === regionFilter) &&
     (topicFilter === "all" || s.topic === topicFilter) &&
     (genderFilter === "all" || s.gender === genderFilter) &&
-    (!unreadOnly || !isRead(s.id))
+    (!unreadOnly || !isRead(s.id)) &&
+    (!favOnly || isFav(s.id))
   ).sort((a, b) => bornYear(a) - bornYear(b));
 
   document.getElementById("countLine").textContent = t.showing(visible.length);
@@ -909,6 +1059,7 @@ function render() {
     : visible.map(s => `
       <div class="card${isRead(s.id) ? " read" : ""}" data-story="${s.id}">
         ${isRead(s.id) ? '<span class="read-star">⭐</span>' : ""}
+        ${isFav(s.id) ? '<span class="fav-mark">💛</span>' : ""}
         <div class="card-top">
           <div class="avatar">${s.emoji}</div>
           <div>
@@ -958,6 +1109,7 @@ function openReader(id) {
     ${pick(textFor(s, lengthsFor(s).includes(storyLen) ? storyLen : "short")).map(p => `<p>${p}</p>`).join("")}
     <div style="text-align:center">
       <button class="mark-read${isRead(s.id) ? " done" : ""}" id="markReadBtn">${isRead(s.id) ? t.markedRead : t.markRead}</button>
+      <button class="fav-btn${isFav(s.id) ? " done" : ""}" id="favBtn">${isFav(s.id) ? t.favBtnOn : t.favBtn}</button>
     </div>
     <div class="goodnight">${LANG_GOODNIGHT[lang] || t.goodnight}</div>`;
   document.getElementById("overlay").classList.add("open");
@@ -977,22 +1129,48 @@ function closeReader() {
 /* ---------- music: gentle classical lullaby playlist ---------- */
 // All recordings are public domain (Wikimedia Commons) — free to use forever.
 const PLAYLIST = [
-  { file: "audio/brahms-lullaby.mp3",        title: "Brahms — Lullaby (Wiegenlied, Op. 49 No. 4)" },
-  { file: "audio/gymnopedie-1.mp3",          title: "Satie — Gymnopédie No. 1" },
-  { file: "audio/debussy-clair-de-lune.mp3", title: "Debussy — Clair de Lune" },
-  { file: "audio/chopin-nocturne.mp3",       title: "Chopin — Nocturne Op. 9 No. 2" },
-  { file: "audio/bach-air.mp3",              title: "Bach — Air on the G String" }
+  { file: "audio/brahms-lullaby.mp3",         title: "Brahms — Lullaby (Wiegenlied, Op. 49 No. 4)" },
+  { file: "audio/gymnopedie-1.mp3",           title: "Satie — Gymnopédie No. 1" },
+  { file: "audio/debussy-clair-de-lune.mp3",  title: "Debussy — Clair de Lune" },
+  { file: "audio/chopin-nocturne.mp3",        title: "Chopin — Nocturne Op. 9 No. 2" },
+  { file: "audio/bach-air.mp3",               title: "Bach — Air on the G String" },
+  { file: "audio/faure-berceuse.mp3",         title: "Fauré — Berceuse (Dolly Suite)" },
+  { file: "audio/schumann-traumerei.mp3",     title: "Schumann — Träumerei (Dreaming)" },
+  { file: "audio/grieg-morning-mood.mp3",     title: "Grieg — Morning Mood (Peer Gynt)" }
 ];
 const music = document.getElementById("bgMusic");
 music.volume = 0.35;
 music.loop = false;                 // one piece flows into the next instead
-let trackIdx = 0;
+let trackIdx = (() => {
+  // Reopen on the family's last-chosen piece when there is one.
+  try {
+    const saved = localStorage.getItem("musicTrack");
+    const i = PLAYLIST.findIndex(p => p.file === saved);
+    return i >= 0 ? i : 0;
+  } catch { return 0; }
+})();
+let hasChosenTrack = (() => { try { return !!localStorage.getItem("musicTrack"); } catch { return false; } })();
 
-function loadTrack(i, autoplay) {
+function loadTrack(i, autoplay, remember) {
   trackIdx = (i + PLAYLIST.length) % PLAYLIST.length;
   music.src = PLAYLIST[trackIdx].file;
+  if (remember) {
+    hasChosenTrack = true;
+    try { localStorage.setItem("musicTrack", PLAYLIST[trackIdx].file); } catch {}
+    pushProfileSoon();
+  }
   if (autoplay) music.play().catch(() => {});
   updateMusicBtn();
+  renderMusicPanel();
+}
+
+// When a piece ends, drift into the next one — staying inside the family's
+// favourites when they have marked any.
+function nextTrackIdx() {
+  const favIdxs = PLAYLIST.map((p, i) => favTracks.includes(p.file) ? i : -1).filter(i => i >= 0);
+  const ring = favIdxs.length ? favIdxs : PLAYLIST.map((_, i) => i);
+  const pos = ring.indexOf(trackIdx);
+  return ring[(pos + 1) % ring.length];
 }
 
 function updateMusicBtn() {
@@ -1006,21 +1184,51 @@ function updateMusicBtn() {
   if (now) now.textContent = playing ? "♪ " + PLAYLIST[trackIdx].title : "";
 }
 
-// when a piece ends, drift softly into the next one
-music.addEventListener("ended", () => loadTrack(trackIdx + 1, true));
+function renderMusicPanel() {
+  const panel = document.getElementById("musicPanel");
+  if (!panel || panel.hidden) return;
+  const t = UI[effLang()];
+  panel.innerHTML = `<h4>🎼 ${t.trackPick}</h4>` + PLAYLIST.map((p, i) => `
+    <div class="track-row${i === trackIdx ? " current" : ""}" data-track="${i}">
+      <span class="t-play">${i === trackIdx && !music.paused ? "♪" : "▷"}</span>
+      <span class="t-title">${p.title}</span>
+      <button class="t-heart${favTracks.includes(p.file) ? " on" : ""}" data-fav-track="${p.file}" aria-label="Favourite">💛</button>
+    </div>`).join("");
+}
+
+music.addEventListener("ended", () => loadTrack(nextTrackIdx(), true, false));
 
 document.getElementById("musicBtn").addEventListener("click", () => {
   if (music.paused) {
-    // start on a different piece each night so bedtime never feels repetitive
-    if (!music.src) loadTrack(Math.floor(Math.random() * PLAYLIST.length), false);
+    if (!music.src) {
+      // No explicit choice yet: favourites first, else a fresh random piece
+      // each night so bedtime never feels repetitive.
+      const favIdxs = PLAYLIST.map((p, i) => favTracks.includes(p.file) ? i : -1).filter(i => i >= 0);
+      const pool = hasChosenTrack ? [trackIdx] : (favIdxs.length ? favIdxs : PLAYLIST.map((_, i) => i));
+      loadTrack(pool[Math.floor(Math.random() * pool.length)], false, false);
+    }
     music.play().then(updateMusicBtn).catch(updateMusicBtn);
   } else {
     music.pause();
     updateMusicBtn();
   }
+  renderMusicPanel();
 });
-music.addEventListener("play", updateMusicBtn);
-music.addEventListener("pause", updateMusicBtn);
+music.addEventListener("play", () => { updateMusicBtn(); renderMusicPanel(); });
+music.addEventListener("pause", () => { updateMusicBtn(); renderMusicPanel(); });
+
+document.getElementById("musicListBtn").addEventListener("click", () => {
+  const panel = document.getElementById("musicPanel");
+  panel.hidden = !panel.hidden;
+  document.getElementById("musicListBtn").classList.toggle("open", !panel.hidden);
+  renderMusicPanel();
+});
+document.getElementById("musicPanel").addEventListener("click", e => {
+  const heart = e.target.closest("[data-fav-track]");
+  if (heart) { toggleFavTrack(heart.dataset.favTrack); renderMusicPanel(); return; }
+  const row = e.target.closest("[data-track]");
+  if (row) loadTrack(+row.dataset.track, true, true);
+});
 
 /* ---------- narration (read aloud) ---------- */
 const synth = window.speechSynthesis;
@@ -1320,6 +1528,207 @@ function submitFeedback() {
   }
 }
 
+/* ---------- family account: magic-link sign-in + cross-device sync ----------
+   The site stays fully usable with no account. Signing in makes the same
+   local state (reading progress, favourites, language, music) follow the
+   family across devices via one profiles row in Supabase. Auth is Supabase's
+   built-in email magic link — no passwords anywhere. */
+const AUTH_BASE = `${SUPABASE_URL}/auth/v1`;
+let session = null;
+try { session = JSON.parse(localStorage.getItem("msSession") || "null"); } catch { session = null; }
+let pushTimer = null;
+
+function saveSession(s) {
+  session = s;
+  try { s ? localStorage.setItem("msSession", JSON.stringify(s)) : localStorage.removeItem("msSession"); } catch {}
+}
+
+const authHeaders = () => ({
+  "apikey": SUPABASE_ANON_KEY,
+  "Authorization": "Bearer " + (session ? session.access_token : SUPABASE_ANON_KEY),
+  "Content-Type": "application/json"
+});
+
+async function refreshSession() {
+  if (!session?.refresh_token) return false;
+  try {
+    const r = await fetch(`${AUTH_BASE}/token?grant_type=refresh_token`, {
+      method: "POST",
+      headers: { "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: session.refresh_token })
+    });
+    if (!r.ok) throw new Error("refresh failed");
+    const j = await r.json();
+    saveSession({
+      access_token: j.access_token, refresh_token: j.refresh_token,
+      expires_at: Date.now() + Math.max(60, (j.expires_in || 3600) - 60) * 1000,
+      email: j.user?.email || session.email, user_id: j.user?.id || session.user_id
+    });
+    return true;
+  } catch { saveSession(null); renderTracker(); return false; }
+}
+
+async function ensureSession() {
+  if (!session) return false;
+  if (Date.now() < (session.expires_at || 0)) return true;
+  return refreshSession();
+}
+
+async function sendMagicLink(email) {
+  const redirect = encodeURIComponent(location.origin + location.pathname);
+  const r = await fetch(`${AUTH_BASE}/otp?redirect_to=${redirect}`, {
+    method: "POST",
+    headers: { "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ email, create_user: true })
+  });
+  if (!r.ok) throw new Error(await r.text());
+}
+
+function currentPrefs() {
+  return {
+    lang,
+    narrator: (typeof narrator !== "undefined" ? narrator : "sarah"),
+    storyLen: (typeof storyLen !== "undefined" ? storyLen : "short"),
+    track: hasChosenTrack ? PLAYLIST[trackIdx].file : null
+  };
+}
+
+// Debounced: any local change (a story marked read, a favourite, a language
+// switch) lands in the profile a moment later, without chattering per keypress.
+function pushProfileSoon() {
+  if (!session) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(pushProfile, 1500);
+}
+
+async function pushProfile() {
+  if (!await ensureSession()) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
+      method: "POST",
+      headers: { ...authHeaders(), "Prefer": "resolution=merge-duplicates,return=minimal" },
+      body: JSON.stringify({
+        id: session.user_id, email: session.email,
+        read_map: readMap, favorites: favStories, fav_tracks: favTracks,
+        prefs: currentPrefs(), updated_at: new Date().toISOString()
+      })
+    });
+  } catch {}
+}
+
+// On sign-in (and on every load while signed in): merge, never overwrite.
+// Reading progress is a union keeping the earliest read date; favourites are a
+// union; preferences prefer whatever this device has explicitly set.
+async function pullAndMergeProfile() {
+  if (!await ensureSession()) return;
+  let rows = [];
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${session.user_id}&select=*`, { headers: authHeaders() });
+    if (r.ok) rows = await r.json();
+  } catch { return; }
+  const remote = rows[0];
+  if (remote) {
+    for (const [id, ts] of Object.entries(remote.read_map || {})) {
+      readMap[id] = readMap[id] ? Math.min(readMap[id], ts) : ts;
+    }
+    try { localStorage.setItem("readStories", JSON.stringify(readMap)); } catch {}
+    favStories = [...new Set([...favStories, ...(remote.favorites || [])])];
+    try { localStorage.setItem("favStories", JSON.stringify(favStories)); } catch {}
+    favTracks = [...new Set([...favTracks, ...(remote.fav_tracks || [])])];
+    try { localStorage.setItem("favTracks", JSON.stringify(favTracks)); } catch {}
+    const p = remote.prefs || {};
+    const localHas = k => { try { return localStorage.getItem(k) != null; } catch { return false; } };
+    if (p.lang && !localHas("lang")) setLang(p.lang);
+    if (p.narrator && !localHas("narrator") && typeof narrator !== "undefined") {
+      narrator = p.narrator; try { localStorage.setItem("narrator", narrator); } catch {}
+    }
+    if (p.storyLen && !localHas("storyLen") && typeof storyLen !== "undefined") {
+      storyLen = p.storyLen; try { localStorage.setItem("storyLen", storyLen); } catch {}
+    }
+    if (p.track && !localHas("musicTrack")) {
+      const i = PLAYLIST.findIndex(x => x.file === p.track);
+      if (i >= 0) { trackIdx = i; hasChosenTrack = true; try { localStorage.setItem("musicTrack", p.track); } catch {} }
+    }
+  }
+  pushProfile();          // write the merged state back up
+  render();
+}
+
+async function signOut() {
+  try { await fetch(`${AUTH_BASE}/logout`, { method: "POST", headers: authHeaders() }); } catch {}
+  saveSession(null);
+  document.getElementById("authModal").hidden = true;
+  render();
+}
+
+function openAuthModal() { renderAuthModal(); document.getElementById("authModal").hidden = false; }
+
+function renderAuthModal() {
+  const t = UI[effLang()];
+  const body = document.getElementById("authBody");
+  if (session) {
+    body.innerHTML = `
+      <h3>✓ ${t.signedInAs(session.email)}</h3>
+      <p>${t.syncedNote}</p>
+      <button class="auth-signout" id="authSignOut">${t.signOut}</button>`;
+  } else {
+    body.innerHTML = `
+      <h3>☁️ ${t.authTitle}</h3>
+      <p>${t.authSub}</p>
+      <input type="email" id="authEmail" placeholder="${t.authEmail}" autocomplete="email">
+      <button class="auth-send" id="authSendBtn">${t.authSend}</button>
+      <div class="auth-status" id="authStatus"></div>`;
+  }
+}
+
+document.getElementById("authModal").addEventListener("click", async e => {
+  if (e.target.id === "authModal" || e.target.id === "authClose") {
+    document.getElementById("authModal").hidden = true; return;
+  }
+  if (e.target.id === "authSignOut") { signOut(); return; }
+  if (e.target.id === "authSendBtn") {
+    const t = UI[effLang()];
+    const email = document.getElementById("authEmail").value.trim();
+    const status = document.getElementById("authStatus");
+    if (!/.+@.+\..+/.test(email)) { status.textContent = t.authErr; status.className = "auth-status err"; return; }
+    e.target.disabled = true;
+    try {
+      await sendMagicLink(email);
+      status.textContent = t.authSent(email);
+      status.className = "auth-status ok";
+    } catch {
+      e.target.disabled = false;
+      status.textContent = t.authErr;
+      status.className = "auth-status err";
+    }
+  }
+});
+
+// Boot: a magic-link lands back here with tokens in the URL hash. Adopt them,
+// clean the URL, and pull the family's profile.
+async function initAccount() {
+  if (location.hash.includes("access_token=")) {
+    const h = new URLSearchParams(location.hash.slice(1));
+    const access = h.get("access_token"), refresh = h.get("refresh_token");
+    history.replaceState(null, "", location.pathname + location.search);
+    if (access) {
+      let user = {};
+      try {
+        const r = await fetch(`${AUTH_BASE}/user`, {
+          headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + access }
+        });
+        if (r.ok) user = await r.json();
+      } catch {}
+      saveSession({
+        access_token: access, refresh_token: refresh,
+        expires_at: Date.now() + Math.max(60, (+h.get("expires_in") || 3600) - 60) * 1000,
+        email: user.email || "", user_id: user.id || ""
+      });
+    }
+  }
+  if (session) await pullAndMergeProfile();
+}
+
 /* ---------- search ---------- */
 document.getElementById("searchInput").addEventListener("input", e => {
   searchQuery = e.target.value.trim();
@@ -1337,9 +1746,23 @@ document.getElementById("searchInput").addEventListener("keydown", e => {
 /* ---------- events (delegated) ---------- */
 document.addEventListener("click", e => {
   const langBtn = e.target.closest("[data-lang]");
-  if (langBtn) { lang = langBtn.dataset.lang; render(); return; }
+  if (langBtn) { setLang(langBtn.dataset.lang); render(); return; }
 
   if (e.target.closest("#unreadToggle")) { unreadOnly = !unreadOnly; render(); return; }
+
+  if (e.target.closest("#favToggle")) { favOnly = !favOnly; render(); return; }
+
+  if (e.target.closest("#accountChip")) { openAuthModal(); return; }
+
+  if (e.target.closest("#favBtn")) {
+    const id = document.getElementById("reader").dataset.story;
+    toggleFav(id);
+    const t = UI[effLang()], btn = document.getElementById("favBtn");
+    btn.classList.toggle("done", isFav(id));
+    btn.textContent = isFav(id) ? t.favBtnOn : t.favBtn;
+    render();
+    return;
+  }
 
   if (e.target.closest("#markReadBtn")) {
     const id = document.getElementById("reader").dataset.story;
@@ -1369,7 +1792,7 @@ document.addEventListener("click", e => {
   const readerLang = e.target.closest("[data-reader-lang]");
   if (readerLang) {
     stopNarration();
-    lang = readerLang.dataset.readerLang;
+    setLang(readerLang.dataset.readerLang);
     render();
     openReader(document.getElementById("reader").dataset.story);
     return;
@@ -1380,6 +1803,7 @@ document.addEventListener("click", e => {
     stopNarration();
     storyLen = lenBtn.dataset.len;
     try { localStorage.setItem("storyLen", storyLen); } catch {}
+    pushProfileSoon();
     openReader(document.getElementById("reader").dataset.story);
     return;
   }
@@ -1389,6 +1813,7 @@ document.addEventListener("click", e => {
     stopNarration();
     narrator = narrBtn.dataset.narrator;
     try { localStorage.setItem("narrator", narrator); } catch {}
+    pushProfileSoon();
     document.querySelectorAll("[data-narrator]").forEach(b =>
       b.classList.toggle("active", b.dataset.narrator === narrator));
     return;
@@ -1410,6 +1835,10 @@ document.addEventListener("click", e => {
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeReader(); });
 
 render();
+
+// Adopt a returning magic-link session (and clear its hash) before the block
+// below decides whether the hash is instead a shared story link.
+initAccount();
 
 // A link to /#id (shared, bookmarked, or from a search result) opens straight
 // to that story instead of just the homepage.
