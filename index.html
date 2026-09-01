@@ -380,15 +380,19 @@
   .t-heart:hover { transform: scale(1.2); }
 
   /* --- account / auth --- */
+  /* Fixed top-right, mirroring .music-dock's fixed bottom-right — the account
+     control should always be visible, not buried inside a scrolled-past panel. */
+  .account-dock { position: fixed; top: 16px; right: 16px; z-index: 9; }
   .account-chip {
     display: inline-flex; align-items: center; gap: 7px;
-    background: transparent; border: 1.5px solid #323d68; color: var(--ink-soft);
-    padding: 6px 14px; border-radius: 999px; font-size: 13px; cursor: pointer;
-    font-family: inherit; margin-top: 12px; margin-left: 8px; transition: all .18s;
-    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    background: var(--card); border: 1.5px solid #3a466f; color: var(--ink);
+    padding: 9px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: all .18s; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .account-chip:hover { border-color: var(--gold); color: var(--ink); }
+  .account-chip:hover { border-color: var(--gold); }
   .account-chip.on { border-color: rgba(110,207,142,.6); color: var(--accent-africa); }
+  @media (max-width: 480px) { .account-chip { font-size: 12.5px; padding: 8px 12px; } }
   .auth-modal {
     position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center;
     background: rgba(6,10,26,.8); padding: 20px;
@@ -439,6 +443,7 @@
 </head>
 <body>
 <div class="stars" id="stars"></div>
+<div class="account-dock" id="accountDock"></div>
 <div class="wrap">
   <header>
     <span class="moon">🌙</span>
@@ -504,6 +509,13 @@
   </div>
 </div>
 
+<div class="auth-modal" id="onboardModal" hidden>
+  <div class="auth-card">
+    <button class="auth-close" id="onboardClose" aria-label="Close">✕</button>
+    <div id="onboardBody"></div>
+  </div>
+</div>
+
 <div class="overlay" id="overlay">
   <div class="reader" id="reader"></div>
 </div>
@@ -534,7 +546,12 @@ const UI = {
         authSent: e => `Check your inbox! We sent a sign-in link to ${e}. Tap it on this device and you're in.`,
         authErr: "Could not send the link — please check the email address and try again.",
         favBtn: "💛 Favourite this story", favBtnOn: "💛 Favourited — tap to remove",
-        favOnly: "Favourites", trackPick: "Choose the music", syncedNote: "Saved to your family account." },
+        favOnly: "Favourites", trackPick: "Choose the music", syncedNote: "Saved to your family account.",
+        forUs: "Just for us",
+        obTitle: "Welcome to the family! 💛", obSub: "A few quick, optional questions to help us pick the right stories for you — skip anytime, change anytime.",
+        obLangQ: "Which language should we read in?", obInterestsQ: "What does your little one love? (pick a few)",
+        obAgeQ: "How old is your child?", obAgeNote: "We don't sort stories by age yet, but we're listening — this helps us build that next.",
+        obSave: "Save my choices", obSkip: "Skip for now", obEdit: "Edit your family's preferences" },
   sw: { title: "Malakai Stories",
         subtitle: "Hadithi fupi za usiku zenye funzo — kuhusu watu waliobadilisha dunia: walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
         region: "Kanda", topic: "Mada", gender: "Jinsia", all: "Zote",
@@ -559,7 +576,12 @@ const UI = {
         authSent: e => `Angalia barua pepe yako! Tumetuma kiungo cha kuingia kwa ${e}. Kigusa kwenye kifaa hiki na umeingia.`,
         authErr: "Imeshindwa kutuma kiungo — tafadhali hakikisha barua pepe na ujaribu tena.",
         favBtn: "💛 Weka hadithi hii kipendwa", favBtnOn: "💛 Kipendwa — gusa kuondoa",
-        favOnly: "Vipendwa", trackPick: "Chagua muziki", syncedNote: "Imehifadhiwa kwenye akaunti ya familia." },
+        favOnly: "Vipendwa", trackPick: "Chagua muziki", syncedNote: "Imehifadhiwa kwenye akaunti ya familia.",
+        forUs: "Kwa ajili yetu",
+        obTitle: "Karibu kwenye familia! 💛", obSub: "Maswali machache ya haraka, si lazima, ili kutusaidia kuchagua hadithi zinazokufaa — unaweza kuruka au kubadilisha wakati wowote.",
+        obLangQ: "Tusome kwa lugha gani?", obInterestsQ: "Mtoto wako anapenda nini? (chagua chache)",
+        obAgeQ: "Mtoto wako ana umri gani?", obAgeNote: "Bado hatujapanga hadithi kwa umri, lakini tunasikiliza — hii itatusaidia kuongeza kipengele hicho baadaye.",
+        obSave: "Hifadhi machaguo yangu", obSkip: "Ruka kwa sasa", obEdit: "Hariri mapendeleo ya familia yako" },
   fr: { title: "Malakai Stories",
         subtitle: "De courtes histoires du soir qui enseignent — sur les gens qui ont changé le monde : où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
         region: "Région", topic: "Sujet", gender: "Genre", all: "Tout",
@@ -584,7 +606,12 @@ const UI = {
         authSent: e => `Regardez votre boîte mail ! Un lien de connexion a été envoyé à ${e}. Touchez-le sur cet appareil et c'est fait.`,
         authErr: "Impossible d'envoyer le lien — vérifiez l'adresse email et réessayez.",
         favBtn: "💛 Mettre en favori", favBtnOn: "💛 En favori — touchez pour retirer",
-        favOnly: "Favoris", trackPick: "Choisir la musique", syncedNote: "Enregistré sur le compte famille." }
+        favOnly: "Favoris", trackPick: "Choisir la musique", syncedNote: "Enregistré sur le compte famille.",
+        forUs: "Juste pour nous",
+        obTitle: "Bienvenue dans la famille ! 💛", obSub: "Quelques questions rapides et facultatives pour nous aider à choisir les bonnes histoires — passez ou changez à tout moment.",
+        obLangQ: "Dans quelle langue devrions-nous lire ?", obInterestsQ: "Qu'est-ce que votre enfant adore ? (choisissez-en quelques-unes)",
+        obAgeQ: "Quel âge a votre enfant ?", obAgeNote: "Nous ne trions pas encore les histoires par âge, mais nous en tenons compte — cela nous aidera à ajouter cette fonctionnalité bientôt.",
+        obSave: "Enregistrer mes choix", obSkip: "Passer pour l'instant", obEdit: "Modifier les préférences de votre famille" }
 };
 
 const REGIONS = {
@@ -794,8 +821,17 @@ let favStories = [];
 try { favStories = JSON.parse(localStorage.getItem("favStories") || "[]"); } catch { favStories = []; }
 let favTracks = [];
 try { favTracks = JSON.parse(localStorage.getItem("favTracks") || "[]"); } catch { favTracks = []; }
+// Onboarding answers: which topics this child loves, and their age band. Set
+// once at sign-up (or later via "Edit preferences"); interests power the
+// "Just for us" filter below. Age is stored and synced but nothing currently
+// filters by it — no story is age-tagged yet.
+let myInterests = [];
+try { myInterests = JSON.parse(localStorage.getItem("interests") || "[]"); } catch { myInterests = []; }
+let myChildAge = "";
+try { myChildAge = localStorage.getItem("childAge") || ""; } catch { myChildAge = ""; }
 let unreadOnly = false;
 let favOnly = false;
+let interestsOnly = false;
 const isRead = id => !!readMap[id];
 const readCount = () => Object.keys(readMap).length;
 const isFav = id => favStories.includes(id);
@@ -819,6 +855,16 @@ function setLang(l) {
   try { localStorage.setItem("lang", l); } catch {}
   pushProfileSoon();
 }
+function setInterests(list) {
+  myInterests = list;
+  try { localStorage.setItem("interests", JSON.stringify(myInterests)); } catch {}
+  pushProfileSoon();
+}
+function setChildAge(band) {
+  myChildAge = band;
+  try { localStorage.setItem("childAge", band); } catch {}
+  pushProfileSoon();
+}
 
 // Milestones a small child can see coming. The last one is the whole library.
 const MILESTONES = [
@@ -829,6 +875,17 @@ const MILESTONES = [
   { n: 50,  emoji: "🏆", en: "Fifty",         sw: "Hamsini",           fr: "Cinquante" },
   { n: 100, emoji: "👑", en: "One hundred",   sw: "Mia moja",          fr: "Cent" }
 ];
+
+// Onboarding age bands. Purely informational for now — see the note above
+// myChildAge — but keyed and labelled so a real age filter can slot in later
+// without a data-migration.
+const AGE_BANDS = [
+  { key: "u2",    en: "Under 2",     sw: "Chini ya miaka 2",  fr: "Moins de 2 ans" },
+  { key: "2-4",   en: "2–4 years",   sw: "Miaka 2–4",         fr: "2–4 ans" },
+  { key: "5-7",   en: "5–7 years",   sw: "Miaka 5–7",         fr: "5–7 ans" },
+  { key: "8plus", en: "8 and up",    sw: "Miaka 8 na zaidi",  fr: "8 ans et plus" }
+];
+
 // Reading widely matters more than reading a lot, so there is a badge for
 // visiting every region and one for trying every topic.
 function extraBadges() {
@@ -972,6 +1029,17 @@ function renderTracker() {
     <button class="unread-toggle${favOnly ? " on" : ""}" id="favToggle" style="margin-left:8px">
       💛 ${t.favOnly}${favStories.length ? ` · ${favStories.length}` : ""}
     </button>
+    ${session && myInterests.length ? `<button class="unread-toggle${interestsOnly ? " on" : ""}" id="interestsToggle" style="margin-left:8px">
+      🎯 ${t.forUs}
+    </button>` : ""}`;
+}
+
+// Fixed top-right so it's always visible, never buried below the fold.
+function renderAccountDock() {
+  const el = document.getElementById("accountDock");
+  if (!el) return;
+  const t = UI[effLang()];
+  el.innerHTML = `
     <button class="account-chip${session ? " on" : ""}" id="accountChip">
       ${session ? "✓ " + t.signedInAs(session.email) : "☁️ " + t.signIn}
     </button>`;
@@ -999,6 +1067,7 @@ function render() {
   updateMusicBtn();
   renderFeedback();
   renderTracker();
+  renderAccountDock();
   // Set properties rather than rebuilding the input, so typing keeps focus.
   const searchEl = document.getElementById("searchInput");
   searchEl.placeholder = t.search;
@@ -1048,7 +1117,8 @@ function render() {
     (topicFilter === "all" || s.topic === topicFilter) &&
     (genderFilter === "all" || s.gender === genderFilter) &&
     (!unreadOnly || !isRead(s.id)) &&
-    (!favOnly || isFav(s.id))
+    (!favOnly || isFav(s.id)) &&
+    (!interestsOnly || myInterests.includes(s.topic))
   ).sort((a, b) => bornYear(a) - bornYear(b));
 
   document.getElementById("countLine").textContent = t.showing(visible.length);
@@ -1589,7 +1659,9 @@ function currentPrefs() {
     lang,
     narrator: (typeof narrator !== "undefined" ? narrator : "sarah"),
     storyLen: (typeof storyLen !== "undefined" ? storyLen : "short"),
-    track: hasChosenTrack ? PLAYLIST[trackIdx].file : null
+    track: hasChosenTrack ? PLAYLIST[trackIdx].file : null,
+    interests: myInterests,
+    childAge: myChildAge
   };
 }
 
@@ -1649,6 +1721,16 @@ async function pullAndMergeProfile() {
       const i = PLAYLIST.findIndex(x => x.file === p.track);
       if (i >= 0) { trackIdx = i; hasChosenTrack = true; try { localStorage.setItem("musicTrack", p.track); } catch {} }
     }
+    if (Array.isArray(p.interests) && !localHas("interests")) {
+      myInterests = p.interests; try { localStorage.setItem("interests", JSON.stringify(myInterests)); } catch {}
+    }
+    if (p.childAge && !localHas("childAge")) {
+      myChildAge = p.childAge; try { localStorage.setItem("childAge", myChildAge); } catch {}
+    }
+  } else {
+    // No profile row yet anywhere — this account has never finished signing in
+    // before, on any device. Ask the onboarding questions once, right now.
+    openOnboarding();
   }
   pushProfile();          // write the merged state back up
   render();
@@ -1661,6 +1743,66 @@ async function signOut() {
   render();
 }
 
+// A short, entirely optional onboarding step: language, story interests, and
+// child's age. Shown once automatically the first time an account ever
+// finishes signing in (see pullAndMergeProfile), and reachable anytime after
+// via "Edit your family's preferences" in the account modal. Answers are held
+// in a draft object and only committed to the real (synced) state on Save, so
+// closing without saving changes nothing.
+let obDraft = null;
+
+function openOnboarding() {
+  obDraft = { lang, interests: [...myInterests], age: myChildAge };
+  renderOnboarding();
+  document.getElementById("onboardModal").hidden = false;
+}
+
+function renderOnboarding() {
+  const t = UI[effLang()];
+  const body = document.getElementById("onboardBody");
+  const langChips = UI_LANGS.map(l =>
+    `<button class="chip ${obDraft.lang === l ? "active" : ""}" data-ob-lang="${l}">${LANG_LABEL[l]}</button>`).join("");
+  const interestChips = Object.entries(TOPICS).map(([k, v]) =>
+    `<button class="chip ${obDraft.interests.includes(k) ? "active" : ""}" data-ob-interest="${k}">${v.emoji} ${v[effLang()] || v.en}</button>`).join("");
+  const ageChips = AGE_BANDS.map(a =>
+    `<button class="chip ${obDraft.age === a.key ? "active" : ""}" data-ob-age="${a.key}">${a[effLang()] || a.en}</button>`).join("");
+  body.innerHTML = `
+    <h3>${t.obTitle}</h3>
+    <p>${t.obSub}</p>
+    <span class="filter-label">${t.obLangQ}</span>
+    <div class="chip-row" style="margin-bottom:18px">${langChips}</div>
+    <span class="filter-label">${t.obInterestsQ}</span>
+    <div class="chip-row" style="margin-bottom:18px">${interestChips}</div>
+    <span class="filter-label">${t.obAgeQ}</span>
+    <div class="chip-row" style="margin-bottom:8px">${ageChips}</div>
+    <p style="font-size:12.5px; opacity:.8; margin-bottom:18px">${t.obAgeNote}</p>
+    <button class="auth-send" id="onboardSaveBtn" style="margin-bottom:10px">${t.obSave}</button><br>
+    <button class="auth-signout" id="onboardSkipBtn">${t.obSkip}</button>`;
+}
+
+document.getElementById("onboardModal").addEventListener("click", e => {
+  if (e.target.id === "onboardModal" || e.target.id === "onboardClose" || e.target.id === "onboardSkipBtn") {
+    document.getElementById("onboardModal").hidden = true; return;
+  }
+  const langBtn = e.target.closest("[data-ob-lang]");
+  if (langBtn) { obDraft.lang = langBtn.dataset.obLang; renderOnboarding(); return; }
+  const interestBtn = e.target.closest("[data-ob-interest]");
+  if (interestBtn) {
+    const k = interestBtn.dataset.obInterest;
+    obDraft.interests = obDraft.interests.includes(k) ? obDraft.interests.filter(x => x !== k) : [...obDraft.interests, k];
+    renderOnboarding(); return;
+  }
+  const ageBtn = e.target.closest("[data-ob-age]");
+  if (ageBtn) { obDraft.age = obDraft.age === ageBtn.dataset.obAge ? "" : ageBtn.dataset.obAge; renderOnboarding(); return; }
+  if (e.target.id === "onboardSaveBtn") {
+    setLang(obDraft.lang);
+    setInterests(obDraft.interests);
+    setChildAge(obDraft.age);
+    document.getElementById("onboardModal").hidden = true;
+    render();
+  }
+});
+
 function openAuthModal() { renderAuthModal(); document.getElementById("authModal").hidden = false; }
 
 function renderAuthModal() {
@@ -1670,6 +1812,7 @@ function renderAuthModal() {
     body.innerHTML = `
       <h3>✓ ${t.signedInAs(session.email)}</h3>
       <p>${t.syncedNote}</p>
+      <button class="auth-signout" id="authEditPrefs" style="margin-right:18px">${t.obEdit}</button>
       <button class="auth-signout" id="authSignOut">${t.signOut}</button>`;
   } else {
     body.innerHTML = `
@@ -1686,6 +1829,11 @@ document.getElementById("authModal").addEventListener("click", async e => {
     document.getElementById("authModal").hidden = true; return;
   }
   if (e.target.id === "authSignOut") { signOut(); return; }
+  if (e.target.id === "authEditPrefs") {
+    document.getElementById("authModal").hidden = true;
+    openOnboarding();
+    return;
+  }
   if (e.target.id === "authSendBtn") {
     const t = UI[effLang()];
     const email = document.getElementById("authEmail").value.trim();
@@ -1751,6 +1899,8 @@ document.addEventListener("click", e => {
   if (e.target.closest("#unreadToggle")) { unreadOnly = !unreadOnly; render(); return; }
 
   if (e.target.closest("#favToggle")) { favOnly = !favOnly; render(); return; }
+
+  if (e.target.closest("#interestsToggle")) { interestsOnly = !interestsOnly; render(); return; }
 
   if (e.target.closest("#accountChip")) { openAuthModal(); return; }
 
