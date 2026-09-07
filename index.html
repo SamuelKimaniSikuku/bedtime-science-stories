@@ -559,6 +559,7 @@ const UI = {
         fbNeed: "Please tap a star or write a little note first.",
         signIn: "Sign in to save across devices", signedInAs: e => `Synced · ${e}`, signOut: "Sign out",
         authTitle: "Keep your journey everywhere", authSub: "Enter your email and we'll send a sign-in link — no password needed. Your reading progress, badges, favourites, language and music choices will follow you on every device.",
+        authLangQ: "Which language should we use?",
         authEmail: "Your email", authSend: "Email me a sign-in link",
         authSent: e => `Check your inbox! We sent a sign-in link to ${e}. Tap it on this device and you're in.`,
         authErr: "Could not send the link — please check the email address and try again.",
@@ -592,6 +593,7 @@ const UI = {
         fbNeed: "Tafadhali gusa nyota au andika ujumbe mfupi kwanza.",
         signIn: "Ingia ili kuhifadhi kwenye kila kifaa", signedInAs: e => `Imesawazishwa · ${e}`, signOut: "Toka",
         authTitle: "Beba safari yako kila mahali", authSub: "Andika barua pepe yako, tutakutumia kiungo cha kuingia — hakuna nenosiri. Maendeleo ya kusoma, beji, vipendwa, lugha na muziki vitakufuata kwenye kila kifaa.",
+        authLangQ: "Tutumie lugha gani?",
         authEmail: "Barua pepe yako", authSend: "Nitumie kiungo cha kuingia",
         authSent: e => `Angalia barua pepe yako! Tumetuma kiungo cha kuingia kwa ${e}. Kigusa kwenye kifaa hiki na umeingia.`,
         authErr: "Imeshindwa kutuma kiungo — tafadhali hakikisha barua pepe na ujaribu tena.",
@@ -625,6 +627,7 @@ const UI = {
         fbNeed: "Veuillez toucher une étoile ou écrire un petit mot.",
         signIn: "Connectez-vous pour tout retrouver partout", signedInAs: e => `Synchronisé · ${e}`, signOut: "Se déconnecter",
         authTitle: "Votre voyage vous suit partout", authSub: "Entrez votre email et nous vous envoyons un lien de connexion — sans mot de passe. Progrès de lecture, badges, favoris, langue et musique vous suivront sur chaque appareil.",
+        authLangQ: "Dans quelle langue ?",
         authEmail: "Votre email", authSend: "Envoyez-moi un lien de connexion",
         authSent: e => `Regardez votre boîte mail ! Un lien de connexion a été envoyé à ${e}. Touchez-le sur cet appareil et c'est fait.`,
         authErr: "Impossible d'envoyer le lien — vérifiez l'adresse email et réessayez.",
@@ -1908,9 +1911,13 @@ function renderAuthModal() {
       <button class="auth-signout" id="authEditPrefs" style="margin-right:18px">${t.obEdit}</button>
       <button class="auth-signout" id="authSignOut">${t.signOut}</button>`;
   } else {
+    const langChips = UI_LANGS.map(l =>
+      `<button class="chip ${l === lang ? "active" : ""}" data-auth-lang="${l}">${LANG_LABEL[l]}</button>`).join("");
     body.innerHTML = `
       <h3>☁️ ${t.authTitle}</h3>
       <p>${t.authSub}</p>
+      <span class="filter-label">${t.authLangQ}</span>
+      <div class="chip-row" style="margin:8px 0 18px">${langChips}</div>
       <input type="email" id="authEmail" placeholder="${t.authEmail}" autocomplete="email">
       <button class="auth-send" id="authSendBtn">${t.authSend}</button>
       <div class="auth-status" id="authStatus"></div>`;
@@ -1925,6 +1932,17 @@ document.getElementById("authModal").addEventListener("click", async e => {
   if (e.target.id === "authEditPrefs") {
     document.getElementById("authModal").hidden = true;
     openOnboarding();
+    return;
+  }
+  const authLangBtn = e.target.closest("[data-auth-lang]");
+  if (authLangBtn) {
+    const emailField = document.getElementById("authEmail");
+    const typedEmail = emailField ? emailField.value : "";
+    setLang(authLangBtn.dataset.authLang);
+    render();
+    renderAuthModal();
+    const newEmailField = document.getElementById("authEmail");
+    if (newEmailField) newEmailField.value = typedEmail;
     return;
   }
   if (e.target.id === "authSendBtn") {
