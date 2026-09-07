@@ -187,6 +187,12 @@
   .mark-read:hover { border-color: var(--gold); color: var(--ink); }
   .mark-read.done { background: var(--gold); border-color: var(--gold); color: #241d07; font-weight: 700; }
 
+  .learn-more {
+    display: inline-block; color: var(--ink-soft); font-size: 13px;
+    text-decoration: underline; margin: 2px 0 14px;
+  }
+  .learn-more:hover { color: var(--gold); }
+
   /* --- search --- */
   .search-group { padding-bottom: 2px; }
   .search-box { position: relative; display: flex; align-items: center; }
@@ -572,7 +578,8 @@ const UI = {
         obAgeQ: "How old is your child?", obAgeNote: "We don't sort stories by age yet, but we're listening — this helps us build that next.",
         obSave: "Save my choices", obSkip: "Skip for now", obEdit: "Edit your family's preferences",
         introFor: name => `Tonight's story for ${name}…`,
-        pickFor: name => `Tonight's pick for ${name}`, pickCta: "Read tonight's story" },
+        pickFor: name => `Tonight's pick for ${name}`, pickCta: "Read tonight's story",
+        learnMore: name => `Learn more about ${name} on Wikipedia ↗` },
   sw: { title: "Malakai Stories",
         subtitle: "Hadithi fupi za usiku zenye funzo — kuhusu watu waliobadilisha dunia: walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
         region: "Kanda", topic: "Mada", gender: "Jinsia", all: "Zote",
@@ -606,7 +613,8 @@ const UI = {
         obAgeQ: "Mtoto wako ana umri gani?", obAgeNote: "Bado hatujapanga hadithi kwa umri, lakini tunasikiliza — hii itatusaidia kuongeza kipengele hicho baadaye.",
         obSave: "Hifadhi machaguo yangu", obSkip: "Ruka kwa sasa", obEdit: "Hariri mapendeleo ya familia yako",
         introFor: name => `Hadithi ya usiku wa leo kwa ${name}…`,
-        pickFor: name => `Chaguo la leo kwa ${name}`, pickCta: "Soma hadithi ya leo" },
+        pickFor: name => `Chaguo la leo kwa ${name}`, pickCta: "Soma hadithi ya leo",
+        learnMore: name => `Jifunze zaidi kuhusu ${name} kwenye Wikipedia ↗` },
   fr: { title: "Malakai Stories",
         subtitle: "De courtes histoires du soir qui enseignent — sur les gens qui ont changé le monde : où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
         region: "Région", topic: "Sujet", gender: "Genre", all: "Tout",
@@ -640,7 +648,8 @@ const UI = {
         obAgeQ: "Quel âge a votre enfant ?", obAgeNote: "Nous ne trions pas encore les histoires par âge, mais nous en tenons compte — cela nous aidera à ajouter cette fonctionnalité bientôt.",
         obSave: "Enregistrer mes choix", obSkip: "Passer pour l'instant", obEdit: "Modifier les préférences de votre famille",
         introFor: name => `L'histoire de ce soir pour ${name}…`,
-        pickFor: name => `La sélection de ce soir pour ${name}`, pickCta: "Lire l'histoire de ce soir" }
+        pickFor: name => `La sélection de ce soir pour ${name}`, pickCta: "Lire l'histoire de ce soir",
+        learnMore: name => `En savoir plus sur ${name} sur Wikipédia ↗` }
 };
 
 const REGIONS = {
@@ -1011,6 +1020,14 @@ const UI_LANGS = ["en", "sw", "fr"];               // languages with a full inte
 function effLang() { return UI_LANGS.includes(lang) ? lang : LANG_FALLBACK[lang]; }
 function pick(o) { return o ? (o[lang] != null ? o[lang] : o[effLang()]) : ""; }  // story field, supports drop-in translations
 
+// No curated per-story link to maintain: Wikipedia's own "go" search jumps
+// straight to the exact article when the name matches one, and degrades to a
+// normal results page otherwise — so it's never a dead link, even for a name
+// English Wikipedia doesn't have an exact title for.
+function wikiLink(name) {
+  return `https://en.wikipedia.org/w/index.php?title=Special:Search&search=${encodeURIComponent(name)}&go=Go`;
+}
+
 // Stories available in the chosen language. Full-interface languages have every
 // story; a partially translated one (Gĩkũyũ today) lists only what really exists.
 function inLang() {
@@ -1260,6 +1277,9 @@ function openReader(id) {
     }</div>` : ""}
     <button class="narrate-btn" id="narrateBtn"><span class="ico">🔊</span><span id="narrateLabel">${t.listen}</span></button>
     ${pick(textFor(s, lengthsFor(s).includes(storyLen) ? storyLen : "short")).map(p => `<p>${p}</p>`).join("")}
+    <div style="text-align:center">
+      <a class="learn-more" href="${wikiLink(s.name)}" target="_blank" rel="noopener noreferrer">${t.learnMore(s.name)}</a>
+    </div>
     <div style="text-align:center">
       <button class="mark-read${isRead(s.id) ? " done" : ""}" id="markReadBtn">${isRead(s.id) ? t.markedRead : t.markRead}</button>
       <button class="fav-btn${isFav(s.id) ? " done" : ""}" id="favBtn">${isFav(s.id) ? t.favBtnOn : t.favBtn}</button>
