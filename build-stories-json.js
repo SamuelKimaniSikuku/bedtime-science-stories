@@ -106,6 +106,11 @@ if (!storiesRe.test(html)) {
 const body = stories.map(s => JSON.stringify(s)).join(",\n");
 html = html.replace(storiesRe, (_, open, close) => open + body + close);
 
+// Reading-library counts come from content, independently of the paid voice-pack scope.
+const description = `${stories.length} true bedtime stories about remarkable people. Read or listen in English, Kiswahili and Français, with selected stories in Gĩkũyũ and Svenska.`;
+html = html.replace(/(<meta (?:name="description"|property="og:description"|name="twitter:description") content=")[^"]*(">)/g,
+  (_, open, close) => open + description + close);
+
 // Keep the SEO ItemList (id="ld-storylist" in index.html's <head>) in sync so
 // every story is a discoverable, shareable https://malakaistory.com/#id link.
 const itemList = {

@@ -143,7 +143,13 @@
     "So Wangari did something simple and enormously powerful. She began to plant trees. She showed village women how to gather seeds, how to fill little bags with soil, how to water the seedlings and wait — most of them grown in gardens right behind their own houses. She paid them a few coins for every tree that lived. They called it the <strong>Green Belt Movement</strong>, and over the years those women planted more than fifty million trees.",
     "It was not easy. Some powerful people did not want the forests saved, and they tried hard to stop her. Once she stood in front of a great park in the middle of Nairobi and refused to let it be built over — and that park is still green today. Wangari stood as steady as her old fig tree and did not give up. In 2004 she was given the <strong>Nobel Peace Prize</strong>, the first African woman ever to receive it, because caring for the earth, the world agreed at last, is one of the ways we make peace.",
     "Wangari died in 2011, but her forests are still growing and the Green Belt Movement still plants. She left us the simplest instruction in the world. When a problem is too big to solve, she said, start with the part you can hold in your hand. Plant one <strong>seed</strong>. Then plant another."
-   ]
+   ],
+   "cover": "images/stories/maathai.webp",
+   "question": {
+    "en": "What little thing could we do tomorrow to help a tree, a flower, or an animal?",
+    "sw": "Kesho tunaweza kufanya jambo gani dogo kusaidia mti, ua au mnyama?",
+    "fr": "Quelle petite chose pourrions-nous faire demain pour aider un arbre, une fleur ou un animal ?"
+   }
   },
   {
    "id": "carver",
@@ -1378,7 +1384,12 @@
     "People walking past laughed at him. They called him <strong>crazy</strong> — the boy playing with rubbish. His mother worried, and his father said nothing but let him keep going. William built a tower out of blue-gum poles, and with his cousin and his friend he hauled the heavy machine to the top, one rung at a time. A crowd gathered below, half of them waiting to watch him fail.",
     "The wind came. The blades turned. And the little bulb in William's hand flickered, glowed, and shone — <strong>light</strong>, made from wind and junk and stubbornness. He was fourteen years old. His mother and sisters came out to look. The whole village went quiet, and then it cheered. Soon four bulbs burned in his family's house, and later a bigger windmill pumped water for the crops and charged the neighbours' phones.",
     "News of the boy who harnessed the wind travelled around the world. William went back to school, then to a school in South Africa for bright young Africans, then to university far away, and he wrote a book that children everywhere now read. He teaches us something worth remembering at bedtime: when the winds of trouble blow hard, some people build walls — and some people build <strong>windmills</strong>."
-   ]
+   ],
+   "question": {
+    "en": "If you could build something to help someone, what would you make?",
+    "sw": "Ukiweza kutengeneza kitu cha kumsaidia mtu, ungetengeneza nini?",
+    "fr": "Si tu pouvais construire quelque chose pour aider quelqu'un, que ferais-tu ?"
+   }
   },
   {
    "id": "washington",
@@ -3122,7 +3133,7 @@
    "id": "ngugi",
    "emoji": "📗",
    "name": "Ngũgĩ wa Thiong'o",
-   "years": "1938–",
+   "years": "1938–2025",
    "born": 1938,
    "region": "africa",
    "topic": "language",
@@ -3145,7 +3156,18 @@
     "Then he made an even braver choice. He decided to write his stories in <strong>Gikuyu</strong> — because a language carries a people's songs, their jokes, their grandmothers and their memory, and because he wanted the farmers and mothers of Limuru to read him first, before anybody else in the world. He and his neighbours even built an open-air theatre in the village and performed a play together, with ordinary workers acting the parts.",
     "That play was in his mother tongue, and because of it he was locked away for a year. Even there he kept writing. He had no notebook, so he wrote a whole novel on sheets of <strong>toilet paper</strong>. The paper there was rough and hard, which turned out to be lucky: rough paper takes ink and does not tear. Page by hidden page, the book grew — because paper is paper, and a story always finds its way out.",
     "He came home, and he kept writing, and he kept telling anyone who would listen: no language in the world is better than another. Today, all over Africa and far beyond, children are learning to read in the languages their grandmothers speak, and teachers point to Ngũgĩ when they explain why. Your mother tongue is not something to hide. It is a <strong>treasure</strong>."
-   ]
+   ],
+   "cover": "images/stories/ngugi.webp",
+   "question": {
+    "en": "What story would you like to tell in your own language?",
+    "sw": "Ungependa kusimulia hadithi gani kwa lugha yako?",
+    "fr": "Quelle histoire aimerais-tu raconter dans ta propre langue ?"
+   },
+   "biographySource": {
+    "url": "https://news.uci.edu/2025/05/29/an-eloquent-voice-for-freedom/",
+    "label": "UC Irvine · Ngũgĩ wa Thiong’o, 1938–2025",
+    "reviewed": "2026-09-07"
+   }
   },
   {
    "id": "aesop",
