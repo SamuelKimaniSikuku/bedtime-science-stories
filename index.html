@@ -157,6 +157,21 @@
   .unread-toggle:hover { border-color: var(--gold); color: var(--ink); }
   .unread-toggle.on { background: var(--gold); border-color: var(--gold); color: #241d07; font-weight: 700; }
 
+  /* --- "Tonight's pick for {name}" featured card --- */
+  .pick-card {
+    display: flex; align-items: center; gap: 18px;
+    background: linear-gradient(135deg, rgba(245,198,100,.16), rgba(255,255,255,.03));
+    border: 1px solid rgba(245,198,100,.35); border-radius: 20px;
+    padding: 18px 22px; margin: 18px 0 0; cursor: pointer; transition: all .18s;
+  }
+  .pick-card:hover { border-color: var(--gold); background: linear-gradient(135deg, rgba(245,198,100,.22), rgba(255,255,255,.04)); }
+  .pick-card .avatar { font-size: 40px; flex-shrink: 0; }
+  .pick-card-label { font-size: 12.5px; color: var(--gold); font-weight: 700; letter-spacing: .02em; margin-bottom: 3px; }
+  .pick-card h3 { font-size: 17px; color: var(--moon); margin-bottom: 2px; }
+  .pick-card .hook { font-size: 13.5px; color: var(--ink-soft); line-height: 1.4; }
+  .pick-card-cta { margin-left: auto; font-size: 13px; color: var(--gold); font-weight: 700; white-space: nowrap; padding-left: 10px; }
+  @media (max-width: 560px) { .pick-card { flex-wrap: wrap; } .pick-card-cta { margin-left: 0; } }
+
   .card.read { border-color: rgba(245,198,100,.35); }
   .card .read-star {
     position: absolute; top: 14px; right: 16px; font-size: 15px;
@@ -259,6 +274,7 @@
   .reader p { font-size: 17.5px; margin-bottom: 16px; color: #e9e7de; }
   .reader p strong { color: var(--moon); }
   .goodnight { text-align: center; color: var(--gold); font-size: 16px; margin-top: 26px; }
+  .story-intro { color: var(--gold); font-size: 14.5px; font-style: italic; margin-bottom: 14px; }
   .reader-langs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
   .reader-langs .lang-btn { padding: 5px 12px; font-size: 13px; }
 
@@ -453,6 +469,7 @@
   </header>
 
   <section class="tracker" id="tracker"></section>
+  <section id="featuredPick"></section>
 
   <div class="filters">
     <div class="filter-group search-group">
@@ -549,9 +566,12 @@ const UI = {
         favOnly: "Favourites", trackPick: "Choose the music", syncedNote: "Saved to your family account.",
         forUs: "Just for us",
         obTitle: "Welcome to the family! 💛", obSub: "A few quick, optional questions to help us pick the right stories for you — skip anytime, change anytime.",
+        obNameQ: "What's your child's name?", obNamePh: "e.g. Malakai",
         obLangQ: "Which language should we read in?", obInterestsQ: "What does your little one love? (pick a few)",
         obAgeQ: "How old is your child?", obAgeNote: "We don't sort stories by age yet, but we're listening — this helps us build that next.",
-        obSave: "Save my choices", obSkip: "Skip for now", obEdit: "Edit your family's preferences" },
+        obSave: "Save my choices", obSkip: "Skip for now", obEdit: "Edit your family's preferences",
+        introFor: name => `Tonight's story for ${name}…`,
+        pickFor: name => `Tonight's pick for ${name}`, pickCta: "Read tonight's story" },
   sw: { title: "Malakai Stories",
         subtitle: "Hadithi fupi za usiku zenye funzo — kuhusu watu waliobadilisha dunia: walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
         region: "Kanda", topic: "Mada", gender: "Jinsia", all: "Zote",
@@ -579,9 +599,12 @@ const UI = {
         favOnly: "Vipendwa", trackPick: "Chagua muziki", syncedNote: "Imehifadhiwa kwenye akaunti ya familia.",
         forUs: "Kwa ajili yetu",
         obTitle: "Karibu kwenye familia! 💛", obSub: "Maswali machache ya haraka, si lazima, ili kutusaidia kuchagua hadithi zinazokufaa — unaweza kuruka au kubadilisha wakati wowote.",
+        obNameQ: "Jina la mtoto wako ni nani?", obNamePh: "mfano: Malakai",
         obLangQ: "Tusome kwa lugha gani?", obInterestsQ: "Mtoto wako anapenda nini? (chagua chache)",
         obAgeQ: "Mtoto wako ana umri gani?", obAgeNote: "Bado hatujapanga hadithi kwa umri, lakini tunasikiliza — hii itatusaidia kuongeza kipengele hicho baadaye.",
-        obSave: "Hifadhi machaguo yangu", obSkip: "Ruka kwa sasa", obEdit: "Hariri mapendeleo ya familia yako" },
+        obSave: "Hifadhi machaguo yangu", obSkip: "Ruka kwa sasa", obEdit: "Hariri mapendeleo ya familia yako",
+        introFor: name => `Hadithi ya usiku wa leo kwa ${name}…`,
+        pickFor: name => `Chaguo la leo kwa ${name}`, pickCta: "Soma hadithi ya leo" },
   fr: { title: "Malakai Stories",
         subtitle: "De courtes histoires du soir qui enseignent — sur les gens qui ont changé le monde : où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
         region: "Région", topic: "Sujet", gender: "Genre", all: "Tout",
@@ -609,9 +632,12 @@ const UI = {
         favOnly: "Favoris", trackPick: "Choisir la musique", syncedNote: "Enregistré sur le compte famille.",
         forUs: "Juste pour nous",
         obTitle: "Bienvenue dans la famille ! 💛", obSub: "Quelques questions rapides et facultatives pour nous aider à choisir les bonnes histoires — passez ou changez à tout moment.",
+        obNameQ: "Quel est le prénom de votre enfant ?", obNamePh: "ex. Malakai",
         obLangQ: "Dans quelle langue devrions-nous lire ?", obInterestsQ: "Qu'est-ce que votre enfant adore ? (choisissez-en quelques-unes)",
         obAgeQ: "Quel âge a votre enfant ?", obAgeNote: "Nous ne trions pas encore les histoires par âge, mais nous en tenons compte — cela nous aidera à ajouter cette fonctionnalité bientôt.",
-        obSave: "Enregistrer mes choix", obSkip: "Passer pour l'instant", obEdit: "Modifier les préférences de votre famille" }
+        obSave: "Enregistrer mes choix", obSkip: "Passer pour l'instant", obEdit: "Modifier les préférences de votre famille",
+        introFor: name => `L'histoire de ce soir pour ${name}…`,
+        pickFor: name => `La sélection de ce soir pour ${name}`, pickCta: "Lire l'histoire de ce soir" }
 };
 
 const REGIONS = {
@@ -829,6 +855,10 @@ let myInterests = [];
 try { myInterests = JSON.parse(localStorage.getItem("interests") || "[]"); } catch { myInterests = []; }
 let myChildAge = "";
 try { myChildAge = localStorage.getItem("childAge") || ""; } catch { myChildAge = ""; }
+// The child's first name, used only to personalize the reader's intro/goodnight
+// lines and the homepage's "Tonight's pick" card — never touches story text itself.
+let myChildName = "";
+try { myChildName = localStorage.getItem("childName") || ""; } catch { myChildName = ""; }
 let unreadOnly = false;
 let favOnly = false;
 let interestsOnly = false;
@@ -863,6 +893,11 @@ function setInterests(list) {
 function setChildAge(band) {
   myChildAge = band;
   try { localStorage.setItem("childAge", band); } catch {}
+  pushProfileSoon();
+}
+function setChildName(name) {
+  myChildName = (name || "").slice(0, 40);
+  try { localStorage.setItem("childName", myChildName); } catch {}
   pushProfileSoon();
 }
 
@@ -963,6 +998,12 @@ const LANG_LABEL = Object.fromEntries(LANGS.map(l => [l.code, l.label]));
 const LANG_FALLBACK = Object.fromEntries(LANGS.map(l => [l.code, l.fallback || "fr"]));
 // Closing line for languages without a full interface, in their own words.
 const LANG_GOODNIGHT = { ki: "Mũthĩa. Ũtukũ mwega 🌙", sv: "Slut. Sov gott 🌙" };
+// Every goodnight line (LANG_GOODNIGHT's and UI's) ends " 🌙" — slot the child's
+// name in right before it rather than maintaining a second full translation.
+function goodnightLine(t) {
+  const base = LANG_GOODNIGHT[lang] || t.goodnight;
+  return myChildName ? base.replace(" 🌙", `, ${myChildName} 🌙`) : base;
+}
 const UI_LANGS = ["en", "sw", "fr"];               // languages with a full interface
 function effLang() { return UI_LANGS.includes(lang) ? lang : LANG_FALLBACK[lang]; }
 function pick(o) { return o ? (o[lang] != null ? o[lang] : o[effLang()]) : ""; }  // story field, supports drop-in translations
@@ -1034,6 +1075,43 @@ function renderTracker() {
     </button>` : ""}`;
 }
 
+// One story a day, same pick all day on every device (seeded by the date, not
+// randomness). Prefers something new in the child's saved interests, and falls
+// back gracefully if there's nothing left unread there.
+function pickOfTheDay() {
+  const pool = inLang();
+  if (!pool.length) return null;
+  const dayKey = new Date().toISOString().slice(0, 10);
+  const seed = [...dayKey].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const withInterests = myInterests.length ? pool.filter(s => myInterests.includes(s.topic)) : [];
+  const unreadInterests = withInterests.filter(s => !isRead(s.id));
+  const unreadAny = pool.filter(s => !isRead(s.id));
+  const candidates = unreadInterests.length ? unreadInterests
+    : withInterests.length ? withInterests
+    : unreadAny.length ? unreadAny
+    : pool;
+  return candidates[seed % candidates.length];
+}
+
+function renderFeaturedPick() {
+  const el = document.getElementById("featuredPick");
+  if (!el) return;
+  if (!session || !myChildName) { el.innerHTML = ""; return; }
+  const s = pickOfTheDay();
+  if (!s) { el.innerHTML = ""; return; }
+  const t = UI[effLang()];
+  el.innerHTML = `
+    <div class="pick-card" data-story="${s.id}">
+      <div class="avatar">${s.emoji}</div>
+      <div>
+        <div class="pick-card-label">✨ ${t.pickFor(myChildName)}</div>
+        <h3>${s.name}</h3>
+        <div class="hook">${pick(s.hook)}</div>
+      </div>
+      <div class="pick-card-cta">${t.pickCta} →</div>
+    </div>`;
+}
+
 // Fixed top-right so it's always visible, never buried below the fold.
 function renderAccountDock() {
   const el = document.getElementById("accountDock");
@@ -1067,6 +1145,7 @@ function render() {
   updateMusicBtn();
   renderFeedback();
   renderTracker();
+  renderFeaturedPick();
   renderAccountDock();
   // Set properties rather than rebuilding the input, so typing keeps focus.
   const searchEl = document.getElementById("searchInput");
@@ -1166,6 +1245,7 @@ function openReader(id) {
       <span class="badge region-${s.region}">${pick(REGIONS[s.region])}</span>
       <span class="badge topic">${TOPICS[s.topic].emoji} ${pick(TOPICS[s.topic])}</span>
     </div>
+    ${myChildName ? `<div class="story-intro">${t.introFor(myChildName)}</div>` : ""}
     ${(!UI_LANGS.includes(lang) && pick(s.text) === s.text[effLang()]) ? `<div class="xlate-note">${xlateNote()}</div>` : ""}
     ${!explicitVoiceParam ? `<div class="chip-row" style="margin:6px 0 10px">${
       Object.entries(HOUSE_VOICES).map(([k, label]) =>
@@ -1181,7 +1261,7 @@ function openReader(id) {
       <button class="mark-read${isRead(s.id) ? " done" : ""}" id="markReadBtn">${isRead(s.id) ? t.markedRead : t.markRead}</button>
       <button class="fav-btn${isFav(s.id) ? " done" : ""}" id="favBtn">${isFav(s.id) ? t.favBtnOn : t.favBtn}</button>
     </div>
-    <div class="goodnight">${LANG_GOODNIGHT[lang] || t.goodnight}</div>`;
+    <div class="goodnight">${goodnightLine(t)}</div>`;
   document.getElementById("overlay").classList.add("open");
   reader.dataset.story = id;
   document.getElementById("overlay").scrollTop = 0;
@@ -1661,7 +1741,8 @@ function currentPrefs() {
     storyLen: (typeof storyLen !== "undefined" ? storyLen : "short"),
     track: hasChosenTrack ? PLAYLIST[trackIdx].file : null,
     interests: myInterests,
-    childAge: myChildAge
+    childAge: myChildAge,
+    childName: myChildName
   };
 }
 
@@ -1727,6 +1808,9 @@ async function pullAndMergeProfile() {
     if (p.childAge && !localHas("childAge")) {
       myChildAge = p.childAge; try { localStorage.setItem("childAge", myChildAge); } catch {}
     }
+    if (p.childName && !localHas("childName")) {
+      myChildName = p.childName; try { localStorage.setItem("childName", myChildName); } catch {}
+    }
   } else {
     // No profile row yet anywhere — this account has never finished signing in
     // before, on any device. Ask the onboarding questions once, right now.
@@ -1752,7 +1836,7 @@ async function signOut() {
 let obDraft = null;
 
 function openOnboarding() {
-  obDraft = { lang, interests: [...myInterests], age: myChildAge };
+  obDraft = { lang, interests: [...myInterests], age: myChildAge, name: myChildName };
   renderOnboarding();
   document.getElementById("onboardModal").hidden = false;
 }
@@ -1769,6 +1853,9 @@ function renderOnboarding() {
   body.innerHTML = `
     <h3>${t.obTitle}</h3>
     <p>${t.obSub}</p>
+    <span class="filter-label">${t.obNameQ}</span>
+    <input type="text" id="onboardName" maxlength="40"
+      placeholder="${t.obNamePh}" value="${(obDraft.name || "").replace(/"/g, "&quot;")}">
     <span class="filter-label">${t.obLangQ}</span>
     <div class="chip-row" style="margin-bottom:18px">${langChips}</div>
     <span class="filter-label">${t.obInterestsQ}</span>
@@ -1795,12 +1882,18 @@ document.getElementById("onboardModal").addEventListener("click", e => {
   const ageBtn = e.target.closest("[data-ob-age]");
   if (ageBtn) { obDraft.age = obDraft.age === ageBtn.dataset.obAge ? "" : ageBtn.dataset.obAge; renderOnboarding(); return; }
   if (e.target.id === "onboardSaveBtn") {
+    const nameInput = document.getElementById("onboardName");
+    if (nameInput) obDraft.name = nameInput.value.trim();
     setLang(obDraft.lang);
     setInterests(obDraft.interests);
     setChildAge(obDraft.age);
+    setChildName(obDraft.name);
     document.getElementById("onboardModal").hidden = true;
     render();
   }
+});
+document.getElementById("onboardModal").addEventListener("input", e => {
+  if (e.target.id === "onboardName" && obDraft) obDraft.name = e.target.value;
 });
 
 function openAuthModal() { renderAuthModal(); document.getElementById("authModal").hidden = false; }
