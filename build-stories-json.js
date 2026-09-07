@@ -132,6 +132,19 @@ if (ldRe.test(html)) {
   console.warn("Could not find the ld-storylist <script> block in index.html — SEO ItemList not updated.");
 }
 
+// -------------------------------------------------------------- your-voice.html
+// The paid voice-pack page quotes the library size in prose, in several places
+// and phrasings — unlike index.html's meta tags, this can't be one generic
+// pattern. Each replacement anchors on stable surrounding wording (not the
+// number itself), so it stays correct however many times the build re-runs.
+let voiceHtml = fs.readFileSync(path.join(root, "your-voice.html"), "utf8");
+const totalRecordings = stories.length * 3;
+voiceHtml = voiceHtml
+  .replace(/collection of \d+ bedtime stories/g, `collection of ${stories.length} bedtime stories`)
+  .replace(/\d+( stories in your voice, in English)/, `${stories.length}$1`)
+  .replace(/\d+( stories in three languages — )\d+( recordings in your voice)/, `${stories.length}$1${totalRecordings}$2`)
+  .replace(/(Voice packages include )\d+( stories\.)/, `$1${stories.length}$2`);
+
 // ----------------------------------------------------------------------- write
 const storiesJson = JSON.stringify(out);
 if (CHECK) {
@@ -139,14 +152,16 @@ if (CHECK) {
   const drift = [
     same("stories.json", storiesJson) ? null : "stories.json",
     same("index.html", html) ? null : "index.html",
+    same("your-voice.html", voiceHtml) ? null : "your-voice.html",
   ].filter(Boolean);
   if (drift.length) { console.error(`Out of date, run the build: ${drift.join(", ")}`); process.exit(1); }
-  console.log("Up to date: index.html and stories.json match content/");
+  console.log("Up to date: index.html, your-voice.html and stories.json match content/");
   process.exit(0);
 }
 
 fs.writeFileSync(path.join(root, "stories.json"), storiesJson);
 fs.writeFileSync(path.join(root, "index.html"), html);
+fs.writeFileSync(path.join(root, "your-voice.html"), voiceHtml);
 
 const langCount = {};
 for (const s of out) for (const l of Object.keys(s.langs)) langCount[l] = (langCount[l] || 0) + 1;

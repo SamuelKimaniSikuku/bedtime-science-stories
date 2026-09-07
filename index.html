@@ -752,7 +752,7 @@ const HOME_UI = {
     note: "Read together · choose a short or longer story", filters: "Filter by region, topic or gender", reset: "Clear filters",
     voiceTitle: "Their favourite voice is yours.", voiceText: "Record three short passages. Let your child hear bedtime stories in your voice, even when you're away.", voiceCta: "Explore your voice →",
     chat: "One little question before goodnight", question: "What is one thing from this story you would like to try or learn more about?",
-    source: "Biography update", reviewed: "Checked 7 September 2026", close: "Close story", minutes: "min", more: "Read story →",
+    source: "Biography update", reviewed: date => `Checked ${date}`, close: "Close story", minutes: "min", more: "Read story →",
     pause: "Pause", resume: "Resume", stop: "Stop", sleep: "Sleep timer", off: "Off", seek: "Story progress",
     preparing: "Preparing the story…", device: "Using your device's voice. Progress follows the sentences.",
     unavailable: "A voice in this language isn't available on this device. You can still read together.",
@@ -764,7 +764,7 @@ const HOME_UI = {
     note: "Somani pamoja · chagua hadithi fupi au ndefu", filters: "Chuja kwa kanda, mada au jinsia", reset: "Ondoa vichujio",
     voiceTitle: "Sauti anayoipenda zaidi ni yako.", voiceText: "Rekodi vifungu vitatu vifupi. Mtoto wako asikie hadithi kwa sauti yako, hata ukiwa mbali.", voiceCta: "Hadithi kwa sauti yako →",
     chat: "Swali dogo kabla ya kulala", question: "Ni jambo gani katika hadithi hii ungependa kujaribu au kujifunza zaidi?",
-    source: "Taarifa ya maisha", reviewed: "Imehakikiwa tarehe 7 Septemba 2026", close: "Funga hadithi", minutes: "dakika", more: "Soma hadithi →",
+    source: "Taarifa ya maisha", reviewed: date => `Imehakikiwa tarehe ${date}`, close: "Funga hadithi", minutes: "dakika", more: "Soma hadithi →",
     pause: "Sitisha", resume: "Endelea", stop: "Acha", sleep: "Kipima muda", off: "Zima", seek: "Maendeleo ya hadithi",
     preparing: "Inaandaa hadithi…", device: "Inatumia sauti ya kifaa chako. Maendeleo yanafuata sentensi.",
     unavailable: "Sauti ya lugha hii haipatikani kwenye kifaa hiki. Mnaweza kusoma pamoja.",
@@ -776,7 +776,7 @@ const HOME_UI = {
     note: "À lire ensemble · version courte ou plus longue", filters: "Filtrer par région, sujet ou genre", reset: "Effacer les filtres",
     voiceTitle: "Sa voix préférée, c'est la vôtre.", voiceText: "Enregistrez trois courts passages. Votre enfant pourra écouter les histoires avec votre voix, même quand vous êtes loin.", voiceCta: "Découvrir votre voix →",
     chat: "Une petite question avant de dormir", question: "Quelle chose de cette histoire aimerais-tu essayer ou mieux comprendre ?",
-    source: "Mise à jour biographique", reviewed: "Vérifié le 7 septembre 2026", close: "Fermer l'histoire", minutes: "min", more: "Lire l'histoire →",
+    source: "Mise à jour biographique", reviewed: date => `Vérifié le ${date}`, close: "Fermer l'histoire", minutes: "min", more: "Lire l'histoire →",
     pause: "Pause", resume: "Reprendre", stop: "Arrêter", sleep: "Minuteur", off: "Désactivé", seek: "Progression de l'histoire",
     preparing: "Préparation de l'histoire…", device: "Lecture avec la voix de votre appareil. La progression suit les phrases.",
     unavailable: "Aucune voix dans cette langue n'est disponible sur cet appareil. Vous pouvez toujours lire ensemble.",
@@ -796,6 +796,18 @@ function inCollection(s, key = collectionFilter) {
 }
 function durationLabel(s) {
   return `~${lengthsFor(s).includes("m") ? "2 / 5" : "2"} ${HOME_UI[effLang()].minutes}`;
+}
+// Formats a story's own biographySource.reviewed date (an ISO "YYYY-MM-DD"),
+// so the "last checked" note reflects that story's real review date instead
+// of a fixed string that would silently go stale the next time one is added.
+const REVIEW_LOCALE = { en: "en-GB", sw: "sw-KE", fr: "fr-FR" };
+function formatReviewDate(iso) {
+  const date = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return iso;
+  try {
+    return new Intl.DateTimeFormat(REVIEW_LOCALE[effLang()] || "en-GB",
+      { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(date);
+  } catch { return iso; }
 }
 
 const REGIONS = {
@@ -1459,7 +1471,7 @@ function openReader(id) {
       <button class="fav-btn${isFav(s.id) ? " done" : ""}" id="favBtn">${isFav(s.id) ? t.favBtnOn : t.favBtn}</button>
     </div>
     <div class="goodnight">${escapeHtml(goodnightLine(t))}</div>
-    ${s.biographySource ? `<div class="source-note">${h.source}: <a href="${s.biographySource.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.biographySource.label)}</a> · ${h.reviewed}</div>` : ""}`;
+    ${s.biographySource ? `<div class="source-note">${h.source}: <a href="${s.biographySource.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.biographySource.label)}</a> · ${h.reviewed(formatReviewDate(s.biographySource.reviewed))}</div>` : ""}`;
   document.getElementById("overlay").classList.add("open");
   reader.dataset.story = id;
   document.getElementById("overlay").scrollTop = 0;
