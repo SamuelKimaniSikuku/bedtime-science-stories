@@ -530,12 +530,13 @@
   .conversation h3 { font-size: 14px; color: var(--gold); margin: 0 0 8px; }
   .conversation div { font-family: Georgia, serif; font-size: 21px; line-height: 1.5; color: var(--moon); }
   /* Ask why: a quiet space for a parent and child to explore together. */
-  .ask { border: 1px solid rgba(245,198,100,.35); border-radius: 18px; padding: 22px; margin: 0 0 24px; scroll-margin-top: 240px; background: linear-gradient(135deg, #f5c6640a, #ffffff02); }
-  .ask-eyebrow { color: var(--gold); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 8px; }
-  .ask h3 { font-family: Georgia, serif; color: var(--moon); font-size: 26px; font-weight: 400; margin: 0 0 8px; }
-  .ask-label, .ask-help { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; line-height: 1.6; }
+  .ask { border: 1px solid rgba(245,198,100,.35); border-radius: 16px; padding: 18px; margin: 0 0 18px; scroll-margin-top: 240px; background: linear-gradient(135deg, #f5c6640a, #ffffff02); }
+  /* Keep activity guidance independent of the story's paragraph typography. */
+  .ask .ask-eyebrow { color: var(--gold); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 4px; }
+  .ask h3 { font-family: Georgia, serif; color: var(--moon); font-size: 22px; font-weight: 400; margin: 0 0 6px; }
+  .ask .ask-label, .ask .ask-help { font-size: 14px; color: var(--ink-soft); margin: 0 0 8px; line-height: 1.5; }
   .ask label { display: block; color: var(--ink); font-size: 14px; margin-bottom: 8px; }
-  .ask-age { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 18px 0 14px; }
+  .ask-age { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0 10px; }
   .ask-age label { margin: 0; }
   .ask-row { display: flex; gap: 8px; }
   .ask-row input, .ask select { min-width: 0; background: #141b38; border: 1.5px solid #323d68; color: var(--ink); border-radius: 12px; padding: 11px 14px; font-size: 16px; font-family: inherit; min-height: 44px; }
@@ -543,30 +544,39 @@
   .ask input:focus-visible, .ask select:focus-visible, .ask button:focus-visible, .ask summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   .ask-btn { background: var(--gold); border: none; color: #201a08; font-weight: 700; font-family: inherit; padding: 11px 18px; min-height: 44px; border-radius: 12px; font-size: 14px; cursor: pointer; }
   .ask button:disabled { opacity: .5; cursor: default; }
-  .ask-tools, .ask-actions, .ask-rate { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
-  .ask-secondary, .ask-rate button { background: transparent; border: 1px solid #46527d; color: var(--moon); font-family: inherit; font-size: 13px; min-height: 44px; padding: 8px 12px; border-radius: 12px; cursor: pointer; }
+  .ask-tools, .ask-actions, .ask-rate { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+  .ask-secondary, .ask-rate button { background: transparent; border: 1px solid #46527d; color: var(--moon); font-family: inherit; font-size: 14px; min-height: 44px; padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+  .ask-tools .ask-secondary { border-color: transparent; padding: 6px 4px; }
   .ask-tools .ask-count { margin-left: auto; color: var(--ink-soft); font-size: 12px; }
-  .ask-privacy { font-size: 13px; line-height: 1.6; color: var(--ink-soft); margin: 14px 0; }
-  .ask-privacy summary { cursor: pointer; padding: 8px 0; color: var(--moon); }
-  .ask-privacy p { margin: 8px 0; }
+  .ask-privacy { font-size: 14px; line-height: 1.5; color: var(--ink-soft); margin: 8px 0; }
+  .ask-privacy summary { cursor: pointer; min-height: 44px; padding: 10px 0; color: var(--moon); }
+  .ask .ask-privacy p { font-size: 14px; line-height: 1.5; color: var(--ink-soft); margin: 8px 0; }
   .ask-privacy a { color: var(--gold); }
-  .ask-offline { border-top: 1px solid #46527d; margin-top: 20px; padding-top: 6px; }
-  .ask-offline summary { color: var(--moon); min-height: 44px; font-size: 16px; }
+  .ask-offline { border-top: 1px solid #46527d; margin-top: 12px; }
+  .ask-offline summary { color: var(--moon); min-height: 44px; font-size: 14px; }
   .ask-offline ol { padding-left: 22px; margin: 10px 0; }
-  .ask-offline li { font-size: 16px; line-height: 1.65; margin: 10px 0; color: var(--ink); }
-  .ask-offline .ask-help { margin: 12px 0; }
-  .ask-note { font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin: 12px 0 0; min-height: 1.5em; }
-  .ask-note.err { color: #ffadad; }
-  .ask-q { font-size: 14px; color: var(--ink-soft); margin: 20px 0 8px; font-style: italic; overflow-wrap: anywhere; }
-  .ask-answer { background: rgba(245,198,100,.08); border: 1px solid #f5c66420; border-radius: 14px; padding: 16px; overflow-wrap: anywhere; }
+  .ask-offline li { font-size: 16px; line-height: 1.5; margin: 8px 0; color: var(--ink); }
+  .ask .ask-note { font-size: 14px; line-height: 1.5; color: var(--ink-soft); margin: 8px 0 0; }
+  .ask .ask-note:empty { margin: 0; }
+  .ask .ask-note.err { color: #ffadad; }
+  .ask-entry { border-top: 1px solid #46527d70; }
+  .ask-entry:first-child { margin-top: 10px; }
+  .ask-summary { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 10px 0; border: 0; background: transparent; color: var(--moon); font: inherit; font-size: 14px; line-height: 1.5; text-align: left; cursor: pointer; }
+  .ask-q { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .ask-summary[aria-expanded="false"] .ask-q { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .ask-state { max-width: 40%; color: var(--ink-soft); font-size: 14px; }
+  .ask-chevron { color: var(--gold); font-size: 18px; }
+  .ask-answer { background: rgba(245,198,100,.08); border: 1px solid #f5c66420; border-radius: 12px; padding: 12px; margin-bottom: 10px; overflow-wrap: anywhere; }
   .ask-answer.note { background: rgba(255,255,255,.04); }
   .ask-answer.approved { border-color: #f5c66470; }
-  .ask-answer-label { font-size: 13px; color: var(--gold); font-weight: 700; margin: 0 0 8px; }
+  .ask-answer-label { font-size: 14px; color: var(--gold); font-weight: 700; margin: 0 0 8px; }
   .ask-answer p { font-family: Georgia, serif; font-size: 19px; line-height: 1.6; color: var(--moon); margin: 0; }
   .ask-answer.note p, .ask-answer p.ask-review { font-family: inherit; font-size: 14px; color: var(--ink-soft); }
   .ask-answer p.ask-review { margin: 8px 0; }
+  .ask-answer .ask-actions:first-child { margin-top: 0; }
   .ask-rate button.on { border-color: var(--gold); background: rgba(245,198,100,.15); }
-  @media (max-width: 560px) { .ask { padding: 18px 14px; } .ask-row { flex-wrap: wrap; } .ask-row .ask-btn { width: 100%; } .ask-age select { max-width: 100%; } }
+  @media (max-width: 560px) { .ask { padding: 14px; } .ask-age select { max-width: 100%; } }
+  @media (max-width: 420px) { .ask-row { flex-wrap: wrap; } .ask-row .ask-btn { width: 100%; } }
   .source-note { font-size: 12px; color: var(--ink-soft); margin: 22px 0; }
   .source-note a { color: var(--gold); text-underline-offset: 3px; }
   @media (max-width: 650px) {
@@ -1544,23 +1554,23 @@ const ASK_UI = {
     toddlerSteps: ["Name one thing from the story in a few simple words.", "Follow your child's gaze, sound or gesture. Give them time to respond.", "Repeat a word they enjoy, then finish whenever they seem ready. No questions to answer."],
     youngSteps: ["Which part of the story did you like?", "Can you describe one thing you remember?", "Think of one little thing you would like to notice together tomorrow."],
     offlineEnd: "It is fine to say, ‘I don't know yet. Let's find out together.’", backToStory: "Back to the story",
-    intro: name => `What did ${name || "your little one"} wonder about? Explore this story together, one question at a time.`,
-    notice: "AI can make mistakes. A parent types each question, checks the draft, and chooses what to read aloud. Please leave out names and private details.",
+    intro: name => `What did ${name || "your little one"} wonder about?`,
+    notice: "AI can make mistakes. A parent asks, checks and chooses what to read. Leave out names and private details.",
     start: "I'm the parent · let's explore", privacy: "How questions are handled", provider: "Anthropic privacy information ↗",
     data: "Your question, the story and the selected age range go to our AI provider, Anthropic. We do not save question or answer text in our database. Service providers may retain data under their own policies. Usage and feedback records are kept separately.",
     temporary: "Questions and drafts clear when you close the story or switch stories, languages or accounts. They are not added to your family profile.",
     age: "Explain for", chooseAge: "Choose an age range", question: "Your child's question about this story", placeholder: "Why…? How…? What if…?",
     starter: "Try the story's question", ask: "Explore why", thinking: "Preparing a draft for you to check…", cancel: "Cancel", clear: "Clear questions",
-    ready: "Your draft is ready. Preview it before reading together.", preview: "Preview · parent only", draft: "AI draft · for you to check", note: "A note for the parent",
+    ready: "Preview needed", reviewing: "Parent review", readReady: "Ready to read", preview: "Preview · parent only", draft: "AI draft · for you to check", note: "A note for the parent",
     review: "Check the facts and whether these words suit your child. You can change the wording as you read, or skip this draft.",
     approve: "I've checked it · ready to read", approved: "AI-assisted · ready to read together", dismiss: "Skip this draft",
-    remaining: n => `${n} AI request${n === 1 ? "" : "s"} available in your rolling 24-hour allowance.`,
+    remaining: n => `${n} AI request${n === 1 ? "" : "s"} left for now.`,
     cap: "Your AI allowance is used for now. Keep wondering together — try the story's conversation question or draw what you discovered.",
     retry: hours => `An AI request becomes available in about ${hours} hour${hours === 1 ? "" : "s"}.`,
     err: "We couldn't prepare a draft. Your question is still here; please try again shortly.", timeout: "This is taking too long. Your question is still here; you can try again.",
     needParent: "A parent needs to open this activity first.", needAge: "Choose an age range so the explanation fits your child.", needQuestion: "Please enter a question between 2 and 200 characters.",
     unavailable: "Ask why currently supports English, Kiswahili and French. Switch the story language to explore a question.",
-    good: "Helpful", bad: "Needs attention", thanks: "Feedback saved", rateErr: "Feedback wasn't saved. Please try again.", cleared: "Questions cleared from this screen.", standalone: "Each question uses this story, without earlier questions. Include the detail you are asking about."
+    good: "Helpful", bad: "Needs attention", thanks: "Feedback saved", rateErr: "Feedback wasn't saved. Please try again.", cleared: "Questions cleared from this screen.", standalone: "Include details; earlier questions aren't remembered."
   },
   sw: {
     eyebrow: "Kwa msaada wa AI · kwa wazazi", title: "Maswali madogo. Ugunduzi mkubwa.",
@@ -1571,23 +1581,23 @@ const ASK_UI = {
     toddlerSteps: ["Taja jambo moja kutoka kwenye hadithi kwa maneno machache rahisi.", "Fuata anachotazama mtoto, sauti au ishara yake. Mpe muda wa kuitikia.", "Rudia neno analolipenda, kisha maliza anapoonekana kuwa tayari. Hakuna maswali ya kujibu."],
     youngSteps: ["Ulipenda sehemu gani ya hadithi?", "Unaweza kueleza jambo moja unalokumbuka?", "Fikirieni jambo moja dogo ambalo mngependa kutazama pamoja kesho."],
     offlineEnd: "Ni sawa kusema, ‘Bado sijui. Tutafute pamoja.’", backToStory: "Rudi kwenye hadithi",
-    intro: name => `Je, ${name || "mtoto wako"} ameuliza nini? Gundua hadithi hii pamoja, swali moja baada ya jingine.`,
-    notice: "AI inaweza kukosea. Mzazi huandika swali, hukagua rasimu na kuchagua cha kusoma kwa sauti. Usiweke majina au taarifa za faragha.",
+    intro: name => `Je, ${name || "mtoto wako"} ameuliza nini?`,
+    notice: "AI inaweza kukosea. Mzazi huuliza, hukagua na kuchagua cha kusoma. Usiweke majina au taarifa za faragha.",
     start: "Mimi ni mzazi · tugundue", privacy: "Maswali yanavyoshughulikiwa", provider: "Taarifa za faragha za Anthropic ↗",
     data: "Swali, hadithi na kundi la umri ulilochagua hutumwa kwa Anthropic, mtoa huduma wetu wa AI. Hatuhifadhi maandishi ya maswali au majibu kwenye hifadhidata yetu. Watoa huduma wanaweza kuhifadhi data kulingana na sera zao. Rekodi za matumizi na maoni huhifadhiwa kando.",
     temporary: "Maswali na rasimu huondolewa ukifunga hadithi au kubadilisha hadithi, lugha au akaunti. Haziongezwi kwenye wasifu wa familia.",
     age: "Eleza kwa umri wa", chooseAge: "Chagua kundi la umri", question: "Swali la mtoto wako kuhusu hadithi hii", placeholder: "Kwa nini…? Vipi…? Ingekuwaje…?",
     starter: "Jaribu swali la hadithi", ask: "Tugundue kwa nini", thinking: "Inaandaa rasimu utakayokagua…", cancel: "Ghairi", clear: "Futa maswali",
-    ready: "Rasimu iko tayari. Ikague kabla ya kusoma pamoja.", preview: "Kagua · mzazi pekee", draft: "Rasimu ya AI · ikague kwanza", note: "Ujumbe kwa mzazi",
+    ready: "Ikague kwanza", reviewing: "Ukaguzi wa mzazi", readReady: "Tayari kusoma", preview: "Kagua · mzazi pekee", draft: "Rasimu ya AI · ikague kwanza", note: "Ujumbe kwa mzazi",
     review: "Hakikisha ukweli na kama maneno haya yanamfaa mtoto wako. Unaweza kuyabadilisha unaposoma au kuruka rasimu hii.",
     approve: "Nimekagua · tayari kusoma", approved: "Kwa msaada wa AI · tayari kusoma pamoja", dismiss: "Ruka rasimu hii",
-    remaining: n => `Maombi ${n} ya AI yanapatikana katika kikomo chako cha saa 24 zilizopita.`,
+    remaining: n => `Maombi ${n} ya AI yamesalia kwa sasa.`,
     cap: "Kikomo cha AI kimefikiwa kwa sasa. Endeleeni kudadisi pamoja — jaribuni swali la hadithi au chora ulichogundua.",
     retry: hours => `Ombi la AI litapatikana baada ya takriban saa ${hours}.`,
     err: "Rasimu haikuandaliwa. Swali lako bado lipo; jaribu tena baada ya muda mfupi.", timeout: "Hii inachukua muda mrefu. Swali lako bado lipo; unaweza kujaribu tena.",
     needParent: "Mzazi anahitaji kufungua shughuli hii kwanza.", needAge: "Chagua kundi la umri ili maelezo yamfae mtoto wako.", needQuestion: "Andika swali lenye herufi 2 hadi 200.",
     unavailable: "Kwa sasa maswali yanapatikana kwa Kiingereza, Kiswahili na Kifaransa. Badilisha lugha ya hadithi ili kuuliza swali.",
-    good: "Limesaidia", bad: "Linahitaji kuangaliwa", thanks: "Maoni yamehifadhiwa", rateErr: "Maoni hayajahifadhiwa. Jaribu tena.", cleared: "Maswali yamefutwa kwenye skrini hii.", standalone: "Kila swali hutumia hadithi hii, bila maswali ya awali. Taja jambo unaloulizia."
+    good: "Limesaidia", bad: "Linahitaji kuangaliwa", thanks: "Maoni yamehifadhiwa", rateErr: "Maoni hayajahifadhiwa. Jaribu tena.", cleared: "Maswali yamefutwa kwenye skrini hii.", standalone: "Taja maelezo; maswali ya awali hayakumbukwi."
   },
   fr: {
     eyebrow: "Avec l'aide de l'IA · pour les parents", title: "Petites questions. Grandes découvertes.",
@@ -1598,26 +1608,26 @@ const ASK_UI = {
     toddlerSteps: ["Nommez une chose de l'histoire en quelques mots simples.", "Suivez le regard, le son ou le geste de votre enfant. Laissez-lui le temps de réagir.", "Répétez un mot qui lui plaît, puis terminez quand il semble prêt. Aucune question à laquelle répondre."],
     youngSteps: ["Quelle partie de l'histoire as-tu aimée ?", "Peux-tu décrire une chose dont tu te souviens ?", "Pensez à une petite chose que vous aimeriez observer ensemble demain."],
     offlineEnd: "Vous pouvez dire : « Je ne sais pas encore. Cherchons ensemble. »", backToStory: "Revenir à l'histoire",
-    intro: name => `Qu'est-ce qui intrigue ${name || "votre enfant"} ? Explorez cette histoire ensemble, une question à la fois.`,
-    notice: "L'IA peut se tromper. Un parent écrit chaque question, vérifie le brouillon et choisit quoi lire à voix haute. Évitez les noms et les informations privées.",
+    intro: name => `Qu'est-ce qui intrigue ${name || "votre enfant"} ?`,
+    notice: "L'IA peut se tromper. Un parent pose la question, vérifie et choisit quoi lire. Évitez les noms et les détails privés.",
     start: "Je suis le parent · explorons", privacy: "Comment les questions sont traitées", provider: "Confidentialité chez Anthropic ↗",
     data: "Votre question, l'histoire et la tranche d'âge choisie sont envoyées à Anthropic, notre fournisseur d'IA. Nous ne conservons pas le texte des questions ou des réponses dans notre base de données. Les prestataires peuvent conserver des données selon leurs propres politiques. Les données d'utilisation et les avis sont conservés séparément.",
     temporary: "Questions et brouillons s'effacent à la fermeture de l'histoire ou au changement d'histoire, de langue ou de compte. Ils ne sont pas ajoutés à votre profil familial.",
     age: "Expliquer pour", chooseAge: "Choisir une tranche d'âge", question: "La question de votre enfant sur cette histoire", placeholder: "Pourquoi… ? Comment… ? Et si… ?",
     starter: "Essayer la question de l'histoire", ask: "Explorons pourquoi", thinking: "Préparation d'un brouillon à vérifier…", cancel: "Annuler", clear: "Effacer les questions",
-    ready: "Votre brouillon est prêt. Vérifiez-le avant de lire ensemble.", preview: "Aperçu · parent uniquement", draft: "Brouillon de l'IA · à vérifier", note: "Un mot pour le parent",
+    ready: "Aperçu à vérifier", reviewing: "Vérification du parent", readReady: "Prêt à lire", preview: "Aperçu · parent uniquement", draft: "Brouillon de l'IA · à vérifier", note: "Un mot pour le parent",
     review: "Vérifiez les faits et si ces mots conviennent à votre enfant. Vous pouvez les adapter en lisant ou passer ce brouillon.",
     approve: "J'ai vérifié · prêt à lire", approved: "Avec l'aide de l'IA · prêt à lire ensemble", dismiss: "Passer ce brouillon",
-    remaining: n => `${n} demande${n > 1 ? "s" : ""} d'IA disponible${n > 1 ? "s" : ""} dans votre quota sur 24 heures glissantes.`,
+    remaining: n => `${n} demande${n > 1 ? "s" : ""} d'IA restante${n > 1 ? "s" : ""} pour le moment.`,
     cap: "Votre quota d'IA est utilisé pour le moment. Restez curieux ensemble : essayez la question de l'histoire ou dessinez votre découverte.",
     retry: hours => `Une demande d'IA sera disponible dans environ ${hours} heure${hours > 1 ? "s" : ""}.`,
     err: "Le brouillon n'a pas pu être préparé. Votre question est toujours là ; réessayez dans un instant.", timeout: "Cela prend trop de temps. Votre question est toujours là ; vous pouvez réessayer.",
     needParent: "Un parent doit d'abord ouvrir cette activité.", needAge: "Choisissez une tranche d'âge pour adapter l'explication à votre enfant.", needQuestion: "Écrivez une question de 2 à 200 caractères.",
     unavailable: "Les questions sont disponibles en anglais, en kiswahili et en français. Changez la langue de l'histoire pour explorer une question.",
-    good: "Utile", bad: "À revoir", thanks: "Avis enregistré", rateErr: "L'avis n'a pas été enregistré. Réessayez.", cleared: "Questions effacées de cet écran.", standalone: "Chaque question utilise cette histoire, sans les questions précédentes. Précisez ce que vous souhaitez savoir."
+    good: "Utile", bad: "À revoir", thanks: "Avis enregistré", rateErr: "L'avis n'a pas été enregistré. Réessayez.", cleared: "Questions effacées de cet écran.", standalone: "Précisez les détails ; les questions précédentes ne sont pas retenues."
   }
 };
-let askThread = { story: null, lang: null, items: [], remaining: null, retryAt: 0, parentReady: false, serviceReady: false };
+let askThread = { story: null, lang: null, items: [], activeItem: null, remaining: null, retryAt: 0, parentReady: false, serviceReady: false };
 let askRequest = null;
 let askCheckRequest = null;
 const ASK_MAX_ITEMS = 8;
@@ -1634,7 +1644,7 @@ function cancelAsk() {
 function resetAsk(story = null) {
   cancelAsk();
   cancelAskCheck();
-  askThread = { story, lang, items: [], remaining: null, retryAt: 0, parentReady: false, serviceReady: false };
+  askThread = { story, lang, items: [], activeItem: null, remaining: null, retryAt: 0, parentReady: false, serviceReady: false };
 }
 function offlineAskSteps(age = myChildAge) {
   const t = ASK_UI[effLang()];
@@ -1706,6 +1716,7 @@ async function startAsk() {
     if (!current()) return;
     if (!response.ok || data?.reviewVersion !== 1 || data.ready !== true) throw new Error("service unavailable");
     thread.serviceReady = true;
+    document.getElementById("askOffline").open = false;
     document.getElementById("askForm").hidden = false;
     start.hidden = true;
     start.setAttribute("aria-expanded", "true");
@@ -1720,7 +1731,7 @@ async function startAsk() {
 function clearAsk() {
   cancelAsk();
   // Invalidate pending feedback as well as generation, retaining the known allowance.
-  askThread = { ...askThread, items: [] };
+  askThread = { ...askThread, items: [], activeItem: null };
   document.getElementById("askInput").value = "";
   document.getElementById("askCount").textContent = "0 / 200";
   renderAskAnswers();
@@ -1738,24 +1749,38 @@ function renderAskAnswers() {
   const box = document.getElementById("askAnswers");
   if (!box) return;
   const t = ASK_UI[effLang()];
-  box.innerHTML = askThread.items.map((item, i) => `
-    <div class="ask-q">“${escapeHtml(item.question)}”</div>
-    <div id="askAnswer-${i}" tabindex="-1" class="ask-answer${item.suitable ? "" : " note"}${item.approved ? " approved" : ""}">
-      <div class="ask-answer-label">${!item.revealed ? t.ready : !item.suitable ? t.note : item.approved ? t.approved : t.draft}</div>
-      ${item.revealed ? `<p>${escapeHtml(item.answer)}</p>${item.suitable && !item.approved ? `<p class="ask-review">${t.review}</p>` : ""}` : ""}
-      <div class="ask-actions">${!item.revealed ? `<button class="ask-btn" data-ask-preview="${i}">${t.preview}</button>` : item.suitable && !item.approved ? `<button class="ask-btn" data-ask-approve="${i}">${t.approve}</button>` : ""}<button class="ask-secondary" data-ask-dismiss="${i}">${t.dismiss}</button></div>
-      ${item.revealed && item.id != null && item.ratingToken ? `<div class="ask-rate"><button data-ask-rate="${i}" data-good="1" aria-pressed="${item.rating === 1}" class="${item.rating === 1 ? "on" : ""}" ${item.ratingBusy ? "disabled" : ""}>${item.rating === 1 ? t.thanks : t.good}</button><button data-ask-rate="${i}" data-good="0" aria-pressed="${item.rating === -1}" class="${item.rating === -1 ? "on" : ""}" ${item.ratingBusy ? "disabled" : ""}>${item.rating === -1 ? t.thanks : t.bad}</button></div>` : ""}
-    </div>`).join("");
+  box.innerHTML = askThread.items.map((item, i) => {
+    const expanded = askThread.activeItem === item;
+    const state = !item.revealed ? t.ready : !item.suitable ? t.note : item.approved ? t.readReady : t.reviewing;
+    return `<div class="ask-entry">
+      <button class="ask-summary" id="askQuestion-${i}" data-ask-toggle="${i}" aria-expanded="${expanded}" aria-controls="askAnswer-${i}">
+        <span class="ask-q">“${escapeHtml(item.question)}”</span><span class="ask-state">${state}</span><span class="ask-chevron" aria-hidden="true">${expanded ? "−" : "+"}</span>
+      </button>
+      <div id="askAnswer-${i}" tabindex="-1" class="ask-answer${item.suitable ? "" : " note"}${item.approved ? " approved" : ""}" ${expanded ? "" : "hidden"}>
+        ${expanded ? `
+          ${item.revealed ? `<div class="ask-answer-label">${!item.suitable ? t.note : item.approved ? t.approved : t.draft}</div><p>${escapeHtml(item.answer)}</p>${item.suitable && !item.approved ? `<p class="ask-review">${t.review}</p>` : ""}` : ""}
+          <div class="ask-actions">${!item.revealed ? `<button class="ask-btn" data-ask-preview="${i}">${t.preview}</button>` : item.suitable && !item.approved ? `<button class="ask-btn" data-ask-approve="${i}">${t.approve}</button>` : ""}<button class="ask-secondary" data-ask-dismiss="${i}">${t.dismiss}</button></div>
+          ${item.revealed && item.id != null && item.ratingToken ? `<div class="ask-rate"><button data-ask-rate="${i}" data-good="1" aria-pressed="${item.rating === 1}" class="${item.rating === 1 ? "on" : ""}" ${item.ratingBusy ? "disabled" : ""}>${item.rating === 1 ? t.thanks : t.good}</button><button data-ask-rate="${i}" data-good="0" aria-pressed="${item.rating === -1}" class="${item.rating === -1 ? "on" : ""}" ${item.ratingBusy ? "disabled" : ""}>${item.rating === -1 ? t.thanks : t.bad}</button></div>` : ""}
+        ` : ""}
+      </div>
+    </div>`;
+  }).reverse().join("");
 }
 function reviewAsk(index, action) {
   const item = askThread.items[index];
   if (!askThread.parentReady || !item) return;
-  if (action === "preview") item.revealed = true;
-  if (action === "approve" && item.revealed && item.suitable) item.approved = true;
-  if (action === "dismiss") askThread.items.splice(index, 1);
+  if (action === "toggle") askThread.activeItem = askThread.activeItem === item ? null : item;
+  if (action === "preview") { askThread.activeItem = item; item.revealed = true; }
+  if (action === "approve" && item.revealed && item.suitable) { askThread.activeItem = item; item.approved = true; }
+  if (action === "dismiss") {
+    askThread.items.splice(index, 1);
+    if (askThread.activeItem === item) askThread.activeItem = askThread.items[askThread.items.length - 1] || null;
+  }
   renderAskAnswers();
   // Keep keyboard focus within the activity after the clicked control is replaced.
-  document.getElementById(action === "dismiss" ? "askInput" : `askAnswer-${index}`)?.focus();
+  const activeIndex = askThread.items.indexOf(askThread.activeItem);
+  const target = action === "toggle" ? `askQuestion-${index}` : action === "dismiss" ? (activeIndex < 0 ? "askInput" : `askQuestion-${activeIndex}`) : `askAnswer-${index}`;
+  document.getElementById(target)?.focus({ preventScroll: true });
 }
 function updateAskNote(message = "", error = true) {
   const note = document.getElementById("askNote");
@@ -1815,6 +1840,7 @@ async function submitAsk() {
     if (!r.ok || !j || j.reviewVersion !== 1 || typeof j.suitable !== "boolean" || typeof j.answer !== "string" || !j.answer.trim() || j.answer.length > 1600) throw new Error("invalid draft");
     thread.items.push({ question, answer: j.answer.trim(), suitable: j.suitable, id: Number.isSafeInteger(j.id) && j.id > 0 ? j.id : null,
       ratingToken: typeof j.ratingToken === "string" ? j.ratingToken : null, rating: 0, revealed: false, approved: false });
+    thread.activeItem = thread.items[thread.items.length - 1];
     if (thread.items.length > ASK_MAX_ITEMS) thread.items.shift();
     thread.remaining = Number.isInteger(j.remaining) && j.remaining >= 0 ? j.remaining : null;
     thread.retryAt = Number.isFinite(j.retryAfter) && j.retryAfter > 0 ? Date.now() + Math.min(j.retryAfter, 86400) * 1000 : 0;
@@ -1822,7 +1848,6 @@ async function submitAsk() {
     document.getElementById("askCount").textContent = "0 / 200";
     renderAskAnswers();
     updateAskNote();
-    updateAskNote(`${t.ready} ${document.getElementById("askNote").textContent}`.trim(), false);
   } catch {
     if (current()) updateAskNote(t.err);
   } finally {
@@ -2763,7 +2788,7 @@ document.addEventListener("click", e => {
   if (e.target.closest("#askStarter")) { useAskStarter(); return; }
   if (e.target.closest("#askClear")) { clearAsk(); return; }
   if (e.target.closest("#askCancel")) { cancelAsk(); updateAskNote(); return; }
-  for (const action of ["preview", "approve", "dismiss"]) {
+  for (const action of ["toggle", "preview", "approve", "dismiss"]) {
     const control = e.target.closest(`[data-ask-${action}]`);
     if (control) { reviewAsk(Number(control.dataset[`ask${action[0].toUpperCase()}${action.slice(1)}`]), action); return; }
   }
