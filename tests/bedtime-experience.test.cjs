@@ -192,59 +192,159 @@ test('generated biography and marketing counts match the content source', () => 
   assert.match(a.get('reader').innerHTML, /news.uci.edu/);
 });
 
-test('ask box sends the question in the on-screen language and renders the answer for the parent', async () => {
+const ratingToken = '3a5d7eb1-690b-4d23-b764-a0b40f6e3a25';
+const askReply = (body = {}, status = 200) => ({ ok: status < 400, status, json: async () => ({ id: 7, reviewVersion: 1, suitable: true, answer: 'Trees need water to grow. What can you notice about a leaf?', remaining: 1, ratingToken, ...body }) });
+const tick = () => new Promise(resolve => setImmediate(resolve));
+function beginAsk(a, story = 'maathai') {
+  a.run(`openReader("${story}"); startAsk()`);
+  // The DOM stand-in does not parse select/option markup.
+  a.get('askAge').value = '5-7';
+}
+
+test('Ask why requires a parent and age choice, then hides the AI draft until parent preview', async () => {
   const calls = [];
-  const a = app({ fetcher: async (url, opts) => {
-    calls.push({ url, body: JSON.parse(opts.body), headers: opts.headers });
-    return { ok: true, status: 200, json: async () => ({ id: 7, suitable: true, answer: 'Trees drink <b>water</b>. What is a tree\'s favourite drink?', remaining: 4, limit: 5 }) };
-  }, stored: { childName: 'Malakai', lang: 'sw' } });
+  const a = app({ stored: { childName: 'Malakai', lang: 'sw' }, fetcher: async (url, opts) => {
+    calls.push({ url, body: JSON.parse(opts.body), signal: opts.signal });
+    return askReply({ answer: 'Miti inahitaji <b>maji</b>. Unaona nini kwenye jani?' });
+  } });
   a.run('openReader("maathai")');
-  assert.match(a.get('reader').innerHTML, /id="askInput"/);
-  assert.match(a.get('reader').innerHTML, /Malakai ameuliza/);
-  a.get('askInput').value = '  Kwa nini miti ilikufa?  ';
+  assert.match(a.get('reader').innerHTML, /id="askForm" hidden/);
+  assert.match(a.get('reader').innerHTML, /AI inaweza kukosea/);
+  a.get('askInput').value = 'Kwa nini miti ilikufa?';
   await a.run('submitAsk()');
-  assert.equal(calls.length, 1);
-  assert.match(calls[0].url, /\/ask$/);
-  assert.deepEqual(calls[0].body, { story: 'maathai', lang: 'sw', question: 'Kwa nini miti ilikufa?', age: null });
-  assert.equal(calls[0].headers.Authorization, undefined);
-  const out = a.get('askAnswers').innerHTML;
-  assert.match(out, /Kwa Malakai/);
-  assert.ok(out.includes('&lt;b&gt;water&lt;/b&gt;') && !out.includes('<b>'));
-  assert.match(out, /data-ask-rate="0"/);
-  assert.match(a.get('askNote').textContent, /4 maswali yamebaki/);
+  assert.equal(calls.length, 0);
+  a.run('startAsk()');
+  await a.run('submitAsk()');
+  assert.equal(calls.length, 0);
+  a.get('askAge').value = '5-7';
+  await a.run('submitAsk()');
+  assert.deepEqual(calls[0].body, { story: 'maathai', lang: 'sw', length: 'short', question: 'Kwa nini miti ilikufa?', age: '5-7', parentPresent: true });
+  assert.equal(calls[0].signal.aborted, true); // controller is released after completion
+  assert.ok(!a.get('askAnswers').innerHTML.includes('Miti inahitaji'));
+  a.run('reviewAsk(0, "approve")');
+  assert.equal(a.run('askThread.items[0].approved'), false);
+  a.run('reviewAsk(0, "preview")');
+  assert.match(a.get('askAnswers').innerHTML, /&lt;b&gt;maji&lt;\/b&gt;/);
+  assert.ok(!a.get('askAnswers').innerHTML.includes('<b>'));
+  a.run('reviewAsk(0, "approve")');
+  assert.equal(a.run('askThread.items[0].approved'), true);
+  assert.match(a.get('askAnswers').innerHTML, /tayari kusoma pamoja/);
+  assert.equal(a.spoken.length, 0);
   assert.equal(a.get('askInput').value, '');
-  await a.run('rateAsk(0, true)');
-  assert.deepEqual(calls[1].body, { rate: 7, good: true });
-  assert.match(a.get('askAnswers').innerHTML, /class="on">👍 Asante/);
+  assert.ok([...a.storage.values()].every(v => !String(v).includes('Kwa nini miti')));
 });
 
-test('unsuitable questions become a note to the parent, limits and errors are explained, and stale answers are dropped', async () => {
-  let reply;
+test('feedback is saved only after server confirmation and uses the private answer token', async () => {
+  const calls = []; let failRating = true;
+  const a = app({ fetcher: async (_, opts) => {
+    const body = JSON.parse(opts.body); calls.push(body);
+    if (body.rate) return { ok: !failRating, status: failRating ? 503 : 200, json: async () => ({ ok: !failRating }) };
+    return askReply();
+  } });
+  beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
+  await a.run('submitAsk()'); a.run('reviewAsk(0, "preview")');
+  await a.run('rateAsk(0, true)');
+  assert.equal(a.run('askThread.items[0].rating'), 0);
+  assert.match(a.get('askNote').textContent, /wasn't saved/);
+  failRating = false;
+  await a.run('rateAsk(0, false)');
+  assert.deepEqual(calls.at(-1), { rate: 7, ratingToken, good: false });
+  assert.equal(a.run('askThread.items[0].rating'), -1);
+  assert.match(a.get('askAnswers').innerHTML, /Feedback saved/);
+});
+
+test('parent notes cannot be approved for reading; malformed drafts preserve the question', async () => {
+  let reply = askReply({ suitable: false, answer: 'A conversation with you will help.' });
   const a = app({ fetcher: async () => reply });
-  a.run('openReader("ngugi")');
-  reply = { ok: true, status: 200, json: async () => ({ id: 8, suitable: false, answer: 'Best saved for daytime.', remaining: 1 }) };
-  a.get('askInput').value = 'something grown-up';
+  beginAsk(a, 'ngugi'); a.get('askInput').value = 'A difficult question';
+  await a.run('submitAsk()'); a.run('reviewAsk(0, "preview"); reviewAsk(0, "approve")');
+  assert.match(a.get('askAnswers').innerHTML, /A note for the parent/);
+  assert.equal(a.run('askThread.items[0].approved'), false);
+  assert.ok(!a.get('askAnswers').innerHTML.includes('data-ask-approve'));
+  for (const bad of [{ reviewVersion: undefined }, { suitable: undefined }, { suitable: 'true' }, { answer: '' }, { answer: 'a'.repeat(1601) }]) {
+    reply = askReply(bad); a.get('askInput').value = 'Why is that?';
+    await a.run('submitAsk()');
+    assert.equal(a.run('askThread.items.length'), 1);
+    assert.equal(a.get('askInput').value, 'Why is that?');
+    assert.match(a.get('askNote').textContent, /couldn't prepare/);
+    assert.equal(a.get('askBtn').disabled, false);
+  }
+});
+
+test('the allowance encourages curiosity, honours retry timing, and leaves offline prompts available', async () => {
+  let calls = 0;
+  const a = app({ fetcher: async () => { calls++; return askReply({ error: 'limit', remaining: 0, retryAfter: 3600 }, 429); } });
+  beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
   await a.run('submitAsk()');
-  assert.match(a.get('askAnswers').innerHTML, /ask-answer note/);
-  assert.match(a.get('askAnswers').innerHTML, /A note for you/);
-  assert.ok(!a.get('askAnswers').innerHTML.includes('data-ask-rate'));
-  reply = { ok: false, status: 429, json: async () => ({ error: 'limit', remaining: 0 }) };
-  a.get('askInput').value = 'why?';
-  await a.run('submitAsk()');
-  assert.match(a.get('askNote').textContent, /enough curiosity/);
-  reply = { ok: false, status: 500, json: async () => ({ error: 'boom' }) };
-  a.get('askInput').value = 'why again?';
-  await a.run('submitAsk()');
-  assert.match(a.get('askNote').textContent, /Try again/);
-  assert.equal(a.get('askNote').className, 'ask-note err');
+  assert.match(a.get('askNote').textContent, /Keep wondering together/);
+  assert.match(a.get('askNote').textContent, /about 1 hour/);
+  await a.run('submitAsk()'); assert.equal(calls, 1);
+  a.run('useAskStarter()');
+  assert.equal(a.get('askInput').value, a.run('STORIES.find(s => s.id === "maathai").question.en'));
+  a.advance(3600001); await a.run('submitAsk()'); assert.equal(calls, 2);
+});
+
+test('old replies cannot cross story, language, close/reopen, clear or account changes', async () => {
+  for (const change of ['openReader("ngugi")', 'setLang("fr")', 'closeReader(); openReader("maathai")', 'clearAsk()', 'saveSession({user_id: "another-parent", access_token: "example"})']) {
+    const pending = deferred(); let signal;
+    const a = app({ fetcher: (_, opts) => { signal = opts.signal; return pending.promise; } });
+    beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
+    const old = a.run('submitAsk()'); await tick();
+    a.run(change);
+    assert.equal(signal.aborted, true, change);
+    pending.resolve(askReply({ answer: 'Old reply' })); await old;
+    assert.equal(a.run('askThread.items.length'), 0, change);
+    assert.ok(!a.get('askAnswers').innerHTML.includes('Old reply'), change);
+  }
+});
+
+test('timeout releases controls and a late response cannot interfere with the next question', async () => {
+  const first = deferred(), second = deferred(); let calls = 0;
+  const a = app({ fetcher: () => ++calls === 1 ? first.promise : second.promise });
+  beginAsk(a); a.get('askInput').value = 'First question';
+  const old = a.run('submitAsk()'); await tick();
+  a.advance(55000);
+  assert.match(a.get('askNote').textContent, /taking too long/);
   assert.equal(a.get('askBtn').disabled, false);
-  const pending = deferred();
-  reply = pending.promise;
-  a.get('askInput').value = 'late question';
-  const late = a.run('submitAsk()');
-  a.run('openReader("maathai")');
-  pending.resolve({ ok: true, status: 200, json: async () => ({ id: 9, suitable: true, answer: 'Stale.', remaining: 3 }) });
-  await late;
+  a.get('askInput').value = 'New question';
+  const current = a.run('submitAsk()'); await tick();
+  first.resolve(askReply({ answer: 'Old answer' })); await old;
+  assert.equal(a.get('askBtn').disabled, true);
   assert.equal(a.run('askThread.items.length'), 0);
-  assert.equal(a.run('askThread.story'), 'maathai');
+  second.resolve(askReply({ answer: 'Current answer' })); await current;
+  assert.equal(a.run('askThread.items[0].answer'), 'Current answer');
+  a.run('closeReader()');
+  assert.equal(a.run('askThread.items.length'), 0);
+  assert.equal(a.get('askBox').innerHTML, '');
+});
+
+test('Ask why uses the selected story length and never silently changes an unsupported language', async () => {
+  const calls = [];
+  const a = app({ fetcher: async (_, opts) => { calls.push(JSON.parse(opts.body)); return askReply(); } });
+  beginAsk(a); a.run('storyLen = "m"'); a.get('askInput').value = 'Why did she start planting?';
+  await a.run('submitAsk()'); assert.equal(calls[0].length, 'm');
+  a.run('setLang("sv"); openReader("newton"); startAsk()');
+  assert.match(a.get('reader').innerHTML, /currently supports English, Kiswahili and French/);
+  assert.ok(!a.get('reader').innerHTML.includes('id="askInput"'));
+  await a.run('submitAsk()'); assert.equal(calls.length, 1);
+});
+
+test('a timed-out feedback request cannot overwrite a subsequent rating', async () => {
+  const late = deferred(); let ratings = 0;
+  const a = app({ fetcher: async (_, opts) => {
+    const body = JSON.parse(opts.body);
+    if (!body.rate) return askReply();
+    if (++ratings === 1) return late.promise;
+    return { ok: true, json: async () => ({ ok: true }) };
+  } });
+  beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
+  await a.run('submitAsk()'); a.run('reviewAsk(0, "preview")');
+  const first = a.run('rateAsk(0, true)'); await tick();
+  a.advance(12000);
+  assert.equal(a.run('askThread.items[0].ratingBusy'), false);
+  assert.match(a.get('askNote').textContent, /wasn't saved/);
+  await a.run('rateAsk(0, false)');
+  assert.equal(a.run('askThread.items[0].rating'), -1);
+  late.resolve({ ok: true, json: async () => ({ ok: true }) }); await first;
+  assert.equal(a.run('askThread.items[0].rating'), -1);
 });

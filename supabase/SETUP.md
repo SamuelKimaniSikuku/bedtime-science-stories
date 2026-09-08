@@ -147,36 +147,159 @@ locally wins over whatever the account had — only a device with no preference 
 account's. From then on, every change (mark a story read, favourite one, switch language, pick a
 track) pushes up to Supabase a moment later, debounced so it doesn't chatter.
 
-## 8 · "Ask why" (the child's question, answered for the parent to read aloud)
+## 8 · Ask why: a parent-led question activity
 
-At the end of every story there is a box where the parent types the question their child just
-asked ("why did the trees die?"). Claude writes a two-to-four-sentence answer in the story's
-language, and the parent reads it aloud. The parent is always in the loop: nothing the model
-writes is shown or played to a child directly, and the question text is never stored — only a
-per-visitor count for the nightly limit (`ask_log`).
+Ask why lives inside the story reader. A parent opens the activity, chooses an age range,
+and types a question about the current story. AI drafts stay hidden until the parent selects
+**Preview · parent only**. They can check and approve the wording or skip the draft. Nothing
+is narrated automatically. The activity is available in English, Kiswahili and French; other
+story languages show an availability note rather than silently returning an English answer.
 
-**One-time setup.**
+This is a parent workflow, **not verified adult identity or a guarantee that a child cannot
+open the preview**. The website explains that AI can make mistakes. The question text, draft
+and parent acknowledgement stay in memory, never in localStorage or the family profile.
+Closing the story or changing the story, language, account or age range clears this activity;
+changing narration settings also reopens the reader and clears drafts. At most eight drafts
+are retained while the story remains open. Each request uses the chosen story version and
+one question; earlier questions are not sent as conversation history.
 
-1. Dashboard → **SQL Editor** → paste `migrations/0005_ask_log.sql` → **Run**.
-2. Dashboard → **Edge Functions** → *Deploy a new function* → name it exactly `ask`, paste
-   `functions/ask/index.ts`, deploy. Open the function → **Details** → **Enforce JWT verification OFF**
-   (guests may ask too, within a smaller limit; signed-in families are recognised from their own token).
-3. Dashboard → **Edge Functions** → **Secrets** → add `ANTHROPIC_API_KEY` = an API key from
-   [console.anthropic.com](https://console.anthropic.com/) (paste it into the dashboard only — never
-   into chat, email, or the website code).
+### Deploy the update
 
-**Limits and cost.** 5 questions per rolling 24 h for a signed-in family, 2 for a guest (change with
-the optional `ASK_LIMIT_SIGNED_IN` / `ASK_LIMIT_GUEST` secrets — no redeploy needed). Each answer
-runs on `claude-opus-5` with the instructions prompt-cached: roughly one to one-and-a-half US cents
-per question, so a busy month of 1,000 questions is about $14.
+The website and the Supabase function are separate deployments. Publishing GitHub Pages
+alone does **not** deploy the function or its migration.
 
-**What the model is told.** Write for the parent to say aloud; two to four short sentences; stay
-anchored to tonight's story; be truthful and say "nobody knows for sure" rather than invent;
-nothing frightening, no medical/legal advice, no personal information; never mention being an AI;
-end with one curious question back. If a question isn't right for a young child at bedtime, it
-does not answer — it returns a one-line note *to the parent* suggesting a daytime chat, plus a
-story question to ask instead (the site shows this as "A note for you"). A safety decline from
-the API is handled the same way.
+Validate these steps in a staging copy first, substituting its project reference for the
+production reference below. Promote both parts only after the staging checks pass.
 
-**Ratings.** The 👍 / 👎 under an answer writes `rating` (1 / −1) on that answer's `ask_log` row, so
-you can see in the Table Editor which answers land — without ever seeing the questions.
+1. In the Supabase project `yyvvbqggwkkncbistzzv`, run `migrations/0005_ask_log.sql` if it
+   has not already been applied. Then run `migrations/0006_ask_reservations.sql` in SQL Editor.
+   The new migration preserves existing records, adds service-only atomic reservations,
+   and stops new writes from requiring a raw IP address.
+2. Keep `ANTHROPIC_API_KEY` in Edge Function secrets. The runtime supplies
+   `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Never put these secret values in source,
+   browser code, a pull request, or chat. Keep provider request/payload logging disabled.
+3. Deploy the **whole** `functions/ask/` directory, including both `index.ts` and `core.mjs`.
+   With an authenticated Supabase CLI, run from this repository:
+
+   ```bash
+   supabase functions deploy ask --project-ref yyvvbqggwkkncbistzzv --no-verify-jwt
+   ```
+
+   If using the dashboard editor, include `core.mjs` as a second file alongside `index.ts`.
+   Keep **Enforce JWT verification OFF** for this function so guests can use it. The
+   handler itself verifies every supplied family token; invalid tokens receive 401.
+4. Publish the matching `index.html` through the existing GitHub Pages workflow. Coordinate
+   these steps: the updated backend requires `parentPresent: true`, so the previous UI will
+   temporarily receive a validation error until it is refreshed. The updated UI requires
+   `reviewVersion: 1` and will not display drafts from the previous single-pass backend.
+5. Confirm the release against the validation cases below. Neither a passing mock test nor a parent
+   button establishes age verification, privacy consent, factual accuracy or child safety.
+
+### Configuration and allowance
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| `ASK_MODEL` | `claude-opus-5` | Model used for both generation and a separate draft review. Confirm availability in your Anthropic account. |
+| `ASK_LIMIT_SIGNED_IN` | `5` | Generation attempts per verified family in a rolling 24 hours. |
+| `ASK_LIMIT_GUEST` | `2` | Generation attempts per guest network in a rolling 24 hours. |
+| `ASK_ALLOWED_ORIGINS` | `https://malakaistory.com,https://www.malakaistory.com` | Comma-separated browser origins; add an exact staging origin only when needed. |
+| `ASK_IDENTITY_SECRET` | Server-side service-role key | Optional dedicated HMAC secret for pseudonymous allowance keys. Rotating it resets those keys and their allowance window. |
+
+Limits accept integers from 0 to 100. Zero or invalid configuration disables generation for
+that group. A service-only `reserve_ask` transaction locks the subject, counts its last 24 hours
+and inserts a reservation **before** any model call. A count/reservation failure returns 503;
+it never grants an unlimited allowance. Once reserved, failed, cancelled and refused requests
+still count, preventing repeated failures from creating unlimited model spend. A full allowance
+returns `Retry-After` and a positive message encouraging offline exploration.
+Historical rows have no subject key and are not counted in this new allowance window.
+
+New guest records use a keyed HMAC of the forwarded client IP, not the IP itself. Signed-in
+records use the verified user ID and a separate keyed subject. Family and guest subjects cannot
+rate one another's rows. Guest network limits are approximate: households can share an IP and
+networks can change. Verify that the deployed gateway supplies trusted `x-forwarded-for`
+values; CORS alone is not an abuse or identity control. Keep provider spend limits configured.
+
+There are normally **two** model calls per answer: a draft and a separate structured review.
+Refusals/parent notes can use one call. No price estimate is hardcoded here; review actual
+usage and [current Anthropic pricing](https://platform.claude.com/docs/en/about-claude/pricing).
+The SDK has retries disabled, each model call has a 20-second timeout, the generation flow
+has a 45-second signal deadline, and the frontend releases its controls after 55 seconds.
+
+### Learning and safety behavior
+
+The model receives the selected story text, language, coarse age range and parent's question.
+It is instructed to explain simple causes, use concrete examples, distinguish facts from
+imagination, admit uncertainty, avoid invented biographical details, and offer at most one
+optional thinking question. It must not seek private details, encourage secrecy, impersonate
+a person or form an emotional relationship with a child. The question and story are serialized
+as data, with explicit instructions to ignore embedded attempts to change the rules.
+
+A separate review checks the candidate against the question, story, age and language. A failed
+or malformed review cannot release the candidate. Declined answers use fixed parent guidance.
+Possible abuse, self-harm or danger flagged by either call produces fixed immediate-support
+wording in the selected language, never advice to put the conversation off until daytime.
+These checks can make mistakes, including shared errors between calls to the same model.
+They are **not independent human fact-checking**. A parent still checks the draft before reading.
+
+The design follows the disclosure and layered-safeguard direction in Anthropic's
+[guidance for organizations serving minors](https://support.claude.com/en/articles/9307344-responsible-use-of-anthropic-s-models-guidelines-for-organizations-serving-minors).
+Before a public child-focused release, confirm the intended ages, countries, parent-consent
+and age-assurance approach, incident handling, and applicable provider terms. This source
+change does not assert legal compliance or replace those decisions.
+
+### Privacy, feedback and retention
+
+The application sends the question, story and coarse age range to Anthropic. It does not send
+the saved child's name or the family email as separate model fields. A parent could still type
+personal information, which is why the notice asks them to leave it out. Provider/platform
+retention and abuse-monitoring policies still apply; this is **not a zero-retention claim**.
+See [Anthropic privacy information](https://www.anthropic.com/legal/privacy).
+
+Our database stores only the reservation ID, pseudonymous subject, verified user ID if present,
+story ID, language, creation time, status, suitability flag, random feedback token, and optional
+feedback value. It does not store the question, answer or selected age. `pending` includes
+unfinished/failed generations; `answered` and `parent_note` identify completed requests.
+The feedback value is 1 (helpful) or −1 (needs attention); neither sends the question or answer.
+The server requires the row ID, unguessable token and matching subject. The UI acknowledges
+feedback only when the database update actually succeeds. Negative feedback is not an
+emergency reporting channel and does not automatically notify anyone.
+
+Migration 0006 preserves historical rows, including any raw IPs written by the earlier function.
+Review those records and choose a documented retention period before release. There is **no
+scheduled deletion job installed by this migration**. For example, after choosing a 30-day
+metadata policy, configure a daily Supabase Cron SQL job for the following and verify it runs:
+
+```sql
+delete from public.ask_log where created_at < now() - interval '30 days';
+```
+
+Keep this period longer than 24 hours or deleting active reservations would reset allowances.
+Do not enable request-body or model-payload logging in Supabase, Anthropic SDK instrumentation
+or a third-party analytics service. Clearing drafts on the device does not erase provider logs.
+
+### Validate before release
+
+Run the offline regression suite and content consistency check:
+
+```bash
+node --test tests/bedtime-experience.test.cjs tests/ask-service.test.mjs
+node build-stories-json.js --check
+```
+
+These tests execute the real frontend logic with DOM/device stand-ins and the real server
+request flow with stubbed authentication, database and model adapters. They do not call
+Anthropic, apply SQL, send a sign-in email, or establish live moderation quality.
+
+In a staging Supabase project, verify:
+
+- Apply migrations 0005 and 0006; `anon` and `authenticated` cannot call `reserve_ask` or read
+  the log. In parallel, send three guest requests with a limit of two: exactly two reservations
+  may be granted. Verify account isolation, 24-hour expiry, and `Retry-After` behavior.
+- Ordinary science, imaginary scenarios, false premises, uncertain biography details,
+  difficult but appropriate questions, privacy requests, prompt-injection attempts and urgent
+  disclosures across English, Kiswahili and French and each age band. Use synthetic examples,
+  with adult review; do not upload real children's disclosures as test data.
+- Refusals, malformed/truncated responses, database outages, failed ratings, timeouts, clearing,
+  close/reopen and language/account changes. No failed review may expose a candidate answer.
+- Inspect the stored rows: new `ip` values must be null, no question/answer text should be
+  present, and the chosen retention job must remove expired metadata as configured.
