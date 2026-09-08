@@ -529,35 +529,44 @@
   .conversation { border-left: 3px solid var(--gold); background: #ffffff05; padding: 18px 20px; margin: 24px 0; }
   .conversation h3 { font-size: 14px; color: var(--gold); margin: 0 0 8px; }
   .conversation div { font-family: Georgia, serif; font-size: 21px; line-height: 1.5; color: var(--moon); }
-  /* --- "ask why": the parent types the child's question, reads the answer aloud --- */
-  .ask { border: 1px solid rgba(245,198,100,.35); border-radius: 16px; padding: 16px 18px; margin: 0 0 24px; }
-  .ask-label { font-size: 14px; color: var(--ink-soft); margin: 0 0 10px; line-height: 1.5; }
+  /* Ask why: a quiet space for a parent and child to explore together. */
+  .ask { border: 1px solid rgba(245,198,100,.35); border-radius: 18px; padding: 22px; margin: 0 0 24px; scroll-margin-top: 240px; background: linear-gradient(135deg, #f5c6640a, #ffffff02); }
+  .ask-eyebrow { color: var(--gold); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 8px; }
+  .ask h3 { font-family: Georgia, serif; color: var(--moon); font-size: 26px; font-weight: 400; margin: 0 0 8px; }
+  .ask-label, .ask-help { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; line-height: 1.6; }
+  .ask label { display: block; color: var(--ink); font-size: 14px; margin-bottom: 8px; }
+  .ask-age { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 18px 0 14px; }
+  .ask-age label { margin: 0; }
   .ask-row { display: flex; gap: 8px; }
-  .ask-row input {
-    flex: 1; min-width: 0; background: #141b38; border: 1.5px solid #323d68; color: var(--ink);
-    border-radius: 12px; padding: 11px 14px; font-size: 15px; font-family: inherit;
-  }
-  .ask-row input:focus { outline: none; border-color: var(--gold); }
-  .ask-btn {
-    background: var(--gold); border: none; color: #201a08; font-weight: 700; font-family: inherit;
-    padding: 0 18px; min-height: 44px; border-radius: 12px; font-size: 14px; cursor: pointer; white-space: nowrap;
-  }
-  .ask-btn:disabled { opacity: .5; cursor: default; }
-  .ask-note { font-size: 12.5px; color: var(--ink-soft); opacity: .85; margin: 8px 0 0; min-height: 1.3em; }
-  .ask-note.err { color: #ff8a8a; opacity: 1; }
-  .ask-q { font-size: 13.5px; color: var(--ink-soft); margin: 16px 0 6px; font-style: italic; }
-  .ask-answer { background: rgba(245,198,100,.10); border-radius: 14px; padding: 14px 16px; }
+  .ask-row input, .ask select { min-width: 0; background: #141b38; border: 1.5px solid #323d68; color: var(--ink); border-radius: 12px; padding: 11px 14px; font-size: 16px; font-family: inherit; min-height: 44px; }
+  .ask-row input { flex: 1; width: 100%; }
+  .ask input:focus-visible, .ask select:focus-visible, .ask button:focus-visible, .ask summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .ask-btn { background: var(--gold); border: none; color: #201a08; font-weight: 700; font-family: inherit; padding: 11px 18px; min-height: 44px; border-radius: 12px; font-size: 14px; cursor: pointer; }
+  .ask button:disabled { opacity: .5; cursor: default; }
+  .ask-tools, .ask-actions, .ask-rate { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+  .ask-secondary, .ask-rate button { background: transparent; border: 1px solid #46527d; color: var(--moon); font-family: inherit; font-size: 13px; min-height: 44px; padding: 8px 12px; border-radius: 12px; cursor: pointer; }
+  .ask-tools .ask-count { margin-left: auto; color: var(--ink-soft); font-size: 12px; }
+  .ask-privacy { font-size: 13px; line-height: 1.6; color: var(--ink-soft); margin: 14px 0; }
+  .ask-privacy summary { cursor: pointer; padding: 8px 0; color: var(--moon); }
+  .ask-privacy p { margin: 8px 0; }
+  .ask-privacy a { color: var(--gold); }
+  .ask-offline { border-top: 1px solid #46527d; margin-top: 20px; padding-top: 6px; }
+  .ask-offline summary { color: var(--moon); min-height: 44px; font-size: 16px; }
+  .ask-offline ol { padding-left: 22px; margin: 10px 0; }
+  .ask-offline li { font-size: 16px; line-height: 1.65; margin: 10px 0; color: var(--ink); }
+  .ask-offline .ask-help { margin: 12px 0; }
+  .ask-note { font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin: 12px 0 0; min-height: 1.5em; }
+  .ask-note.err { color: #ffadad; }
+  .ask-q { font-size: 14px; color: var(--ink-soft); margin: 20px 0 8px; font-style: italic; overflow-wrap: anywhere; }
+  .ask-answer { background: rgba(245,198,100,.08); border: 1px solid #f5c66420; border-radius: 14px; padding: 16px; overflow-wrap: anywhere; }
   .ask-answer.note { background: rgba(255,255,255,.04); }
-  .ask-answer-label { font-size: 12px; color: var(--gold); font-weight: 700; margin: 0 0 6px; letter-spacing: .02em; }
-  .ask-answer p { font-family: Georgia, serif; font-size: 18px; line-height: 1.55; color: var(--moon); margin: 0; }
-  .ask-answer.note p { font-family: inherit; font-size: 15px; color: var(--ink); }
-  .ask-rate { display: flex; gap: 8px; margin-top: 10px; }
-  .ask-rate button {
-    background: transparent; border: 1.5px solid #3a466f; color: var(--ink-soft); font-family: inherit;
-    font-size: 12.5px; padding: 6px 12px; border-radius: 999px; cursor: pointer;
-  }
-  .ask-rate button.on { border-color: var(--gold); color: var(--moon); background: rgba(245,198,100,.15); }
-  @media (max-width: 560px) { .ask-row { flex-wrap: wrap; } .ask-btn { width: 100%; } }
+  .ask-answer.approved { border-color: #f5c66470; }
+  .ask-answer-label { font-size: 13px; color: var(--gold); font-weight: 700; margin: 0 0 8px; }
+  .ask-answer p { font-family: Georgia, serif; font-size: 19px; line-height: 1.6; color: var(--moon); margin: 0; }
+  .ask-answer.note p, .ask-answer p.ask-review { font-family: inherit; font-size: 14px; color: var(--ink-soft); }
+  .ask-answer p.ask-review { margin: 8px 0; }
+  .ask-rate button.on { border-color: var(--gold); background: rgba(245,198,100,.15); }
+  @media (max-width: 560px) { .ask { padding: 18px 14px; } .ask-row { flex-wrap: wrap; } .ask-row .ask-btn { width: 100%; } .ask-age select { max-width: 100%; } }
   .source-note { font-size: 12px; color: var(--ink-soft); margin: 22px 0; }
   .source-note a { color: var(--gold); text-underline-offset: 3px; }
   @media (max-width: 650px) {
@@ -702,13 +711,7 @@ const UI = {
         introFor: name => `Tonight's story for ${name}…`,
         pickFor: name => `Tonight's pick for ${name}`, pickCta: "Read tonight's story",
         learnMore: name => `Learn more about ${name} on Wikipedia ↗`,
-        askLabel: name => `Did ${name || "your little one"} ask something? Type it here and read the answer aloud.`,
-        askPh: "Why did the trees die?", askBtn: "Ask", askThinking: "Thinking of a gentle answer…",
-        askFor: name => name ? `For ${name}` : "To read aloud", askNoteParent: "A note for you",
-        askRemaining: n => `${n} question${n === 1 ? "" : "s"} left tonight · answers stay on this screen`,
-        askCap: "That's enough curiosity for tonight 🌙 Ask more tomorrow.",
-        askErr: "Couldn't get an answer just now. Try again.",
-        askGood: "Good answer", askBad: "Not quite", askThanks: "Thanks" },
+        },
   sw: { title: "Malakai Stories",
         subtitle: "Hadithi fupi za usiku zenye funzo — kuhusu watu waliobadilisha dunia: walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
         region: "Kanda", topic: "Mada", gender: "Jinsia", all: "Zote",
@@ -744,13 +747,7 @@ const UI = {
         introFor: name => `Hadithi ya usiku wa leo kwa ${name}…`,
         pickFor: name => `Chaguo la leo kwa ${name}`, pickCta: "Soma hadithi ya leo",
         learnMore: name => `Jifunze zaidi kuhusu ${name} kwenye Wikipedia ↗`,
-        askLabel: name => `Je, ${name || "mtoto wako"} ameuliza jambo? Liandike hapa, kisha umsomee jibu.`,
-        askPh: "Kwa nini miti ilikufa?", askBtn: "Uliza", askThinking: "Inatafuta jibu la upole…",
-        askFor: name => name ? `Kwa ${name}` : "Ya kusomwa kwa sauti", askNoteParent: "Ujumbe kwako",
-        askRemaining: n => `${n} ${n === 1 ? "swali limebaki" : "maswali yamebaki"} usiku huu · majibu hubaki kwenye skrini hii`,
-        askCap: "Udadisi wa kutosha kwa usiku huu 🌙 Uliza zaidi kesho.",
-        askErr: "Jibu halikupatikana sasa hivi. Jaribu tena.",
-        askGood: "Jibu zuri", askBad: "Si sahihi", askThanks: "Asante" },
+        },
   fr: { title: "Malakai Stories",
         subtitle: "De courtes histoires du soir qui enseignent — sur les gens qui ont changé le monde : où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
         region: "Région", topic: "Sujet", gender: "Genre", all: "Tout",
@@ -786,13 +783,7 @@ const UI = {
         introFor: name => `L'histoire de ce soir pour ${name}…`,
         pickFor: name => `La sélection de ce soir pour ${name}`, pickCta: "Lire l'histoire de ce soir",
         learnMore: name => `En savoir plus sur ${name} sur Wikipédia ↗`,
-        askLabel: name => `${name || "Votre enfant"} a posé une question ? Écrivez-la ici, puis lisez la réponse à voix haute.`,
-        askPh: "Pourquoi les arbres sont-ils morts ?", askBtn: "Demander", askThinking: "Recherche d'une réponse toute douce…",
-        askFor: name => name ? `Pour ${name}` : "À lire à voix haute", askNoteParent: "Un mot pour vous",
-        askRemaining: n => `${n} question${n === 1 ? "" : "s"} ce soir · les réponses restent sur cet écran`,
-        askCap: "Assez de curiosité pour ce soir 🌙 Demandez-en plus demain.",
-        askErr: "Impossible d'obtenir une réponse pour l'instant. Réessayez.",
-        askGood: "Bonne réponse", askBad: "Pas tout à fait", askThanks: "Merci" }
+        }
 };
 
 const HOME_UI = {
@@ -1102,7 +1093,9 @@ function toggleFavTrack(file) {
   pushProfileSoon();
 }
 function setLang(l) {
+  const changed = lang !== l;
   lang = l;
+  if (changed && document.getElementById("overlay").classList.contains("open")) openReader(document.getElementById("reader").dataset.story);
   try { localStorage.setItem("lang", l); } catch {}
   pushProfileSoon();
 }
@@ -1468,6 +1461,7 @@ function openReader(id) {
   const s = STORIES.find(x => x.id === id);
   if (!s) return;
   if (typeof stopNarration === "function") stopNarration();
+  resetAsk(id);
   const t = UI[effLang()], h = HOME_UI[effLang()];
   const reader = document.getElementById("reader");
   if (!document.getElementById("overlay").classList.contains("open")) {
@@ -1501,6 +1495,7 @@ function openReader(id) {
       <div class="audio-controls">
         <button class="narrate-btn" id="narrateBtn"><span id="narrateLabel">▶ ${h.listen}</span></button>
         <button class="text-button" id="stopNarration" hidden>${h.stop}</button>
+        <button class="text-button" id="askJump" aria-controls="askBox">${ASK_UI[effLang()].jump}</button>
         <label class="sleep-control">${h.sleep}<select id="sleepTimer">${[0, 5, 10, 15, 30].map(n => `<option value="${n}">${n ? `${n} ${h.minutes}` : h.off}</option>`).join("")}</select><span id="sleepRemaining"></span></label>
       </div>
       <div class="audio-progress" id="audioProgress" hidden>
@@ -1513,15 +1508,7 @@ function openReader(id) {
     </div>
     <div class="story-body">${pick(textFor(s, lengthsFor(s).includes(storyLen) ? storyLen : "short")).map(p => `<p>${p}</p>`).join("")}</div>
     <aside class="conversation"><h3>${h.chat}</h3><div>${escapeHtml(s.question?.[lang] || s.question?.[effLang()] || h.question)}</div></aside>
-    <div class="ask" id="askBox">
-      <p class="ask-label">💬 ${escapeHtml(t.askLabel(myChildName))}</p>
-      <div class="ask-row">
-        <input type="text" id="askInput" maxlength="200" placeholder="${escapeHtml(t.askPh)}" aria-label="${escapeHtml(t.askBtn)}" autocomplete="off">
-        <button class="ask-btn" id="askBtn">${t.askBtn}</button>
-      </div>
-      <p class="ask-note" id="askNote" role="status"></p>
-      <div id="askAnswers"></div>
-    </div>
+    ${renderAskBox(s)}
     <div style="text-align:center">
       <a class="learn-more" href="${wikiLink(s.name)}" target="_blank" rel="noopener noreferrer">${t.learnMore(s.name)}</a>
     </div>
@@ -1541,98 +1528,342 @@ function openReader(id) {
   document.querySelectorAll(".wrap, .account-dock, .music-dock").forEach(el => { el.inert = true; });
   updateNarrationUI();
   updateSleepUI();
-  if (askThread.story !== id) askThread = { story: id, items: [], remaining: null };
   renderAskAnswers();
   updateAskNote("");
   reader.focus({ preventScroll: true });
 }
 
-/* ---------- "ask why": the child's question, answered for the parent to read aloud ----------
-   The parent types, the parent reads. Nothing from the model reaches a child
-   directly, and the question text never leaves this screen except to be
-   answered — the backend keeps only a nightly count. */
-let askThread = { story: null, items: [], remaining: null };
-let askBusy = false;
+/* ---------- Ask why: parent-led, temporary questions about the current story ---------- */
+const ASK_UI = {
+  en: {
+    eyebrow: "AI-assisted · for parents", title: "Little questions. Big discoveries.",
+    jump: "Wonder together", checking: "Checking availability…", retryService: "Check AI availability again",
+    serviceUnavailable: "AI answers are unavailable right now. No question has been sent. You can still explore this story together below.",
+    offline: "Explore together without AI", offlineIntro: "Let your child lead. There is no score and no need to finish every question.",
+    offlineSteps: ["What caught your attention in the story?", "What do you think happened, and what in the story makes you think that?", "Choose one thing to find out together tomorrow. You can draw your idea or ask someone who knows about it."],
+    toddlerSteps: ["Name one thing from the story in a few simple words.", "Follow your child's gaze, sound or gesture. Give them time to respond.", "Repeat a word they enjoy, then finish whenever they seem ready. No questions to answer."],
+    youngSteps: ["Which part of the story did you like?", "Can you describe one thing you remember?", "Think of one little thing you would like to notice together tomorrow."],
+    offlineEnd: "It is fine to say, ‘I don't know yet. Let's find out together.’", backToStory: "Back to the story",
+    intro: name => `What did ${name || "your little one"} wonder about? Explore this story together, one question at a time.`,
+    notice: "AI can make mistakes. A parent types each question, checks the draft, and chooses what to read aloud. Please leave out names and private details.",
+    start: "I'm the parent · let's explore", privacy: "How questions are handled", provider: "Anthropic privacy information ↗",
+    data: "Your question, the story and the selected age range go to our AI provider, Anthropic. We do not save question or answer text in our database. Service providers may retain data under their own policies. Usage and feedback records are kept separately.",
+    temporary: "Questions and drafts clear when you close the story or switch stories, languages or accounts. They are not added to your family profile.",
+    age: "Explain for", chooseAge: "Choose an age range", question: "Your child's question about this story", placeholder: "Why…? How…? What if…?",
+    starter: "Try the story's question", ask: "Explore why", thinking: "Preparing a draft for you to check…", cancel: "Cancel", clear: "Clear questions",
+    ready: "Your draft is ready. Preview it before reading together.", preview: "Preview · parent only", draft: "AI draft · for you to check", note: "A note for the parent",
+    review: "Check the facts and whether these words suit your child. You can change the wording as you read, or skip this draft.",
+    approve: "I've checked it · ready to read", approved: "AI-assisted · ready to read together", dismiss: "Skip this draft",
+    remaining: n => `${n} AI request${n === 1 ? "" : "s"} available in your rolling 24-hour allowance.`,
+    cap: "Your AI allowance is used for now. Keep wondering together — try the story's conversation question or draw what you discovered.",
+    retry: hours => `An AI request becomes available in about ${hours} hour${hours === 1 ? "" : "s"}.`,
+    err: "We couldn't prepare a draft. Your question is still here; please try again shortly.", timeout: "This is taking too long. Your question is still here; you can try again.",
+    needParent: "A parent needs to open this activity first.", needAge: "Choose an age range so the explanation fits your child.", needQuestion: "Please enter a question between 2 and 200 characters.",
+    unavailable: "Ask why currently supports English, Kiswahili and French. Switch the story language to explore a question.",
+    good: "Helpful", bad: "Needs attention", thanks: "Feedback saved", rateErr: "Feedback wasn't saved. Please try again.", cleared: "Questions cleared from this screen.", standalone: "Each question uses this story, without earlier questions. Include the detail you are asking about."
+  },
+  sw: {
+    eyebrow: "Kwa msaada wa AI · kwa wazazi", title: "Maswali madogo. Ugunduzi mkubwa.",
+    jump: "Tudadisi pamoja", checking: "Inaangalia upatikanaji…", retryService: "Angalia tena upatikanaji wa AI",
+    serviceUnavailable: "Majibu ya AI hayapatikani kwa sasa. Hakuna swali lililotumwa. Bado mnaweza kugundua hadithi hii pamoja hapa chini.",
+    offline: "Gundueni pamoja bila AI", offlineIntro: "Mruhusu mtoto wako aongoze. Hakuna alama wala haja ya kumaliza kila swali.",
+    offlineSteps: ["Ni nini kilikuvutia kwenye hadithi?", "Unafikiri nini kilitokea, na ni sehemu gani ya hadithi inakufanya ufikiri hivyo?", "Chagueni jambo moja la kuchunguza pamoja kesho. Mnaweza kuchora wazo lenu au kumuuliza mtu anayejua kuhusu jambo hilo."],
+    toddlerSteps: ["Taja jambo moja kutoka kwenye hadithi kwa maneno machache rahisi.", "Fuata anachotazama mtoto, sauti au ishara yake. Mpe muda wa kuitikia.", "Rudia neno analolipenda, kisha maliza anapoonekana kuwa tayari. Hakuna maswali ya kujibu."],
+    youngSteps: ["Ulipenda sehemu gani ya hadithi?", "Unaweza kueleza jambo moja unalokumbuka?", "Fikirieni jambo moja dogo ambalo mngependa kutazama pamoja kesho."],
+    offlineEnd: "Ni sawa kusema, ‘Bado sijui. Tutafute pamoja.’", backToStory: "Rudi kwenye hadithi",
+    intro: name => `Je, ${name || "mtoto wako"} ameuliza nini? Gundua hadithi hii pamoja, swali moja baada ya jingine.`,
+    notice: "AI inaweza kukosea. Mzazi huandika swali, hukagua rasimu na kuchagua cha kusoma kwa sauti. Usiweke majina au taarifa za faragha.",
+    start: "Mimi ni mzazi · tugundue", privacy: "Maswali yanavyoshughulikiwa", provider: "Taarifa za faragha za Anthropic ↗",
+    data: "Swali, hadithi na kundi la umri ulilochagua hutumwa kwa Anthropic, mtoa huduma wetu wa AI. Hatuhifadhi maandishi ya maswali au majibu kwenye hifadhidata yetu. Watoa huduma wanaweza kuhifadhi data kulingana na sera zao. Rekodi za matumizi na maoni huhifadhiwa kando.",
+    temporary: "Maswali na rasimu huondolewa ukifunga hadithi au kubadilisha hadithi, lugha au akaunti. Haziongezwi kwenye wasifu wa familia.",
+    age: "Eleza kwa umri wa", chooseAge: "Chagua kundi la umri", question: "Swali la mtoto wako kuhusu hadithi hii", placeholder: "Kwa nini…? Vipi…? Ingekuwaje…?",
+    starter: "Jaribu swali la hadithi", ask: "Tugundue kwa nini", thinking: "Inaandaa rasimu utakayokagua…", cancel: "Ghairi", clear: "Futa maswali",
+    ready: "Rasimu iko tayari. Ikague kabla ya kusoma pamoja.", preview: "Kagua · mzazi pekee", draft: "Rasimu ya AI · ikague kwanza", note: "Ujumbe kwa mzazi",
+    review: "Hakikisha ukweli na kama maneno haya yanamfaa mtoto wako. Unaweza kuyabadilisha unaposoma au kuruka rasimu hii.",
+    approve: "Nimekagua · tayari kusoma", approved: "Kwa msaada wa AI · tayari kusoma pamoja", dismiss: "Ruka rasimu hii",
+    remaining: n => `Maombi ${n} ya AI yanapatikana katika kikomo chako cha saa 24 zilizopita.`,
+    cap: "Kikomo cha AI kimefikiwa kwa sasa. Endeleeni kudadisi pamoja — jaribuni swali la hadithi au chora ulichogundua.",
+    retry: hours => `Ombi la AI litapatikana baada ya takriban saa ${hours}.`,
+    err: "Rasimu haikuandaliwa. Swali lako bado lipo; jaribu tena baada ya muda mfupi.", timeout: "Hii inachukua muda mrefu. Swali lako bado lipo; unaweza kujaribu tena.",
+    needParent: "Mzazi anahitaji kufungua shughuli hii kwanza.", needAge: "Chagua kundi la umri ili maelezo yamfae mtoto wako.", needQuestion: "Andika swali lenye herufi 2 hadi 200.",
+    unavailable: "Kwa sasa maswali yanapatikana kwa Kiingereza, Kiswahili na Kifaransa. Badilisha lugha ya hadithi ili kuuliza swali.",
+    good: "Limesaidia", bad: "Linahitaji kuangaliwa", thanks: "Maoni yamehifadhiwa", rateErr: "Maoni hayajahifadhiwa. Jaribu tena.", cleared: "Maswali yamefutwa kwenye skrini hii.", standalone: "Kila swali hutumia hadithi hii, bila maswali ya awali. Taja jambo unaloulizia."
+  },
+  fr: {
+    eyebrow: "Avec l'aide de l'IA · pour les parents", title: "Petites questions. Grandes découvertes.",
+    jump: "S'émerveiller ensemble", checking: "Vérification de la disponibilité…", retryService: "Vérifier à nouveau la disponibilité de l'IA",
+    serviceUnavailable: "Les réponses de l'IA sont indisponibles pour le moment. Aucune question n'a été envoyée. Vous pouvez toujours explorer cette histoire ensemble ci-dessous.",
+    offline: "Explorer ensemble sans IA", offlineIntro: "Laissez votre enfant vous guider. Il n'y a ni score ni obligation de répondre à toutes les questions.",
+    offlineSteps: ["Qu'est-ce qui a attiré ton attention dans l'histoire ?", "Que penses-tu qu'il s'est passé, et quel détail de l'histoire te le fait penser ?", "Choisissez une chose à découvrir ensemble demain. Vous pouvez dessiner votre idée ou interroger quelqu'un qui connaît le sujet."],
+    toddlerSteps: ["Nommez une chose de l'histoire en quelques mots simples.", "Suivez le regard, le son ou le geste de votre enfant. Laissez-lui le temps de réagir.", "Répétez un mot qui lui plaît, puis terminez quand il semble prêt. Aucune question à laquelle répondre."],
+    youngSteps: ["Quelle partie de l'histoire as-tu aimée ?", "Peux-tu décrire une chose dont tu te souviens ?", "Pensez à une petite chose que vous aimeriez observer ensemble demain."],
+    offlineEnd: "Vous pouvez dire : « Je ne sais pas encore. Cherchons ensemble. »", backToStory: "Revenir à l'histoire",
+    intro: name => `Qu'est-ce qui intrigue ${name || "votre enfant"} ? Explorez cette histoire ensemble, une question à la fois.`,
+    notice: "L'IA peut se tromper. Un parent écrit chaque question, vérifie le brouillon et choisit quoi lire à voix haute. Évitez les noms et les informations privées.",
+    start: "Je suis le parent · explorons", privacy: "Comment les questions sont traitées", provider: "Confidentialité chez Anthropic ↗",
+    data: "Votre question, l'histoire et la tranche d'âge choisie sont envoyées à Anthropic, notre fournisseur d'IA. Nous ne conservons pas le texte des questions ou des réponses dans notre base de données. Les prestataires peuvent conserver des données selon leurs propres politiques. Les données d'utilisation et les avis sont conservés séparément.",
+    temporary: "Questions et brouillons s'effacent à la fermeture de l'histoire ou au changement d'histoire, de langue ou de compte. Ils ne sont pas ajoutés à votre profil familial.",
+    age: "Expliquer pour", chooseAge: "Choisir une tranche d'âge", question: "La question de votre enfant sur cette histoire", placeholder: "Pourquoi… ? Comment… ? Et si… ?",
+    starter: "Essayer la question de l'histoire", ask: "Explorons pourquoi", thinking: "Préparation d'un brouillon à vérifier…", cancel: "Annuler", clear: "Effacer les questions",
+    ready: "Votre brouillon est prêt. Vérifiez-le avant de lire ensemble.", preview: "Aperçu · parent uniquement", draft: "Brouillon de l'IA · à vérifier", note: "Un mot pour le parent",
+    review: "Vérifiez les faits et si ces mots conviennent à votre enfant. Vous pouvez les adapter en lisant ou passer ce brouillon.",
+    approve: "J'ai vérifié · prêt à lire", approved: "Avec l'aide de l'IA · prêt à lire ensemble", dismiss: "Passer ce brouillon",
+    remaining: n => `${n} demande${n > 1 ? "s" : ""} d'IA disponible${n > 1 ? "s" : ""} dans votre quota sur 24 heures glissantes.`,
+    cap: "Votre quota d'IA est utilisé pour le moment. Restez curieux ensemble : essayez la question de l'histoire ou dessinez votre découverte.",
+    retry: hours => `Une demande d'IA sera disponible dans environ ${hours} heure${hours > 1 ? "s" : ""}.`,
+    err: "Le brouillon n'a pas pu être préparé. Votre question est toujours là ; réessayez dans un instant.", timeout: "Cela prend trop de temps. Votre question est toujours là ; vous pouvez réessayer.",
+    needParent: "Un parent doit d'abord ouvrir cette activité.", needAge: "Choisissez une tranche d'âge pour adapter l'explication à votre enfant.", needQuestion: "Écrivez une question de 2 à 200 caractères.",
+    unavailable: "Les questions sont disponibles en anglais, en kiswahili et en français. Changez la langue de l'histoire pour explorer une question.",
+    good: "Utile", bad: "À revoir", thanks: "Avis enregistré", rateErr: "L'avis n'a pas été enregistré. Réessayez.", cleared: "Questions effacées de cet écran.", standalone: "Chaque question utilise cette histoire, sans les questions précédentes. Précisez ce que vous souhaitez savoir."
+  }
+};
+let askThread = { story: null, lang: null, items: [], remaining: null, retryAt: 0, parentReady: false, serviceReady: false };
+let askRequest = null;
+let askCheckRequest = null;
+const ASK_MAX_ITEMS = 8;
 
+function cancelAsk() {
+  if (askRequest) { clearTimeout(askRequest.timer); askRequest.controller.abort(); askRequest = null; }
+  const btn = document.getElementById("askBtn"), cancel = document.getElementById("askCancel");
+  if (btn) btn.disabled = false;
+  const input = document.getElementById("askInput");
+  if (input) input.disabled = false;
+  if (cancel) cancel.hidden = true;
+  document.getElementById("askBox")?.setAttribute("aria-busy", "false");
+}
+function resetAsk(story = null) {
+  cancelAsk();
+  cancelAskCheck();
+  askThread = { story, lang, items: [], remaining: null, retryAt: 0, parentReady: false, serviceReady: false };
+}
+function offlineAskSteps(age = myChildAge) {
+  const t = ASK_UI[effLang()];
+  const steps = age === "u2" ? t.toddlerSteps : age === "2-4" ? t.youngSteps : t.offlineSteps;
+  return steps.map(step => `<li>${escapeHtml(step)}</li>`).join("");
+}
+function renderAskBox(s) {
+  const t = ASK_UI[effLang()];
+  return `<section class="ask" id="askBox" aria-labelledby="askTitle" aria-busy="false">
+    <p class="ask-eyebrow">${t.eyebrow}</p><h3 id="askTitle" tabindex="-1">${t.title}</h3>
+    <p class="ask-label">${escapeHtml(t.intro(myChildName))}</p>
+    ${!UI_LANGS.includes(lang) ? `<p class="ask-help">${t.unavailable}</p>` : `
+    <p class="ask-help">${t.notice}</p>
+    <details class="ask-privacy"><summary>${t.privacy}</summary><p>${t.data}</p><p>${t.temporary}</p><a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener noreferrer">${t.provider}</a></details>
+    <button class="ask-btn" id="askStart" aria-controls="askForm" aria-expanded="false">${t.start}</button>
+    <div id="askForm" hidden>
+      <div class="ask-age"><label for="askAge">${t.age}</label><select id="askAge"><option value="">${t.chooseAge}</option>${AGE_BANDS.map(a => `<option value="${a.key}" ${a.key === myChildAge ? "selected" : ""}>${a[effLang()]}</option>`).join("")}</select></div>
+      <label for="askInput">${t.question}</label>
+      <div class="ask-row"><input type="text" id="askInput" maxlength="200" placeholder="${t.placeholder}" aria-describedby="askScope askNote" autocomplete="off"><button class="ask-btn" id="askBtn">${t.ask}</button></div>
+      <div class="ask-tools"><button class="ask-secondary" id="askStarter">${t.starter}</button><button class="ask-secondary" id="askCancel" hidden>${t.cancel}</button><button class="ask-secondary" id="askClear">${t.clear}</button><span class="ask-count" id="askCount">0 / 200</span></div>
+      <p class="ask-help" id="askScope">${t.standalone}</p>
+    </div>`}
+    <p class="ask-note" id="askNote" role="status" aria-live="polite"></p><div id="askAnswers"></div>
+    <details class="ask-offline" id="askOffline"><summary>${t.offline}</summary>
+      <p class="ask-help">${t.offlineIntro}</p><ol id="askOfflineSteps">${offlineAskSteps()}</ol>
+      <p class="ask-help">${t.offlineEnd}</p>
+    </details>
+    <button class="text-button" id="askBack">${t.backToStory}</button>
+  </section>`;
+}
+function jumpToAsk() {
+  if (narrationState === "playing") toggleNarration();
+  document.getElementById("askBox")?.scrollIntoView({ block: "start" });
+  document.getElementById("askTitle")?.focus({ preventScroll: true });
+}
+function cancelAskCheck() {
+  if (askCheckRequest) { clearTimeout(askCheckRequest.timer); askCheckRequest.controller.abort(); askCheckRequest = null; }
+  const start = document.getElementById("askStart");
+  if (start) start.disabled = false;
+}
+function askServiceUnavailable() {
+  askThread.serviceReady = false;
+  const start = document.getElementById("askStart");
+  start.hidden = false;
+  start.textContent = ASK_UI[effLang()].retryService;
+  start.setAttribute("aria-expanded", "false");
+  document.getElementById("askForm").hidden = true;
+  document.getElementById("askOffline").open = true;
+  updateAskNote(ASK_UI[effLang()].serviceUnavailable, false);
+}
+async function startAsk() {
+  if (!UI_LANGS.includes(lang) || askCheckRequest || !askThread.story) return;
+  const thread = askThread, t = ASK_UI[effLang()], start = document.getElementById("askStart");
+  thread.parentReady = true;
+  thread.serviceReady = false;
+  const request = { controller: new AbortController(), timer: null };
+  askCheckRequest = request;
+  const current = () => askCheckRequest === request && askThread === thread;
+  start.disabled = true;
+  start.textContent = t.checking;
+  updateAskNote(t.checking, false);
+  request.timer = setTimeout(() => {
+    if (!current()) return;
+    cancelAskCheck(); askServiceUnavailable();
+  }, 8000);
+  try {
+    const response = await fetch(`${NARRATE_BASE}/ask?capabilities=1`, { method: "GET", cache: "no-store", signal: request.controller.signal });
+    const data = await response.json();
+    if (!current()) return;
+    if (!response.ok || data?.reviewVersion !== 1 || data.ready !== true) throw new Error("service unavailable");
+    thread.serviceReady = true;
+    document.getElementById("askForm").hidden = false;
+    start.hidden = true;
+    start.setAttribute("aria-expanded", "true");
+    updateAskNote("", false);
+    (document.getElementById("askAge").value ? document.getElementById("askInput") : document.getElementById("askAge")).focus();
+  } catch {
+    if (current()) askServiceUnavailable();
+  } finally {
+    if (current()) cancelAskCheck();
+  }
+}
+function clearAsk() {
+  cancelAsk();
+  // Invalidate pending feedback as well as generation, retaining the known allowance.
+  askThread = { ...askThread, items: [] };
+  document.getElementById("askInput").value = "";
+  document.getElementById("askCount").textContent = "0 / 200";
+  renderAskAnswers();
+  updateAskNote(ASK_UI[effLang()].cleared, false);
+}
+function useAskStarter() {
+  if (askRequest) return;
+  const s = STORIES.find(s => s.id === askThread.story);
+  const input = document.getElementById("askInput");
+  input.value = (s?.question?.[lang] || HOME_UI[effLang()].question).slice(0, 200);
+  document.getElementById("askCount").textContent = `${input.value.length} / 200`;
+  input.focus();
+}
 function renderAskAnswers() {
   const box = document.getElementById("askAnswers");
   if (!box) return;
-  const t = UI[effLang()];
+  const t = ASK_UI[effLang()];
   box.innerHTML = askThread.items.map((item, i) => `
     <div class="ask-q">“${escapeHtml(item.question)}”</div>
-    <div class="ask-answer${item.suitable ? "" : " note"}">
-      <div class="ask-answer-label">${escapeHtml(item.suitable ? t.askFor(myChildName) : t.askNoteParent)}</div>
-      <p>${escapeHtml(item.answer)}</p>
-      ${item.suitable && item.id != null ? `<div class="ask-rate">
-        <button data-ask-rate="${i}" data-good="1" class="${item.rating === 1 ? "on" : ""}">👍 ${item.rating === 1 ? t.askThanks : t.askGood}</button>
-        <button data-ask-rate="${i}" data-good="0" class="${item.rating === -1 ? "on" : ""}">👎 ${item.rating === -1 ? t.askThanks : t.askBad}</button>
-      </div>` : ""}
+    <div id="askAnswer-${i}" tabindex="-1" class="ask-answer${item.suitable ? "" : " note"}${item.approved ? " approved" : ""}">
+      <div class="ask-answer-label">${!item.revealed ? t.ready : !item.suitable ? t.note : item.approved ? t.approved : t.draft}</div>
+      ${item.revealed ? `<p>${escapeHtml(item.answer)}</p>${item.suitable && !item.approved ? `<p class="ask-review">${t.review}</p>` : ""}` : ""}
+      <div class="ask-actions">${!item.revealed ? `<button class="ask-btn" data-ask-preview="${i}">${t.preview}</button>` : item.suitable && !item.approved ? `<button class="ask-btn" data-ask-approve="${i}">${t.approve}</button>` : ""}<button class="ask-secondary" data-ask-dismiss="${i}">${t.dismiss}</button></div>
+      ${item.revealed && item.id != null && item.ratingToken ? `<div class="ask-rate"><button data-ask-rate="${i}" data-good="1" aria-pressed="${item.rating === 1}" class="${item.rating === 1 ? "on" : ""}" ${item.ratingBusy ? "disabled" : ""}>${item.rating === 1 ? t.thanks : t.good}</button><button data-ask-rate="${i}" data-good="0" aria-pressed="${item.rating === -1}" class="${item.rating === -1 ? "on" : ""}" ${item.ratingBusy ? "disabled" : ""}>${item.rating === -1 ? t.thanks : t.bad}</button></div>` : ""}
     </div>`).join("");
 }
-
-function updateAskNote(errorText) {
+function reviewAsk(index, action) {
+  const item = askThread.items[index];
+  if (!askThread.parentReady || !item) return;
+  if (action === "preview") item.revealed = true;
+  if (action === "approve" && item.revealed && item.suitable) item.approved = true;
+  if (action === "dismiss") askThread.items.splice(index, 1);
+  renderAskAnswers();
+  // Keep keyboard focus within the activity after the clicked control is replaced.
+  document.getElementById(action === "dismiss" ? "askInput" : `askAnswer-${index}`)?.focus();
+}
+function updateAskNote(message = "", error = true) {
   const note = document.getElementById("askNote");
   if (!note) return;
-  const t = UI[effLang()];
-  if (errorText) { note.textContent = errorText; note.className = "ask-note err"; return; }
-  note.className = "ask-note";
-  note.textContent = askThread.remaining == null ? ""
-    : askThread.remaining > 0 ? t.askRemaining(askThread.remaining) : t.askCap;
+  const t = ASK_UI[effLang()];
+  note.className = message && error ? "ask-note err" : "ask-note";
+  if (message) { note.textContent = message; return; }
+  note.textContent = askThread.remaining == null ? "" : askThread.remaining > 0 ? t.remaining(askThread.remaining) : t.cap;
+  if (askThread.remaining === 0 && askThread.retryAt > Date.now()) note.textContent += " " + t.retry(Math.ceil((askThread.retryAt - Date.now()) / 3600000));
 }
-
 async function askHeaders() {
   const headers = { "Content-Type": "application/json" };
-  if (session && await ensureSession()) headers["Authorization"] = `Bearer ${session.access_token}`;
+  if (session) {
+    if (!await ensureSession()) throw new Error("session expired");
+    headers.Authorization = `Bearer ${session.access_token}`;
+  }
   return headers;
 }
-
 async function submitAsk() {
-  if (askBusy) return;
-  const input = document.getElementById("askInput"), btn = document.getElementById("askBtn"), note = document.getElementById("askNote");
-  const story = document.getElementById("reader").dataset.story;
-  const question = (input?.value || "").trim();
-  if (!story || question.length < 2) { input?.focus(); return; }
-  const t = UI[effLang()];
-  askBusy = true;
-  if (btn) btn.disabled = true;
-  if (note) { note.textContent = t.askThinking; note.className = "ask-note"; }
-  let failed = false;
+  if (askRequest) return;
+  const input = document.getElementById("askInput"), btn = document.getElementById("askBtn"), t = ASK_UI[effLang()];
+  const thread = askThread, story = thread.story, age = document.getElementById("askAge")?.value;
+  const question = (input?.value || "").trim().replace(/\s+/g, " ");
+  if (!thread.parentReady) { updateAskNote(t.needParent); return; }
+  if (!thread.serviceReady) { updateAskNote(t.serviceUnavailable, false); return; }
+  if (!UI_LANGS.includes(lang) || thread.lang !== lang || !story) return;
+  if (!AGE_BANDS.some(a => a.key === age)) { updateAskNote(t.needAge); document.getElementById("askAge")?.focus(); return; }
+  if (question.length < 2 || question.length > 200) { updateAskNote(t.needQuestion); input?.focus(); return; }
+  if (thread.remaining === 0 && thread.retryAt > Date.now()) { updateAskNote(); return; }
+  const request = { controller: new AbortController(), timer: null };
+  askRequest = request;
+  const current = () => askRequest === request && askThread === thread;
+  btn.disabled = true;
+  input.disabled = true;
+  document.getElementById("askCancel").hidden = false;
+  document.getElementById("askBox").setAttribute("aria-busy", "true");
+  updateAskNote(t.thinking, false);
+  request.timer = setTimeout(() => {
+    if (!current()) return;
+    cancelAsk();
+    updateAskNote(t.timeout);
+  }, 55000);
   try {
-    // Answer in the language on screen — never a language the child isn't hearing.
-    const askLang = UI_LANGS.includes(lang) ? lang : effLang();
-    const r = await fetch(`${NARRATE_BASE}/ask`, {
-      method: "POST", headers: await askHeaders(),
-      body: JSON.stringify({ story, lang: askLang, question, age: myChildAge || null })
-    });
+    const headers = await askHeaders();
+    if (!current()) return;
+    const s = STORIES.find(s => s.id === story);
+    const length = lengthsFor(s).includes(storyLen) ? storyLen : "short";
+    const r = await fetch(`${NARRATE_BASE}/ask`, { method: "POST", headers, signal: request.controller.signal,
+      body: JSON.stringify({ story, lang: thread.lang, length, question, age, parentPresent: true }) });
     const j = await r.json().catch(() => ({}));
-    if (askThread.story !== story) return;   // reader moved on while we waited
-    if (r.status === 429) { askThread.remaining = 0; return; }
-    if (!r.ok || typeof j.answer !== "string") throw new Error(j.error || `HTTP ${r.status}`);
-    askThread.items.push({ question, answer: j.answer, suitable: j.suitable !== false, id: j.id ?? null, rating: 0 });
-    askThread.remaining = typeof j.remaining === "number" ? j.remaining : null;
-    if (input) input.value = "";
+    if (!current()) return;
+    if (r.status === 429) {
+      thread.remaining = 0;
+      thread.retryAt = Number.isFinite(j.retryAfter) && j.retryAfter > 0 ? Date.now() + Math.min(j.retryAfter, 86400) * 1000 : 0;
+      updateAskNote(); return;
+    }
+    if (!r.ok || !j || j.reviewVersion !== 1 || typeof j.suitable !== "boolean" || typeof j.answer !== "string" || !j.answer.trim() || j.answer.length > 1600) throw new Error("invalid draft");
+    thread.items.push({ question, answer: j.answer.trim(), suitable: j.suitable, id: Number.isSafeInteger(j.id) && j.id > 0 ? j.id : null,
+      ratingToken: typeof j.ratingToken === "string" ? j.ratingToken : null, rating: 0, revealed: false, approved: false });
+    if (thread.items.length > ASK_MAX_ITEMS) thread.items.shift();
+    thread.remaining = Number.isInteger(j.remaining) && j.remaining >= 0 ? j.remaining : null;
+    thread.retryAt = Number.isFinite(j.retryAfter) && j.retryAfter > 0 ? Date.now() + Math.min(j.retryAfter, 86400) * 1000 : 0;
+    input.value = "";
+    document.getElementById("askCount").textContent = "0 / 200";
     renderAskAnswers();
+    updateAskNote();
+    updateAskNote(`${t.ready} ${document.getElementById("askNote").textContent}`.trim(), false);
   } catch {
-    failed = true;
+    if (current()) updateAskNote(t.err);
   } finally {
-    askBusy = false;
-    if (btn) btn.disabled = false;
-    if (askThread.story === story) updateAskNote(failed ? t.askErr : "");
-    else updateAskNote("");
+    if (current()) cancelAsk();
+  }
+}
+async function rateAsk(index, good) {
+  const thread = askThread, item = thread.items[index], t = ASK_UI[effLang()];
+  if (!item || !item.revealed || item.id == null || !item.ratingToken || item.ratingBusy || typeof good !== "boolean") return;
+  const controller = new AbortController();
+  const current = () => askThread === thread && thread.items.includes(item) && item.ratingRequest === controller;
+  item.ratingRequest = controller;
+  item.ratingBusy = true;
+  renderAskAnswers();
+  const timer = setTimeout(() => {
+    controller.abort();
+    if (!current()) return;
+    item.ratingRequest = null; item.ratingBusy = false;
+    renderAskAnswers(); updateAskNote(t.rateErr);
+  }, 12000);
+  try {
+    const headers = await askHeaders();
+    if (!current()) return;
+    const r = await fetch(`${NARRATE_BASE}/ask`, { method: "POST", headers, signal: controller.signal,
+      body: JSON.stringify({ rate: item.id, ratingToken: item.ratingToken, good }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || j.ok !== true) throw new Error("feedback failed");
+    if (current()) { item.rating = good ? 1 : -1; updateAskNote(); }
+  } catch {
+    if (current()) updateAskNote(t.rateErr);
+  } finally {
+    clearTimeout(timer);
+    if (current()) { item.ratingRequest = null; item.ratingBusy = false; renderAskAnswers(); }
   }
 }
 
-async function rateAsk(index, good) {
-  const item = askThread.items[index];
-  if (!item || item.id == null) return;
-  item.rating = good ? 1 : -1;
-  renderAskAnswers();
-  try {
-    await fetch(`${NARRATE_BASE}/ask`, { method: "POST", headers: await askHeaders(), body: JSON.stringify({ rate: item.id, good }) });
-  } catch {}
-}
 
 function closeReader() {
+  resetAsk();
+  const askBox = document.getElementById("askBox");
+  if (askBox) askBox.innerHTML = "";
   if (!document.getElementById("overlay").classList.contains("open")) return;
   stopNarration();
   document.getElementById("overlay").classList.remove("open");
@@ -2177,7 +2408,9 @@ try { session = JSON.parse(localStorage.getItem("msSession") || "null"); } catch
 let pushTimer = null;
 
 function saveSession(s) {
+  const accountChanged = (session?.user_id || null) !== (s?.user_id || null);
   session = s;
+  if (accountChanged && document.getElementById("overlay").classList.contains("open")) openReader(document.getElementById("reader").dataset.story);
   try { s ? localStorage.setItem("msSession", JSON.stringify(s)) : localStorage.removeItem("msSession"); } catch {}
 }
 
@@ -2487,6 +2720,7 @@ document.getElementById("searchInput").addEventListener("keydown", e => {
   if (e.key === "Escape" && searchQuery) { e.stopPropagation(); searchQuery = ""; render(); }
 });
 document.addEventListener("change", e => {
+  if (e.target.id === "askAge") { clearAsk(); document.getElementById("askOfflineSteps").innerHTML = offlineAskSteps(e.target.value); document.getElementById("askInput").focus(); return; }
   if (e.target.id === "sleepTimer") setSleepTimer(Number(e.target.value));
   if (e.target.id === "audioSeek" && narrationMode === "audio" && Number.isFinite(parentVoice.duration)) {
     parentVoice.currentTime = Math.max(0, Math.min(parentVoice.duration, Number(e.target.value) || 0));
@@ -2523,6 +2757,16 @@ document.addEventListener("click", e => {
 
   if (e.target.closest("#accountChip")) { openAuthModal(); return; }
 
+  if (e.target.closest("#askStart")) { startAsk(); return; }
+  if (e.target.closest("#askJump")) { jumpToAsk(); return; }
+  if (e.target.closest("#askBack")) { document.getElementById("readerTitle")?.scrollIntoView({ block: "start" }); document.getElementById("reader").focus({ preventScroll: true }); return; }
+  if (e.target.closest("#askStarter")) { useAskStarter(); return; }
+  if (e.target.closest("#askClear")) { clearAsk(); return; }
+  if (e.target.closest("#askCancel")) { cancelAsk(); updateAskNote(); return; }
+  for (const action of ["preview", "approve", "dismiss"]) {
+    const control = e.target.closest(`[data-ask-${action}]`);
+    if (control) { reviewAsk(Number(control.dataset[`ask${action[0].toUpperCase()}${action.slice(1)}`]), action); return; }
+  }
   if (e.target.closest("#askBtn")) { submitAsk(); return; }
   const rateBtn = e.target.closest("[data-ask-rate]");
   if (rateBtn) { rateAsk(Number(rateBtn.dataset.askRate), rateBtn.dataset.good === "1"); return; }
@@ -2611,6 +2855,9 @@ document.addEventListener("click", e => {
   }
 
   if (e.target.id === "closeReader" || e.target.id === "overlay") closeReader();
+});
+document.addEventListener("input", e => {
+  if (e.target.id === "askInput") document.getElementById("askCount").textContent = `${e.target.value.length} / 200`;
 });
 document.addEventListener("keydown", e => {
   if (!document.getElementById("overlay").classList.contains("open")) return;
