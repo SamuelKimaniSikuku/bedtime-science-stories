@@ -12,7 +12,7 @@ const script = [...html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)]
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
 const response = (url, ok = true) => ({ ok, json: async () => ({ url }) });
 
-function app({ fetcher = async () => response('https://example.test/story.mp3'), search = '', stored = {}, voices } = {}) {
+function app({ fetcher = async () => response('https://example.test/story.mp3'), availability = async () => ({ ok: true, json: async () => ({ reviewVersion: 1, ready: true }) }), search = '', stored = {}, voices } = {}) {
   const elements = new Map(), timers = new Map(), events = new Map(), storage = new Map(Object.entries(stored));
   const recordings = [], spoken = [];
   let document, clock = Date.now(), timerId = 0;
@@ -53,7 +53,7 @@ function app({ fetcher = async () => response('https://example.test/story.mp3'),
     history: { replaceState: (_, __, url) => { location.hash = url.startsWith('#') ? url : ''; } },
     localStorage: { getItem: k => storage.get(k) ?? null, setItem: (k, v) => storage.set(k, v), removeItem: k => storage.delete(k) },
     Audio, SpeechSynthesisUtterance: class { constructor(text) { this.text = text; } }, URLSearchParams, AbortController,
-    fetch: fetcher, console, Date: class extends Date { static now() { return clock; } },
+    fetch: (url, options) => url.endsWith('/ask?capabilities=1') ? availability(url, options) : fetcher(url, options), console, Date: class extends Date { static now() { return clock; } },
     setTimeout: (fn, delay) => { const id = ++timerId; timers.set(id, { fn, at: clock + delay }); return id; }, clearTimeout: id => timers.delete(id)
   });
   vm.runInContext(script, context, { filename: 'index.html' });
@@ -195,8 +195,8 @@ test('generated biography and marketing counts match the content source', () => 
 const ratingToken = '3a5d7eb1-690b-4d23-b764-a0b40f6e3a25';
 const askReply = (body = {}, status = 200) => ({ ok: status < 400, status, json: async () => ({ id: 7, reviewVersion: 1, suitable: true, answer: 'Trees need water to grow. What can you notice about a leaf?', remaining: 1, ratingToken, ...body }) });
 const tick = () => new Promise(resolve => setImmediate(resolve));
-function beginAsk(a, story = 'maathai') {
-  a.run(`openReader("${story}"); startAsk()`);
+async function beginAsk(a, story = 'maathai') {
+  await a.run(`openReader("${story}"); startAsk()`);
   // The DOM stand-in does not parse select/option markup.
   a.get('askAge').value = '5-7';
 }
@@ -213,7 +213,7 @@ test('Ask why requires a parent and age choice, then hides the AI draft until pa
   a.get('askInput').value = 'Kwa nini miti ilikufa?';
   await a.run('submitAsk()');
   assert.equal(calls.length, 0);
-  a.run('startAsk()');
+  await a.run('startAsk()');
   await a.run('submitAsk()');
   assert.equal(calls.length, 0);
   a.get('askAge').value = '5-7';
@@ -241,7 +241,7 @@ test('feedback is saved only after server confirmation and uses the private answ
     if (body.rate) return { ok: !failRating, status: failRating ? 503 : 200, json: async () => ({ ok: !failRating }) };
     return askReply();
   } });
-  beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
+  await beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
   await a.run('submitAsk()'); a.run('reviewAsk(0, "preview")');
   await a.run('rateAsk(0, true)');
   assert.equal(a.run('askThread.items[0].rating'), 0);
@@ -256,7 +256,7 @@ test('feedback is saved only after server confirmation and uses the private answ
 test('parent notes cannot be approved for reading; malformed drafts preserve the question', async () => {
   let reply = askReply({ suitable: false, answer: 'A conversation with you will help.' });
   const a = app({ fetcher: async () => reply });
-  beginAsk(a, 'ngugi'); a.get('askInput').value = 'A difficult question';
+  await beginAsk(a, 'ngugi'); a.get('askInput').value = 'A difficult question';
   await a.run('submitAsk()'); a.run('reviewAsk(0, "preview"); reviewAsk(0, "approve")');
   assert.match(a.get('askAnswers').innerHTML, /A note for the parent/);
   assert.equal(a.run('askThread.items[0].approved'), false);
@@ -274,7 +274,7 @@ test('parent notes cannot be approved for reading; malformed drafts preserve the
 test('the allowance encourages curiosity, honours retry timing, and leaves offline prompts available', async () => {
   let calls = 0;
   const a = app({ fetcher: async () => { calls++; return askReply({ error: 'limit', remaining: 0, retryAfter: 3600 }, 429); } });
-  beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
+  await beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
   await a.run('submitAsk()');
   assert.match(a.get('askNote').textContent, /Keep wondering together/);
   assert.match(a.get('askNote').textContent, /about 1 hour/);
@@ -288,7 +288,7 @@ test('old replies cannot cross story, language, close/reopen, clear or account c
   for (const change of ['openReader("ngugi")', 'setLang("fr")', 'closeReader(); openReader("maathai")', 'clearAsk()', 'saveSession({user_id: "another-parent", access_token: "example"})']) {
     const pending = deferred(); let signal;
     const a = app({ fetcher: (_, opts) => { signal = opts.signal; return pending.promise; } });
-    beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
+    await beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
     const old = a.run('submitAsk()'); await tick();
     a.run(change);
     assert.equal(signal.aborted, true, change);
@@ -301,7 +301,7 @@ test('old replies cannot cross story, language, close/reopen, clear or account c
 test('timeout releases controls and a late response cannot interfere with the next question', async () => {
   const first = deferred(), second = deferred(); let calls = 0;
   const a = app({ fetcher: () => ++calls === 1 ? first.promise : second.promise });
-  beginAsk(a); a.get('askInput').value = 'First question';
+  await beginAsk(a); a.get('askInput').value = 'First question';
   const old = a.run('submitAsk()'); await tick();
   a.advance(55000);
   assert.match(a.get('askNote').textContent, /taking too long/);
@@ -321,7 +321,7 @@ test('timeout releases controls and a late response cannot interfere with the ne
 test('Ask why uses the selected story length and never silently changes an unsupported language', async () => {
   const calls = [];
   const a = app({ fetcher: async (_, opts) => { calls.push(JSON.parse(opts.body)); return askReply(); } });
-  beginAsk(a); a.run('storyLen = "m"'); a.get('askInput').value = 'Why did she start planting?';
+  await beginAsk(a); a.run('storyLen = "m"'); a.get('askInput').value = 'Why did she start planting?';
   await a.run('submitAsk()'); assert.equal(calls[0].length, 'm');
   a.run('setLang("sv"); openReader("newton"); startAsk()');
   assert.match(a.get('reader').innerHTML, /currently supports English, Kiswahili and French/);
@@ -337,7 +337,7 @@ test('a timed-out feedback request cannot overwrite a subsequent rating', async 
     if (++ratings === 1) return late.promise;
     return { ok: true, json: async () => ({ ok: true }) };
   } });
-  beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
+  await beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
   await a.run('submitAsk()'); a.run('reviewAsk(0, "preview")');
   const first = a.run('rateAsk(0, true)'); await tick();
   a.advance(12000);
@@ -347,4 +347,62 @@ test('a timed-out feedback request cannot overwrite a subsequent rating', async 
   assert.equal(a.run('askThread.items[0].rating'), -1);
   late.resolve({ ok: true, json: async () => ({ ok: true }) }); await first;
   assert.equal(a.run('askThread.items[0].rating'), -1);
+});
+
+test('an old or unavailable answer service cannot receive a question; offline exploration remains usable', async () => {
+  for (const availability of [
+    async () => ({ ok: false, json: async () => ({ error: 'POST only' }) }),
+    async () => ({ ok: true, json: async () => ({ reviewVersion: 1, ready: false }) }),
+    async () => ({ ok: true, json: async () => ({ ready: true }) }),
+    async () => { throw new Error('network unavailable'); },
+  ]) {
+    let sent = 0;
+    const a = app({ availability, fetcher: async () => { sent++; return askReply(); } });
+    await beginAsk(a);
+    a.get('askInput').value = 'Why do trees need water?';
+    await a.run('submitAsk()');
+    assert.equal(sent, 0);
+    assert.equal(a.get('askForm').hidden, true);
+    assert.equal(a.get('askOffline').open, true);
+    assert.equal(a.get('askStart').disabled, false);
+    assert.match(a.get('askNote').textContent, /No question has been sent/);
+    assert.match(a.get('reader').innerHTML, /Explore together without AI/);
+    assert.equal(a.run('askThread.serviceReady'), false);
+  }
+});
+
+test('availability timeout and closing a story invalidate late checks and permit a fresh retry', async () => {
+  for (const change of ['closeReader(); openReader("ngugi")', 'timeout']) {
+    const pending = deferred(); let calls = 0, signal;
+    const a = app({ availability: (_, options) => {
+      signal = options.signal;
+      return ++calls === 1 ? pending.promise : Promise.resolve({ ok: true, json: async () => ({ reviewVersion: 1, ready: true }) });
+    } });
+    const first = a.run('openReader("maathai"); startAsk()');
+    if (change === 'timeout') a.advance(8000); else a.run(change);
+    assert.equal(signal.aborted, true);
+    assert.equal(a.run('askThread.serviceReady'), false);
+    await a.run('startAsk()');
+    assert.equal(a.run('askThread.serviceReady'), true);
+    pending.resolve({ ok: false, json: async () => ({ ready: false }) });
+    await first;
+    assert.equal(a.run('askThread.serviceReady'), true);
+    assert.equal(a.get('askForm').hidden, false);
+  }
+});
+
+test('Wonder together pauses a playing story and offers age-appropriate offline prompts', async () => {
+  const a = app({ stored: { childAge: 'u2' } });
+  a.run('openReader("maathai")');
+  await a.run('startNarration()');
+  a.run('jumpToAsk()');
+  assert.equal(a.run('narrationState'), 'paused');
+  assert.equal(a.run('askThread.parentReady'), false);
+  assert.match(a.run('offlineAskSteps()'), /No questions to answer/);
+  a.event('change', { id: 'askAge', value: '2-4' });
+  assert.match(a.get('askOfflineSteps').innerHTML, /Which part of the story/);
+  a.run('setLang("fr")');
+  assert.match(a.run('offlineAskSteps("u2")'), /Aucune question/);
+  a.run('setLang("sw")');
+  assert.match(a.run('offlineAskSteps("u2")'), /Hakuna maswali/);
 });

@@ -530,7 +530,7 @@
   .conversation h3 { font-size: 14px; color: var(--gold); margin: 0 0 8px; }
   .conversation div { font-family: Georgia, serif; font-size: 21px; line-height: 1.5; color: var(--moon); }
   /* Ask why: a quiet space for a parent and child to explore together. */
-  .ask { border: 1px solid rgba(245,198,100,.35); border-radius: 18px; padding: 22px; margin: 0 0 24px; background: linear-gradient(135deg, #f5c6640a, #ffffff02); }
+  .ask { border: 1px solid rgba(245,198,100,.35); border-radius: 18px; padding: 22px; margin: 0 0 24px; scroll-margin-top: 240px; background: linear-gradient(135deg, #f5c6640a, #ffffff02); }
   .ask-eyebrow { color: var(--gold); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 8px; }
   .ask h3 { font-family: Georgia, serif; color: var(--moon); font-size: 26px; font-weight: 400; margin: 0 0 8px; }
   .ask-label, .ask-help { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; line-height: 1.6; }
@@ -550,6 +550,11 @@
   .ask-privacy summary { cursor: pointer; padding: 8px 0; color: var(--moon); }
   .ask-privacy p { margin: 8px 0; }
   .ask-privacy a { color: var(--gold); }
+  .ask-offline { border-top: 1px solid #46527d; margin-top: 20px; padding-top: 6px; }
+  .ask-offline summary { color: var(--moon); min-height: 44px; font-size: 16px; }
+  .ask-offline ol { padding-left: 22px; margin: 10px 0; }
+  .ask-offline li { font-size: 16px; line-height: 1.65; margin: 10px 0; color: var(--ink); }
+  .ask-offline .ask-help { margin: 12px 0; }
   .ask-note { font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin: 12px 0 0; min-height: 1.5em; }
   .ask-note.err { color: #ffadad; }
   .ask-q { font-size: 14px; color: var(--ink-soft); margin: 20px 0 8px; font-style: italic; overflow-wrap: anywhere; }
@@ -1490,6 +1495,7 @@ function openReader(id) {
       <div class="audio-controls">
         <button class="narrate-btn" id="narrateBtn"><span id="narrateLabel">▶ ${h.listen}</span></button>
         <button class="text-button" id="stopNarration" hidden>${h.stop}</button>
+        <button class="text-button" id="askJump" aria-controls="askBox">${ASK_UI[effLang()].jump}</button>
         <label class="sleep-control">${h.sleep}<select id="sleepTimer">${[0, 5, 10, 15, 30].map(n => `<option value="${n}">${n ? `${n} ${h.minutes}` : h.off}</option>`).join("")}</select><span id="sleepRemaining"></span></label>
       </div>
       <div class="audio-progress" id="audioProgress" hidden>
@@ -1531,6 +1537,13 @@ function openReader(id) {
 const ASK_UI = {
   en: {
     eyebrow: "AI-assisted · for parents", title: "Little questions. Big discoveries.",
+    jump: "Wonder together", checking: "Checking availability…", retryService: "Check AI availability again",
+    serviceUnavailable: "AI answers are unavailable right now. No question has been sent. You can still explore this story together below.",
+    offline: "Explore together without AI", offlineIntro: "Let your child lead. There is no score and no need to finish every question.",
+    offlineSteps: ["What caught your attention in the story?", "What do you think happened, and what in the story makes you think that?", "Choose one thing to find out together tomorrow. You can draw your idea or ask someone who knows about it."],
+    toddlerSteps: ["Name one thing from the story in a few simple words.", "Follow your child's gaze, sound or gesture. Give them time to respond.", "Repeat a word they enjoy, then finish whenever they seem ready. No questions to answer."],
+    youngSteps: ["Which part of the story did you like?", "Can you describe one thing you remember?", "Think of one little thing you would like to notice together tomorrow."],
+    offlineEnd: "It is fine to say, ‘I don't know yet. Let's find out together.’", backToStory: "Back to the story",
     intro: name => `What did ${name || "your little one"} wonder about? Explore this story together, one question at a time.`,
     notice: "AI can make mistakes. A parent types each question, checks the draft, and chooses what to read aloud. Please leave out names and private details.",
     start: "I'm the parent · let's explore", privacy: "How questions are handled", provider: "Anthropic privacy information ↗",
@@ -1551,6 +1564,13 @@ const ASK_UI = {
   },
   sw: {
     eyebrow: "Kwa msaada wa AI · kwa wazazi", title: "Maswali madogo. Ugunduzi mkubwa.",
+    jump: "Tudadisi pamoja", checking: "Inaangalia upatikanaji…", retryService: "Angalia tena upatikanaji wa AI",
+    serviceUnavailable: "Majibu ya AI hayapatikani kwa sasa. Hakuna swali lililotumwa. Bado mnaweza kugundua hadithi hii pamoja hapa chini.",
+    offline: "Gundueni pamoja bila AI", offlineIntro: "Mruhusu mtoto wako aongoze. Hakuna alama wala haja ya kumaliza kila swali.",
+    offlineSteps: ["Ni nini kilikuvutia kwenye hadithi?", "Unafikiri nini kilitokea, na ni sehemu gani ya hadithi inakufanya ufikiri hivyo?", "Chagueni jambo moja la kuchunguza pamoja kesho. Mnaweza kuchora wazo lenu au kumuuliza mtu anayejua kuhusu jambo hilo."],
+    toddlerSteps: ["Taja jambo moja kutoka kwenye hadithi kwa maneno machache rahisi.", "Fuata anachotazama mtoto, sauti au ishara yake. Mpe muda wa kuitikia.", "Rudia neno analolipenda, kisha maliza anapoonekana kuwa tayari. Hakuna maswali ya kujibu."],
+    youngSteps: ["Ulipenda sehemu gani ya hadithi?", "Unaweza kueleza jambo moja unalokumbuka?", "Fikirieni jambo moja dogo ambalo mngependa kutazama pamoja kesho."],
+    offlineEnd: "Ni sawa kusema, ‘Bado sijui. Tutafute pamoja.’", backToStory: "Rudi kwenye hadithi",
     intro: name => `Je, ${name || "mtoto wako"} ameuliza nini? Gundua hadithi hii pamoja, swali moja baada ya jingine.`,
     notice: "AI inaweza kukosea. Mzazi huandika swali, hukagua rasimu na kuchagua cha kusoma kwa sauti. Usiweke majina au taarifa za faragha.",
     start: "Mimi ni mzazi · tugundue", privacy: "Maswali yanavyoshughulikiwa", provider: "Taarifa za faragha za Anthropic ↗",
@@ -1571,6 +1591,13 @@ const ASK_UI = {
   },
   fr: {
     eyebrow: "Avec l'aide de l'IA · pour les parents", title: "Petites questions. Grandes découvertes.",
+    jump: "S'émerveiller ensemble", checking: "Vérification de la disponibilité…", retryService: "Vérifier à nouveau la disponibilité de l'IA",
+    serviceUnavailable: "Les réponses de l'IA sont indisponibles pour le moment. Aucune question n'a été envoyée. Vous pouvez toujours explorer cette histoire ensemble ci-dessous.",
+    offline: "Explorer ensemble sans IA", offlineIntro: "Laissez votre enfant vous guider. Il n'y a ni score ni obligation de répondre à toutes les questions.",
+    offlineSteps: ["Qu'est-ce qui a attiré ton attention dans l'histoire ?", "Que penses-tu qu'il s'est passé, et quel détail de l'histoire te le fait penser ?", "Choisissez une chose à découvrir ensemble demain. Vous pouvez dessiner votre idée ou interroger quelqu'un qui connaît le sujet."],
+    toddlerSteps: ["Nommez une chose de l'histoire en quelques mots simples.", "Suivez le regard, le son ou le geste de votre enfant. Laissez-lui le temps de réagir.", "Répétez un mot qui lui plaît, puis terminez quand il semble prêt. Aucune question à laquelle répondre."],
+    youngSteps: ["Quelle partie de l'histoire as-tu aimée ?", "Peux-tu décrire une chose dont tu te souviens ?", "Pensez à une petite chose que vous aimeriez observer ensemble demain."],
+    offlineEnd: "Vous pouvez dire : « Je ne sais pas encore. Cherchons ensemble. »", backToStory: "Revenir à l'histoire",
     intro: name => `Qu'est-ce qui intrigue ${name || "votre enfant"} ? Explorez cette histoire ensemble, une question à la fois.`,
     notice: "L'IA peut se tromper. Un parent écrit chaque question, vérifie le brouillon et choisit quoi lire à voix haute. Évitez les noms et les informations privées.",
     start: "Je suis le parent · explorons", privacy: "Comment les questions sont traitées", provider: "Confidentialité chez Anthropic ↗",
@@ -1590,8 +1617,9 @@ const ASK_UI = {
     good: "Utile", bad: "À revoir", thanks: "Avis enregistré", rateErr: "L'avis n'a pas été enregistré. Réessayez.", cleared: "Questions effacées de cet écran.", standalone: "Chaque question utilise cette histoire, sans les questions précédentes. Précisez ce que vous souhaitez savoir."
   }
 };
-let askThread = { story: null, lang: null, items: [], remaining: null, retryAt: 0, parentReady: false };
+let askThread = { story: null, lang: null, items: [], remaining: null, retryAt: 0, parentReady: false, serviceReady: false };
 let askRequest = null;
+let askCheckRequest = null;
 const ASK_MAX_ITEMS = 8;
 
 function cancelAsk() {
@@ -1605,12 +1633,18 @@ function cancelAsk() {
 }
 function resetAsk(story = null) {
   cancelAsk();
-  askThread = { story, lang, items: [], remaining: null, retryAt: 0, parentReady: false };
+  cancelAskCheck();
+  askThread = { story, lang, items: [], remaining: null, retryAt: 0, parentReady: false, serviceReady: false };
+}
+function offlineAskSteps(age = myChildAge) {
+  const t = ASK_UI[effLang()];
+  const steps = age === "u2" ? t.toddlerSteps : age === "2-4" ? t.youngSteps : t.offlineSteps;
+  return steps.map(step => `<li>${escapeHtml(step)}</li>`).join("");
 }
 function renderAskBox(s) {
   const t = ASK_UI[effLang()];
   return `<section class="ask" id="askBox" aria-labelledby="askTitle" aria-busy="false">
-    <p class="ask-eyebrow">${t.eyebrow}</p><h3 id="askTitle">${t.title}</h3>
+    <p class="ask-eyebrow">${t.eyebrow}</p><h3 id="askTitle" tabindex="-1">${t.title}</h3>
     <p class="ask-label">${escapeHtml(t.intro(myChildName))}</p>
     ${!UI_LANGS.includes(lang) ? `<p class="ask-help">${t.unavailable}</p>` : `
     <p class="ask-help">${t.notice}</p>
@@ -1624,15 +1658,64 @@ function renderAskBox(s) {
       <p class="ask-help" id="askScope">${t.standalone}</p>
     </div>`}
     <p class="ask-note" id="askNote" role="status" aria-live="polite"></p><div id="askAnswers"></div>
+    <details class="ask-offline" id="askOffline"><summary>${t.offline}</summary>
+      <p class="ask-help">${t.offlineIntro}</p><ol id="askOfflineSteps">${offlineAskSteps()}</ol>
+      <p class="ask-help">${t.offlineEnd}</p>
+    </details>
+    <button class="text-button" id="askBack">${t.backToStory}</button>
   </section>`;
 }
-function startAsk() {
-  if (!UI_LANGS.includes(lang)) return;
-  askThread.parentReady = true;
-  document.getElementById("askForm").hidden = false;
-  document.getElementById("askStart").hidden = true;
-  document.getElementById("askStart").setAttribute("aria-expanded", "true");
-  (document.getElementById("askAge").value ? document.getElementById("askInput") : document.getElementById("askAge")).focus();
+function jumpToAsk() {
+  if (narrationState === "playing") toggleNarration();
+  document.getElementById("askBox")?.scrollIntoView({ block: "start" });
+  document.getElementById("askTitle")?.focus({ preventScroll: true });
+}
+function cancelAskCheck() {
+  if (askCheckRequest) { clearTimeout(askCheckRequest.timer); askCheckRequest.controller.abort(); askCheckRequest = null; }
+  const start = document.getElementById("askStart");
+  if (start) start.disabled = false;
+}
+function askServiceUnavailable() {
+  askThread.serviceReady = false;
+  const start = document.getElementById("askStart");
+  start.hidden = false;
+  start.textContent = ASK_UI[effLang()].retryService;
+  start.setAttribute("aria-expanded", "false");
+  document.getElementById("askForm").hidden = true;
+  document.getElementById("askOffline").open = true;
+  updateAskNote(ASK_UI[effLang()].serviceUnavailable, false);
+}
+async function startAsk() {
+  if (!UI_LANGS.includes(lang) || askCheckRequest || !askThread.story) return;
+  const thread = askThread, t = ASK_UI[effLang()], start = document.getElementById("askStart");
+  thread.parentReady = true;
+  thread.serviceReady = false;
+  const request = { controller: new AbortController(), timer: null };
+  askCheckRequest = request;
+  const current = () => askCheckRequest === request && askThread === thread;
+  start.disabled = true;
+  start.textContent = t.checking;
+  updateAskNote(t.checking, false);
+  request.timer = setTimeout(() => {
+    if (!current()) return;
+    cancelAskCheck(); askServiceUnavailable();
+  }, 8000);
+  try {
+    const response = await fetch(`${NARRATE_BASE}/ask?capabilities=1`, { method: "GET", cache: "no-store", signal: request.controller.signal });
+    const data = await response.json();
+    if (!current()) return;
+    if (!response.ok || data?.reviewVersion !== 1 || data.ready !== true) throw new Error("service unavailable");
+    thread.serviceReady = true;
+    document.getElementById("askForm").hidden = false;
+    start.hidden = true;
+    start.setAttribute("aria-expanded", "true");
+    updateAskNote("", false);
+    (document.getElementById("askAge").value ? document.getElementById("askInput") : document.getElementById("askAge")).focus();
+  } catch {
+    if (current()) askServiceUnavailable();
+  } finally {
+    if (current()) cancelAskCheck();
+  }
 }
 function clearAsk() {
   cancelAsk();
@@ -1697,6 +1780,7 @@ async function submitAsk() {
   const thread = askThread, story = thread.story, age = document.getElementById("askAge")?.value;
   const question = (input?.value || "").trim().replace(/\s+/g, " ");
   if (!thread.parentReady) { updateAskNote(t.needParent); return; }
+  if (!thread.serviceReady) { updateAskNote(t.serviceUnavailable, false); return; }
   if (!UI_LANGS.includes(lang) || thread.lang !== lang || !story) return;
   if (!AGE_BANDS.some(a => a.key === age)) { updateAskNote(t.needAge); document.getElementById("askAge")?.focus(); return; }
   if (question.length < 2 || question.length > 200) { updateAskNote(t.needQuestion); input?.focus(); return; }
@@ -2636,7 +2720,7 @@ document.getElementById("searchInput").addEventListener("keydown", e => {
   if (e.key === "Escape" && searchQuery) { e.stopPropagation(); searchQuery = ""; render(); }
 });
 document.addEventListener("change", e => {
-  if (e.target.id === "askAge") { clearAsk(); document.getElementById("askInput").focus(); return; }
+  if (e.target.id === "askAge") { clearAsk(); document.getElementById("askOfflineSteps").innerHTML = offlineAskSteps(e.target.value); document.getElementById("askInput").focus(); return; }
   if (e.target.id === "sleepTimer") setSleepTimer(Number(e.target.value));
   if (e.target.id === "audioSeek" && narrationMode === "audio" && Number.isFinite(parentVoice.duration)) {
     parentVoice.currentTime = Math.max(0, Math.min(parentVoice.duration, Number(e.target.value) || 0));
@@ -2674,6 +2758,8 @@ document.addEventListener("click", e => {
   if (e.target.closest("#accountChip")) { openAuthModal(); return; }
 
   if (e.target.closest("#askStart")) { startAsk(); return; }
+  if (e.target.closest("#askJump")) { jumpToAsk(); return; }
+  if (e.target.closest("#askBack")) { document.getElementById("readerTitle")?.scrollIntoView({ block: "start" }); document.getElementById("reader").focus({ preventScroll: true }); return; }
   if (e.target.closest("#askStarter")) { useAskStarter(); return; }
   if (e.target.closest("#askClear")) { clearAsk(); return; }
   if (e.target.closest("#askCancel")) { cancelAsk(); updateAskNote(); return; }

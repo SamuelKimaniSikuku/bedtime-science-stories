@@ -16,6 +16,7 @@ function service(overrides = {}) {
   const calls = { model: [], reserve: [], finish: [], rate: [] };
   const deps = {
     ready: true, identitySecret: 'offline-test-secret', origins: ['https://malakaistory.com'], limitGuest: 2, limitSignedIn: 5,
+    checkReady: async () => true,
     getUser: async () => 'cd0971b7-7552-4eb6-af51-eb7c320a71ca',
     loadStories: async () => [{ id: 'maathai', langs: {
       en: { title: 'Wangari', text: ['She planted trees.'], textM: ['She helped people care for forests.'] },
@@ -152,4 +153,19 @@ test('identity hashes are secret-bound and configuration cannot accidentally rem
   for (const value of ['NaN', 'Infinity', '-1', '2.5', '101']) assert.equal(readLimit(value, 5), 0);
   const s = service({ limitGuest: 'invalid' });
   assert.equal((await s.handler(request())).status, 429); assert.equal(s.calls.model.length, 0);
+});
+
+test('availability checks require the deployed schema and never use AI or reserve allowance', async () => {
+  const check = () => new Request('https://example.test/ask?capabilities=1', { headers: { origin: 'https://malakaistory.com' } });
+  const s = service();
+  const r = await s.handler(check());
+  assert.equal(r.status, 200);
+  assert.deepEqual(await r.json(), { reviewVersion: 1, ready: true });
+  assert.equal(r.headers.get('cache-control'), 'no-store');
+  for (const calls of Object.values(s.calls)) assert.equal(calls.length, 0);
+  for (const overrides of [{ ready: false }, { checkReady: async () => false }, { checkReady: async () => { throw new Error('database credential'); } }, { limitGuest: 0, limitSignedIn: 0 }]) {
+    const disabled = await service(overrides).handler(check());
+    assert.equal(disabled.status, 503);
+    assert.deepEqual(await disabled.json(), { reviewVersion: 1, ready: false });
+  }
 });

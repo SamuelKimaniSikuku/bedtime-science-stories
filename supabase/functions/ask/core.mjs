@@ -121,12 +121,21 @@ export function createAskHandler(deps) {
     const origin = req.headers.get("origin");
     const headers = {
       "Content-Type": "application/json", "Cache-Control": "no-store", "Vary": "Origin", "X-Content-Type-Options": "nosniff",
-      "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type", "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       ...(origin && deps.origins.includes(origin) ? { "Access-Control-Allow-Origin": origin } : {}),
     };
     const json = (body, status = 200, extra = {}) => new Response(JSON.stringify(body), { status, headers: { ...headers, ...extra } });
     if (origin && !deps.origins.includes(origin)) return json({ error: "origin_not_allowed" }, 403);
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers });
+    // The browser checks compatibility before sending any family question.
+    // This probe never calls a model, reserves allowance or writes a usage row.
+    if (req.method === "GET" && new URL(req.url).searchParams.get("capabilities") === "1") {
+      try {
+        const enabled = readLimit(deps.limitGuest, 0) > 0 || readLimit(deps.limitSignedIn, 0) > 0;
+        const ready = !!(deps.ready && enabled && await deps.checkReady?.());
+        return json({ reviewVersion: 1, ready }, ready ? 200 : 503);
+      } catch { return json({ reviewVersion: 1, ready: false }, 503); }
+    }
     if (req.method !== "POST") return json({ error: "post_only" }, 405, { Allow: "POST, OPTIONS" });
     try {
       const body = await readBody(req);

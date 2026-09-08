@@ -155,6 +155,22 @@ and types a question about the current story. AI drafts stay hidden until the pa
 is narrated automatically. The activity is available in English, Kiswahili and French; other
 story languages show an availability note rather than silently returning an English answer.
 
+**Wonder together** beside the audio controls jumps to the activity and pauses a playing
+story. It does not acknowledge parent presence or send a question. **Explore together
+without AI** offers a short conversation with no score, account or AI request; babies get
+naming and listening prompts, ages 2–4 get simple recall prompts, and older children get
+noticing and reasoning prompts. These use the saved age range and update when the parent
+changes the age selector. **Back to the story** returns to the reader without starting audio.
+
+When a parent opens the AI activity, the browser first makes a read-only
+`GET /functions/v1/ask?capabilities=1` request. It opens the question form only after the
+service returns HTTP 200 with `{ "reviewVersion": 1, "ready": true }`. The check confirms
+server configuration, an enabled allowance, and the migration's required columns without
+calling the model, storing a question or consuming a request. It is not a moderation or
+model-output evaluation. The check times out after eight seconds; old deployments, schema
+errors and network failures show the offline activity and a retry button. Closing a story
+or switching stories, languages or accounts invalidates a pending check.
+
 This is a parent workflow, **not verified adult identity or a guarantee that a child cannot
 open the preview**. The website explains that AI can make mistakes. The question text, draft
 and parent acknowledgement stay in memory, never in localStorage or the family profile.
@@ -188,10 +204,12 @@ production reference below. Promote both parts only after the staging checks pas
    If using the dashboard editor, include `core.mjs` as a second file alongside `index.ts`.
    Keep **Enforce JWT verification OFF** for this function so guests can use it. The
    handler itself verifies every supplied family token; invalid tokens receive 401.
-4. Publish the matching `index.html` through the existing GitHub Pages workflow. Coordinate
-   these steps: the updated backend requires `parentPresent: true`, so the previous UI will
-   temporarily receive a validation error until it is refreshed. The updated UI requires
-   `reviewVersion: 1` and will not display drafts from the previous single-pass backend.
+4. Publish the matching `index.html` through the existing GitHub Pages workflow. The new
+   website can be published first: it offers offline exploration and keeps AI input closed
+   until the compatible backend is ready. Publishing the new backend first makes older
+   open website tabs temporarily receive a validation error because the backend requires
+   `parentPresent: true`. The new UI requires `reviewVersion: 1` on both its availability
+   check and answers, so it cannot send questions to the earlier single-pass backend.
 5. Confirm the release against the validation cases below. Neither a passing mock test nor a parent
    button establishes age verification, privacy consent, factual accuracy or child safety.
 
@@ -292,6 +310,9 @@ Anthropic, apply SQL, send a sign-in email, or establish live moderation quality
 
 In a staging Supabase project, verify:
 
+- Before deploying the new function, opening Ask why shows offline exploration and sends no
+  question. After deploying, the availability GET returns `reviewVersion: 1, ready: true`
+  without creating an `ask_log` row; missing schema/configuration returns 503 with `ready: false`.
 - Apply migrations 0005 and 0006; `anon` and `authenticated` cannot call `reserve_ask` or read
   the log. In parallel, send three guest requests with a limit of two: exactly two reservations
   may be granted. Verify account isolation, 24-hour expiry, and `Retry-After` behavior.

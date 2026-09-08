@@ -39,6 +39,11 @@ Deno.serve(createAskHandler({
   limitGuest: readLimit(Deno.env.get("ASK_LIMIT_GUEST"), 2),
   limitSignedIn: readLimit(Deno.env.get("ASK_LIMIT_SIGNED_IN"), 5),
   loadStories,
+  async checkReady() {
+    // Migration 0006 creates these columns and reserve_ask in one transaction.
+    const { error } = await db!.from("ask_log").select("subject_key,rating_token,status").limit(0);
+    return !error;
+  },
   async getUser(token: string) {
     const { data, error } = await db!.auth.getUser(token);
     if (error || !data.user) return null;
