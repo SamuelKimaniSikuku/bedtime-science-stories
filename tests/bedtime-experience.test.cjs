@@ -191,3 +191,60 @@ test('generated biography and marketing counts match the content source', () => 
   assert.match(a.get('reader').innerHTML, /One little question/);
   assert.match(a.get('reader').innerHTML, /news.uci.edu/);
 });
+
+test('ask box sends the question in the on-screen language and renders the answer for the parent', async () => {
+  const calls = [];
+  const a = app({ fetcher: async (url, opts) => {
+    calls.push({ url, body: JSON.parse(opts.body), headers: opts.headers });
+    return { ok: true, status: 200, json: async () => ({ id: 7, suitable: true, answer: 'Trees drink <b>water</b>. What is a tree\'s favourite drink?', remaining: 4, limit: 5 }) };
+  }, stored: { childName: 'Malakai', lang: 'sw' } });
+  a.run('openReader("maathai")');
+  assert.match(a.get('reader').innerHTML, /id="askInput"/);
+  assert.match(a.get('reader').innerHTML, /Malakai ameuliza/);
+  a.get('askInput').value = '  Kwa nini miti ilikufa?  ';
+  await a.run('submitAsk()');
+  assert.equal(calls.length, 1);
+  assert.match(calls[0].url, /\/ask$/);
+  assert.deepEqual(calls[0].body, { story: 'maathai', lang: 'sw', question: 'Kwa nini miti ilikufa?', age: null });
+  assert.equal(calls[0].headers.Authorization, undefined);
+  const out = a.get('askAnswers').innerHTML;
+  assert.match(out, /Kwa Malakai/);
+  assert.ok(out.includes('&lt;b&gt;water&lt;/b&gt;') && !out.includes('<b>'));
+  assert.match(out, /data-ask-rate="0"/);
+  assert.match(a.get('askNote').textContent, /4 maswali yamebaki/);
+  assert.equal(a.get('askInput').value, '');
+  await a.run('rateAsk(0, true)');
+  assert.deepEqual(calls[1].body, { rate: 7, good: true });
+  assert.match(a.get('askAnswers').innerHTML, /class="on">👍 Asante/);
+});
+
+test('unsuitable questions become a note to the parent, limits and errors are explained, and stale answers are dropped', async () => {
+  let reply;
+  const a = app({ fetcher: async () => reply });
+  a.run('openReader("ngugi")');
+  reply = { ok: true, status: 200, json: async () => ({ id: 8, suitable: false, answer: 'Best saved for daytime.', remaining: 1 }) };
+  a.get('askInput').value = 'something grown-up';
+  await a.run('submitAsk()');
+  assert.match(a.get('askAnswers').innerHTML, /ask-answer note/);
+  assert.match(a.get('askAnswers').innerHTML, /A note for you/);
+  assert.ok(!a.get('askAnswers').innerHTML.includes('data-ask-rate'));
+  reply = { ok: false, status: 429, json: async () => ({ error: 'limit', remaining: 0 }) };
+  a.get('askInput').value = 'why?';
+  await a.run('submitAsk()');
+  assert.match(a.get('askNote').textContent, /enough curiosity/);
+  reply = { ok: false, status: 500, json: async () => ({ error: 'boom' }) };
+  a.get('askInput').value = 'why again?';
+  await a.run('submitAsk()');
+  assert.match(a.get('askNote').textContent, /Try again/);
+  assert.equal(a.get('askNote').className, 'ask-note err');
+  assert.equal(a.get('askBtn').disabled, false);
+  const pending = deferred();
+  reply = pending.promise;
+  a.get('askInput').value = 'late question';
+  const late = a.run('submitAsk()');
+  a.run('openReader("maathai")');
+  pending.resolve({ ok: true, status: 200, json: async () => ({ id: 9, suitable: true, answer: 'Stale.', remaining: 3 }) });
+  await late;
+  assert.equal(a.run('askThread.items.length'), 0);
+  assert.equal(a.run('askThread.story'), 'maathai');
+});

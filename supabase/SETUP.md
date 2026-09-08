@@ -146,3 +146,37 @@ from either device is lost), and a language/narrator/track the device already ha
 locally wins over whatever the account had — only a device with no preference yet adopts the
 account's. From then on, every change (mark a story read, favourite one, switch language, pick a
 track) pushes up to Supabase a moment later, debounced so it doesn't chatter.
+
+## 8 · "Ask why" (the child's question, answered for the parent to read aloud)
+
+At the end of every story there is a box where the parent types the question their child just
+asked ("why did the trees die?"). Claude writes a two-to-four-sentence answer in the story's
+language, and the parent reads it aloud. The parent is always in the loop: nothing the model
+writes is shown or played to a child directly, and the question text is never stored — only a
+per-visitor count for the nightly limit (`ask_log`).
+
+**One-time setup.**
+
+1. Dashboard → **SQL Editor** → paste `migrations/0005_ask_log.sql` → **Run**.
+2. Dashboard → **Edge Functions** → *Deploy a new function* → name it exactly `ask`, paste
+   `functions/ask/index.ts`, deploy. Open the function → **Details** → **Enforce JWT verification OFF**
+   (guests may ask too, within a smaller limit; signed-in families are recognised from their own token).
+3. Dashboard → **Edge Functions** → **Secrets** → add `ANTHROPIC_API_KEY` = an API key from
+   [console.anthropic.com](https://console.anthropic.com/) (paste it into the dashboard only — never
+   into chat, email, or the website code).
+
+**Limits and cost.** 5 questions per rolling 24 h for a signed-in family, 2 for a guest (change with
+the optional `ASK_LIMIT_SIGNED_IN` / `ASK_LIMIT_GUEST` secrets — no redeploy needed). Each answer
+runs on `claude-opus-5` with the instructions prompt-cached: roughly one to one-and-a-half US cents
+per question, so a busy month of 1,000 questions is about $14.
+
+**What the model is told.** Write for the parent to say aloud; two to four short sentences; stay
+anchored to tonight's story; be truthful and say "nobody knows for sure" rather than invent;
+nothing frightening, no medical/legal advice, no personal information; never mention being an AI;
+end with one curious question back. If a question isn't right for a young child at bedtime, it
+does not answer — it returns a one-line note *to the parent* suggesting a daytime chat, plus a
+story question to ask instead (the site shows this as "A note for you"). A safety decline from
+the API is handled the same way.
+
+**Ratings.** The 👍 / 👎 under an answer writes `rating` (1 / −1) on that answer's `ask_log` row, so
+you can see in the Table Editor which answers land — without ever seeing the questions.

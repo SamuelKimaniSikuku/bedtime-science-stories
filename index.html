@@ -529,6 +529,35 @@
   .conversation { border-left: 3px solid var(--gold); background: #ffffff05; padding: 18px 20px; margin: 24px 0; }
   .conversation h3 { font-size: 14px; color: var(--gold); margin: 0 0 8px; }
   .conversation div { font-family: Georgia, serif; font-size: 21px; line-height: 1.5; color: var(--moon); }
+  /* --- "ask why": the parent types the child's question, reads the answer aloud --- */
+  .ask { border: 1px solid rgba(245,198,100,.35); border-radius: 16px; padding: 16px 18px; margin: 0 0 24px; }
+  .ask-label { font-size: 14px; color: var(--ink-soft); margin: 0 0 10px; line-height: 1.5; }
+  .ask-row { display: flex; gap: 8px; }
+  .ask-row input {
+    flex: 1; min-width: 0; background: #141b38; border: 1.5px solid #323d68; color: var(--ink);
+    border-radius: 12px; padding: 11px 14px; font-size: 15px; font-family: inherit;
+  }
+  .ask-row input:focus { outline: none; border-color: var(--gold); }
+  .ask-btn {
+    background: var(--gold); border: none; color: #201a08; font-weight: 700; font-family: inherit;
+    padding: 0 18px; min-height: 44px; border-radius: 12px; font-size: 14px; cursor: pointer; white-space: nowrap;
+  }
+  .ask-btn:disabled { opacity: .5; cursor: default; }
+  .ask-note { font-size: 12.5px; color: var(--ink-soft); opacity: .85; margin: 8px 0 0; min-height: 1.3em; }
+  .ask-note.err { color: #ff8a8a; opacity: 1; }
+  .ask-q { font-size: 13.5px; color: var(--ink-soft); margin: 16px 0 6px; font-style: italic; }
+  .ask-answer { background: rgba(245,198,100,.10); border-radius: 14px; padding: 14px 16px; }
+  .ask-answer.note { background: rgba(255,255,255,.04); }
+  .ask-answer-label { font-size: 12px; color: var(--gold); font-weight: 700; margin: 0 0 6px; letter-spacing: .02em; }
+  .ask-answer p { font-family: Georgia, serif; font-size: 18px; line-height: 1.55; color: var(--moon); margin: 0; }
+  .ask-answer.note p { font-family: inherit; font-size: 15px; color: var(--ink); }
+  .ask-rate { display: flex; gap: 8px; margin-top: 10px; }
+  .ask-rate button {
+    background: transparent; border: 1.5px solid #3a466f; color: var(--ink-soft); font-family: inherit;
+    font-size: 12.5px; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  }
+  .ask-rate button.on { border-color: var(--gold); color: var(--moon); background: rgba(245,198,100,.15); }
+  @media (max-width: 560px) { .ask-row { flex-wrap: wrap; } .ask-btn { width: 100%; } }
   .source-note { font-size: 12px; color: var(--ink-soft); margin: 22px 0; }
   .source-note a { color: var(--gold); text-underline-offset: 3px; }
   @media (max-width: 650px) {
@@ -672,7 +701,14 @@ const UI = {
         obSave: "Save my choices", obSkip: "Skip for now", obEdit: "Edit your family's preferences",
         introFor: name => `Tonight's story for ${name}…`,
         pickFor: name => `Tonight's pick for ${name}`, pickCta: "Read tonight's story",
-        learnMore: name => `Learn more about ${name} on Wikipedia ↗` },
+        learnMore: name => `Learn more about ${name} on Wikipedia ↗`,
+        askLabel: name => `Did ${name || "your little one"} ask something? Type it here and read the answer aloud.`,
+        askPh: "Why did the trees die?", askBtn: "Ask", askThinking: "Thinking of a gentle answer…",
+        askFor: name => name ? `For ${name}` : "To read aloud", askNoteParent: "A note for you",
+        askRemaining: n => `${n} question${n === 1 ? "" : "s"} left tonight · answers stay on this screen`,
+        askCap: "That's enough curiosity for tonight 🌙 Ask more tomorrow.",
+        askErr: "Couldn't get an answer just now. Try again.",
+        askGood: "Good answer", askBad: "Not quite", askThanks: "Thanks" },
   sw: { title: "Malakai Stories",
         subtitle: "Hadithi fupi za usiku zenye funzo — kuhusu watu waliobadilisha dunia: walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
         region: "Kanda", topic: "Mada", gender: "Jinsia", all: "Zote",
@@ -707,7 +743,14 @@ const UI = {
         obSave: "Hifadhi machaguo yangu", obSkip: "Ruka kwa sasa", obEdit: "Hariri mapendeleo ya familia yako",
         introFor: name => `Hadithi ya usiku wa leo kwa ${name}…`,
         pickFor: name => `Chaguo la leo kwa ${name}`, pickCta: "Soma hadithi ya leo",
-        learnMore: name => `Jifunze zaidi kuhusu ${name} kwenye Wikipedia ↗` },
+        learnMore: name => `Jifunze zaidi kuhusu ${name} kwenye Wikipedia ↗`,
+        askLabel: name => `Je, ${name || "mtoto wako"} ameuliza jambo? Liandike hapa, kisha umsomee jibu.`,
+        askPh: "Kwa nini miti ilikufa?", askBtn: "Uliza", askThinking: "Inatafuta jibu la upole…",
+        askFor: name => name ? `Kwa ${name}` : "Ya kusomwa kwa sauti", askNoteParent: "Ujumbe kwako",
+        askRemaining: n => `${n} ${n === 1 ? "swali limebaki" : "maswali yamebaki"} usiku huu · majibu hubaki kwenye skrini hii`,
+        askCap: "Udadisi wa kutosha kwa usiku huu 🌙 Uliza zaidi kesho.",
+        askErr: "Jibu halikupatikana sasa hivi. Jaribu tena.",
+        askGood: "Jibu zuri", askBad: "Si sahihi", askThanks: "Asante" },
   fr: { title: "Malakai Stories",
         subtitle: "De courtes histoires du soir qui enseignent — sur les gens qui ont changé le monde : où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
         region: "Région", topic: "Sujet", gender: "Genre", all: "Tout",
@@ -742,7 +785,14 @@ const UI = {
         obSave: "Enregistrer mes choix", obSkip: "Passer pour l'instant", obEdit: "Modifier les préférences de votre famille",
         introFor: name => `L'histoire de ce soir pour ${name}…`,
         pickFor: name => `La sélection de ce soir pour ${name}`, pickCta: "Lire l'histoire de ce soir",
-        learnMore: name => `En savoir plus sur ${name} sur Wikipédia ↗` }
+        learnMore: name => `En savoir plus sur ${name} sur Wikipédia ↗`,
+        askLabel: name => `${name || "Votre enfant"} a posé une question ? Écrivez-la ici, puis lisez la réponse à voix haute.`,
+        askPh: "Pourquoi les arbres sont-ils morts ?", askBtn: "Demander", askThinking: "Recherche d'une réponse toute douce…",
+        askFor: name => name ? `Pour ${name}` : "À lire à voix haute", askNoteParent: "Un mot pour vous",
+        askRemaining: n => `${n} question${n === 1 ? "" : "s"} ce soir · les réponses restent sur cet écran`,
+        askCap: "Assez de curiosité pour ce soir 🌙 Demandez-en plus demain.",
+        askErr: "Impossible d'obtenir une réponse pour l'instant. Réessayez.",
+        askGood: "Bonne réponse", askBad: "Pas tout à fait", askThanks: "Merci" }
 };
 
 const HOME_UI = {
@@ -1463,6 +1513,15 @@ function openReader(id) {
     </div>
     <div class="story-body">${pick(textFor(s, lengthsFor(s).includes(storyLen) ? storyLen : "short")).map(p => `<p>${p}</p>`).join("")}</div>
     <aside class="conversation"><h3>${h.chat}</h3><div>${escapeHtml(s.question?.[lang] || s.question?.[effLang()] || h.question)}</div></aside>
+    <div class="ask" id="askBox">
+      <p class="ask-label">💬 ${escapeHtml(t.askLabel(myChildName))}</p>
+      <div class="ask-row">
+        <input type="text" id="askInput" maxlength="200" placeholder="${escapeHtml(t.askPh)}" aria-label="${escapeHtml(t.askBtn)}" autocomplete="off">
+        <button class="ask-btn" id="askBtn">${t.askBtn}</button>
+      </div>
+      <p class="ask-note" id="askNote" role="status"></p>
+      <div id="askAnswers"></div>
+    </div>
     <div style="text-align:center">
       <a class="learn-more" href="${wikiLink(s.name)}" target="_blank" rel="noopener noreferrer">${t.learnMore(s.name)}</a>
     </div>
@@ -1482,7 +1541,95 @@ function openReader(id) {
   document.querySelectorAll(".wrap, .account-dock, .music-dock").forEach(el => { el.inert = true; });
   updateNarrationUI();
   updateSleepUI();
+  if (askThread.story !== id) askThread = { story: id, items: [], remaining: null };
+  renderAskAnswers();
+  updateAskNote("");
   reader.focus({ preventScroll: true });
+}
+
+/* ---------- "ask why": the child's question, answered for the parent to read aloud ----------
+   The parent types, the parent reads. Nothing from the model reaches a child
+   directly, and the question text never leaves this screen except to be
+   answered — the backend keeps only a nightly count. */
+let askThread = { story: null, items: [], remaining: null };
+let askBusy = false;
+
+function renderAskAnswers() {
+  const box = document.getElementById("askAnswers");
+  if (!box) return;
+  const t = UI[effLang()];
+  box.innerHTML = askThread.items.map((item, i) => `
+    <div class="ask-q">“${escapeHtml(item.question)}”</div>
+    <div class="ask-answer${item.suitable ? "" : " note"}">
+      <div class="ask-answer-label">${escapeHtml(item.suitable ? t.askFor(myChildName) : t.askNoteParent)}</div>
+      <p>${escapeHtml(item.answer)}</p>
+      ${item.suitable && item.id != null ? `<div class="ask-rate">
+        <button data-ask-rate="${i}" data-good="1" class="${item.rating === 1 ? "on" : ""}">👍 ${item.rating === 1 ? t.askThanks : t.askGood}</button>
+        <button data-ask-rate="${i}" data-good="0" class="${item.rating === -1 ? "on" : ""}">👎 ${item.rating === -1 ? t.askThanks : t.askBad}</button>
+      </div>` : ""}
+    </div>`).join("");
+}
+
+function updateAskNote(errorText) {
+  const note = document.getElementById("askNote");
+  if (!note) return;
+  const t = UI[effLang()];
+  if (errorText) { note.textContent = errorText; note.className = "ask-note err"; return; }
+  note.className = "ask-note";
+  note.textContent = askThread.remaining == null ? ""
+    : askThread.remaining > 0 ? t.askRemaining(askThread.remaining) : t.askCap;
+}
+
+async function askHeaders() {
+  const headers = { "Content-Type": "application/json" };
+  if (session && await ensureSession()) headers["Authorization"] = `Bearer ${session.access_token}`;
+  return headers;
+}
+
+async function submitAsk() {
+  if (askBusy) return;
+  const input = document.getElementById("askInput"), btn = document.getElementById("askBtn"), note = document.getElementById("askNote");
+  const story = document.getElementById("reader").dataset.story;
+  const question = (input?.value || "").trim();
+  if (!story || question.length < 2) { input?.focus(); return; }
+  const t = UI[effLang()];
+  askBusy = true;
+  if (btn) btn.disabled = true;
+  if (note) { note.textContent = t.askThinking; note.className = "ask-note"; }
+  let failed = false;
+  try {
+    // Answer in the language on screen — never a language the child isn't hearing.
+    const askLang = UI_LANGS.includes(lang) ? lang : effLang();
+    const r = await fetch(`${NARRATE_BASE}/ask`, {
+      method: "POST", headers: await askHeaders(),
+      body: JSON.stringify({ story, lang: askLang, question, age: myChildAge || null })
+    });
+    const j = await r.json().catch(() => ({}));
+    if (askThread.story !== story) return;   // reader moved on while we waited
+    if (r.status === 429) { askThread.remaining = 0; return; }
+    if (!r.ok || typeof j.answer !== "string") throw new Error(j.error || `HTTP ${r.status}`);
+    askThread.items.push({ question, answer: j.answer, suitable: j.suitable !== false, id: j.id ?? null, rating: 0 });
+    askThread.remaining = typeof j.remaining === "number" ? j.remaining : null;
+    if (input) input.value = "";
+    renderAskAnswers();
+  } catch {
+    failed = true;
+  } finally {
+    askBusy = false;
+    if (btn) btn.disabled = false;
+    if (askThread.story === story) updateAskNote(failed ? t.askErr : "");
+    else updateAskNote("");
+  }
+}
+
+async function rateAsk(index, good) {
+  const item = askThread.items[index];
+  if (!item || item.id == null) return;
+  item.rating = good ? 1 : -1;
+  renderAskAnswers();
+  try {
+    await fetch(`${NARRATE_BASE}/ask`, { method: "POST", headers: await askHeaders(), body: JSON.stringify({ rate: item.id, good }) });
+  } catch {}
 }
 
 function closeReader() {
@@ -2376,6 +2523,10 @@ document.addEventListener("click", e => {
 
   if (e.target.closest("#accountChip")) { openAuthModal(); return; }
 
+  if (e.target.closest("#askBtn")) { submitAsk(); return; }
+  const rateBtn = e.target.closest("[data-ask-rate]");
+  if (rateBtn) { rateAsk(Number(rateBtn.dataset.askRate), rateBtn.dataset.good === "1"); return; }
+
   if (e.target.closest("#favBtn")) {
     const id = document.getElementById("reader").dataset.story;
     toggleFav(id);
@@ -2463,6 +2614,7 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => {
   if (!document.getElementById("overlay").classList.contains("open")) return;
+  if (e.key === "Enter" && e.target?.id === "askInput") { e.preventDefault(); submitAsk(); return; }
   if (e.key === "Escape") { e.preventDefault(); closeReader(); return; }
   if (e.key !== "Tab") return;
   const reader = document.getElementById("reader");
