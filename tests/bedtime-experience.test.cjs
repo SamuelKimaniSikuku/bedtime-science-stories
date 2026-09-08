@@ -234,6 +234,39 @@ test('Ask why requires a parent and age choice, then hides the AI draft until pa
   assert.ok([...a.storage.values()].every(v => !String(v).includes('Kwa nini miti')));
 });
 
+test('question history opens one item at a time without revealing unreviewed answers or sending new requests', async () => {
+  let calls = 0;
+  const a = app({ fetcher: async () => askReply({ answer: ++calls === 1 ? 'First private draft.' : 'Second private draft.' }) });
+  await beginAsk(a);
+  a.get('askInput').value = 'First question';
+  await a.run('submitAsk()');
+  a.run('reviewAsk(0, "preview"); reviewAsk(0, "approve")');
+  a.get('askInput').value = 'Second question';
+  await a.run('submitAsk()');
+  let html = a.get('askAnswers').innerHTML;
+  assert.equal((html.match(/aria-expanded="true"/g) || []).length, 1);
+  assert.ok(html.indexOf('Second question') < html.indexOf('First question'));
+  assert.match(html, /data-ask-preview="1"/);
+  assert.ok(!html.includes('First private draft.') && !html.includes('Second private draft.'));
+  const toggle = index => a.event('click', { closest: selector => selector === '[data-ask-toggle]' ? { dataset: { askToggle: String(index) } } : null });
+  toggle(0);
+  html = a.get('askAnswers').innerHTML;
+  assert.equal((html.match(/aria-expanded="true"/g) || []).length, 1);
+  assert.match(html, /First private draft\./);
+  assert.ok(!html.includes('Second private draft.') && !html.includes('data-ask-preview="1"'));
+  assert.equal(a.run('askThread.items[0].approved'), true);
+  assert.equal(a.run('askThread.items[1].revealed'), false);
+  a.run('reviewAsk(0, "dismiss")');
+  assert.match(a.get('askAnswers').innerHTML, /data-ask-preview="0"/);
+  assert.ok(!a.get('askAnswers').innerHTML.includes('Second private draft.'));
+  toggle(0);
+  assert.ok(!a.get('askAnswers').innerHTML.includes('aria-expanded="true"'));
+  assert.equal(calls, 2);
+  a.run('clearAsk()');
+  assert.equal(a.run('askThread.activeItem'), null);
+  assert.equal(a.get('askAnswers').innerHTML, '');
+});
+
 test('feedback is saved only after server confirmation and uses the private answer token', async () => {
   const calls = []; let failRating = true;
   const a = app({ fetcher: async (_, opts) => {
@@ -388,6 +421,7 @@ test('availability timeout and closing a story invalidate late checks and permit
     await first;
     assert.equal(a.run('askThread.serviceReady'), true);
     assert.equal(a.get('askForm').hidden, false);
+    assert.equal(a.get('askOffline').open, false);
   }
 });
 
