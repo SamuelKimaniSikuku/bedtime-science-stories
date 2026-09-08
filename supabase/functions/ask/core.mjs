@@ -137,6 +137,7 @@ export function createAskHandler(deps) {
       } catch { return json({ reviewVersion: 1, ready: false }, 503); }
     }
     if (req.method !== "POST") return json({ error: "post_only" }, 405, { Allow: "POST, OPTIONS" });
+    let stage = "request", reservation = null;
     try {
       const body = await readBody(req);
       const rating = Object.hasOwn(body, "rate");
@@ -150,12 +151,16 @@ export function createAskHandler(deps) {
         userId = await deps.getUser(auth.slice(7));
         if (!userId) throw new HttpError(401, "sign_in_again");
       }
+      stage = "identity";
       const subject = await subjectKey(userId, req.headers.get("x-forwarded-for"), deps.identitySecret);
       if (rating) {
         if (!await deps.rate(body.rate, body.ratingToken, subject, body.good)) throw new HttpError(404, "rating_not_found");
         return json({ ok: true });
       }
+      stage = "availability";
+      if (deps.checkReady && !await deps.checkReady()) throw new HttpError(503, "temporarily_unavailable");
       const signal = AbortSignal.any([req.signal, AbortSignal.timeout(45000)]);
+      stage = "story";
       const stories = await deps.loadStories(signal);
       const story = stories.find(s => s.id === input.story), pack = story?.langs?.[input.lang];
       const paragraphs = input.length === "m" ? pack?.textM : pack?.text;
@@ -166,18 +171,36 @@ export function createAskHandler(deps) {
       if (!limit) return json({ error: "limit", limit, remaining: 0 }, 429);
       // One service-only database transaction checks and reserves the allowance.
       // Every model attempt counts, even if a client disconnects or a provider fails.
+      stage = "allowance";
       const slot = await deps.reserve({ p_subject_key: subject, p_user_id: userId, p_story: input.story, p_lang: input.lang, p_limit: limit });
       if (!slot || typeof slot.allowed !== "boolean" || !Number.isInteger(slot.remaining) || slot.remaining < 0 || !Number.isInteger(slot.retry_after) || slot.retry_after < 0) throw new Error("invalid allowance");
       if (!slot.allowed) return json({ error: "limit", remaining: 0, limit, retryAfter: slot.retry_after }, 429, { "Retry-After": String(Math.max(1, slot.retry_after)) });
       if (!Number.isSafeInteger(slot.id) || slot.id <= 0 || !uuid(slot.rating_token)) throw new Error("invalid reservation");
+      reservation = { id: slot.id, subject };
       signal.throwIfAborted();
-      const result = await prepareDraft(deps.complete, { lang: input.lang, language: LANGUAGES[input.lang], age: AGES[input.age], story: storyText, question: input.question }, signal);
+      const complete = async (...args) => {
+        stage = args[0] === REVIEW_SYSTEM ? "review" : "draft";
+        return await deps.complete(...args);
+      };
+      const result = await prepareDraft(complete, { lang: input.lang, language: LANGUAGES[input.lang], age: AGES[input.age], story: storyText, question: input.question }, signal);
       signal.throwIfAborted();
+      stage = "record";
       await deps.finish(slot.id, subject, result.suitable);
       return json({ ...result, reviewVersion: 1, id: slot.id, ratingToken: slot.rating_token, remaining: slot.remaining, limit, retryAfter: slot.retry_after });
     } catch (error) {
       // No raw provider, database, auth or validation exception crosses this boundary.
-      return error instanceof HttpError ? json({ error: error.message }, error.status) : json({ error: "temporarily_unavailable" }, 503);
+      // Only a fixed stage and an HTTP status aid release diagnostics. Never
+      // expose provider messages, request bodies, account details or credentials.
+      const status = Number.isInteger(error?.status) && error.status >= 400 && error.status <= 599 ? `_${error.status}` : "";
+      const providerFailure = stage === "draft" || stage === "review";
+      const message = providerFailure && error?.status === 400 ? String(error.message || "") : "";
+      const detail = /credit balance|billing|purchase credits|insufficient credit/i.test(message) ? "_billing"
+        : /max_tokens|budget_tokens/i.test(message) ? "_token_budget"
+        : /output_config|json_schema|structured output|schema/i.test(message) ? "_output_format" : "";
+      if (reservation && providerFailure && (detail === "_billing" || [401, 403, 404].includes(error?.status))) {
+        try { await deps.markUnavailable?.(reservation.id, reservation.subject); } catch { /* Keep the original fixed error. */ }
+      }
+      return error instanceof HttpError ? json({ error: error.message }, error.status) : json({ error: "temporarily_unavailable" }, 503, { "X-Ask-Failure": stage + status + detail });
     }
   };
 }

@@ -171,6 +171,14 @@ model-output evaluation. The check times out after eight seconds; old deployment
 errors and network failures show the offline activity and a retry button. Closing a story
 or switching stories, languages or accounts invalidates a pending check.
 
+If the AI provider rejects a request for billing, authentication, permission or model
+availability, its reservation is marked `provider_unavailable`. Both the availability
+check and generation pause for five minutes after the latest such attempt. The next
+attempt after that cooldown can recover automatically once the provider account is fixed.
+This state is shared across function instances through the existing metadata table. It
+does not create a question history or send a paid model request just to check readiness.
+The website offers the offline activity during the pause.
+
 This is a parent workflow, **not verified adult identity or a guarantee that a child cannot
 open the preview**. The website explains that AI can make mistakes. The question text, draft
 and parent acknowledgement stay in memory, never in localStorage or the family profile.
@@ -242,6 +250,9 @@ Refusals/parent notes can use one call. No price estimate is hardcoded here; rev
 usage and [current Anthropic pricing](https://platform.claude.com/docs/en/about-claude/pricing).
 The SDK has retries disabled, each model call has a 20-second timeout, the generation flow
 has a 45-second signal deadline, and the frontend releases its controls after 55 seconds.
+The original low-effort setting and 1,024-token ceiling are retained for each model call.
+An `X-Ask-Failure` response header exposes only a fixed processing stage, HTTP status and
+optional failure category for troubleshooting; it never includes the provider's error text.
 
 ### Learning and safety behavior
 
@@ -278,6 +289,7 @@ story ID, language, creation time, status, suitability flag, random feedback tok
 feedback value. It does not store the question, answer or selected age. `pending` includes
 unfinished/failed generations; `answered` and `parent_note` identify completed requests.
 The feedback value is 1 (helpful) or −1 (needs attention); neither sends the question or answer.
+`provider_unavailable` marks the short service pause described above.
 The server requires the row ID, unguessable token and matching subject. The UI acknowledges
 feedback only when the database update actually succeeds. Negative feedback is not an
 emergency reporting channel and does not automatically notify anyone.

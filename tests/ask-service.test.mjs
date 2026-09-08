@@ -169,3 +169,25 @@ test('availability checks require the deployed schema and never use AI or reserv
     assert.deepEqual(await disabled.json(), { reviewVersion: 1, ready: false });
   }
 });
+
+test('release diagnostics expose only a fixed stage and failure category, never provider details', async () => {
+  let unavailable = false, markedId;
+  const s = service({
+    checkReady: async () => !unavailable,
+    markUnavailable: async (id) => { unavailable = true; markedId = id; },
+    complete: async () => { throw Object.assign(new Error('credit balance too low; private account detail sk-secret and family question'), { status: 400 }); },
+  });
+  const r = await s.handler(request());
+  assert.equal(r.status, 503);
+  assert.equal(r.headers.get('x-ask-failure'), 'draft_400_billing');
+  assert.deepEqual(await r.json(), { error: 'temporarily_unavailable' });
+  assert.ok(!JSON.stringify([...r.headers]).includes('private'));
+  assert.ok(!JSON.stringify([...r.headers]).includes('sk-secret'));
+  assert.equal(markedId, 1);
+  const readiness = await s.handler(new Request('https://example.test/ask?capabilities=1'));
+  assert.equal(readiness.status, 503);
+  assert.deepEqual(await readiness.json(), { reviewVersion: 1, ready: false });
+  const blocked = await s.handler(request());
+  assert.equal(blocked.status, 503);
+  assert.equal(s.calls.reserve.length, 1); // no further usage or model calls during the pause
+});

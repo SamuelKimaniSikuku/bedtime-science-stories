@@ -41,8 +41,19 @@ Deno.serve(createAskHandler({
   loadStories,
   async checkReady() {
     // Migration 0006 creates these columns and reserve_ask in one transaction.
-    const { error } = await db!.from("ask_log").select("subject_key,rating_token,status").limit(0);
-    return !error;
+    // A provider configuration/billing failure pauses requests across isolates
+    // for five minutes; no prompts or provider error text are stored.
+    const { data, error } = await db!.from("ask_log").select("subject_key,rating_token,status,created_at")
+      .in("status", ["provider_unavailable", "answered", "parent_note"])
+      .order("created_at", { ascending: false }).limit(1);
+    if (error) return false;
+    const latest = data?.[0];
+    return !latest || latest.status !== "provider_unavailable" || Date.now() - Date.parse(latest.created_at) >= 300000;
+  },
+  async markUnavailable(id: number, subject: string) {
+    const { error } = await db!.from("ask_log").update({ status: "provider_unavailable" })
+      .eq("id", id).eq("subject_key", subject);
+    if (error) throw new Error("service status unavailable");
   },
   async getUser(token: string) {
     const { data, error } = await db!.auth.getUser(token);
@@ -68,8 +79,8 @@ Deno.serve(createAskHandler({
   },
   async complete(system: string, content: string, schema: Record<string, unknown>, signal: AbortSignal) {
     return await client!.messages.create({
-      model, max_tokens: 900,
-      output_config: { format: { type: "json_schema", schema } },
+      model, max_tokens: 1024,
+      output_config: { effort: "low", format: { type: "json_schema", schema } },
       system, messages: [{ role: "user", content }],
     }, { signal });
   },
