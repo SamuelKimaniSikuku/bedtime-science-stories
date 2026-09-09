@@ -526,9 +526,6 @@
   .audio-progress input, .audio-progress progress { flex: 1; min-width: 0; width: 100%; accent-color: var(--gold); }
   .audio-progress input { height: 24px; }
   .audio-status { font-size: 12px; color: var(--ink-soft); min-height: 1.4em; margin-top: 4px; }
-  .conversation { border-left: 3px solid var(--gold); background: #ffffff05; padding: 18px 20px; margin: 24px 0; }
-  .conversation h3 { font-size: 14px; color: var(--gold); margin: 0 0 8px; }
-  .conversation div { font-family: Georgia, serif; font-size: 21px; line-height: 1.5; color: var(--moon); }
   /* Ask why: a quiet space for a parent and child to explore together. */
   .ask { border: 1px solid rgba(245,198,100,.35); border-radius: 12px; margin: 0 0 18px; scroll-margin-top: 240px; background: linear-gradient(135deg, #f5c6640a, #ffffff02); }
   .ask-disclosure { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 12px 16px; color: var(--gold); font-size: 16px; font-weight: 600; line-height: 1.5; list-style: none; cursor: pointer; border-radius: 12px; }
@@ -808,7 +805,7 @@ const HOME_UI = {
     tonight: "Tonight's story", read: "Read together", listen: "Listen", library: "Find your next story",
     note: "Read together · choose a short or longer story", filters: "Filter by region, topic or gender", reset: "Clear filters",
     voiceTitle: "Their favourite voice is yours.", voiceText: "Record three short passages. Let your child hear bedtime stories in your voice, even when you're away.", voiceCta: "Explore your voice →",
-    chat: "One little question before goodnight", question: "What is one thing from this story you would like to try or learn more about?",
+    question: "What is one thing from this story you would like to try or learn more about?",
     source: "Biography update", reviewed: date => `Checked ${date}`, close: "Close story", minutes: "min", more: "Read story →",
     pause: "Pause", resume: "Resume", stop: "Stop", sleep: "Sleep timer", off: "Off", seek: "Story progress",
     preparing: "Preparing the story…", device: "Using your device's voice. Progress follows the sentences.",
@@ -820,7 +817,7 @@ const HOME_UI = {
     tonight: "Hadithi ya leo", read: "Tusome pamoja", listen: "Sikiliza", library: "Chagua hadithi inayofuata",
     note: "Somani pamoja · chagua hadithi fupi au ndefu", filters: "Chuja kwa kanda, mada au jinsia", reset: "Ondoa vichujio",
     voiceTitle: "Sauti anayoipenda zaidi ni yako.", voiceText: "Rekodi vifungu vitatu vifupi. Mtoto wako asikie hadithi kwa sauti yako, hata ukiwa mbali.", voiceCta: "Hadithi kwa sauti yako →",
-    chat: "Swali dogo kabla ya kulala", question: "Ni jambo gani katika hadithi hii ungependa kujaribu au kujifunza zaidi?",
+    question: "Ni jambo gani katika hadithi hii ungependa kujaribu au kujifunza zaidi?",
     source: "Taarifa ya maisha", reviewed: date => `Imehakikiwa tarehe ${date}`, close: "Funga hadithi", minutes: "dakika", more: "Soma hadithi →",
     pause: "Sitisha", resume: "Endelea", stop: "Acha", sleep: "Kipima muda", off: "Zima", seek: "Maendeleo ya hadithi",
     preparing: "Inaandaa hadithi…", device: "Inatumia sauti ya kifaa chako. Maendeleo yanafuata sentensi.",
@@ -832,7 +829,7 @@ const HOME_UI = {
     tonight: "L'histoire de ce soir", read: "Lire ensemble", listen: "Écouter", library: "Trouvez votre prochaine histoire",
     note: "À lire ensemble · version courte ou plus longue", filters: "Filtrer par région, sujet ou genre", reset: "Effacer les filtres",
     voiceTitle: "Sa voix préférée, c'est la vôtre.", voiceText: "Enregistrez trois courts passages. Votre enfant pourra écouter les histoires avec votre voix, même quand vous êtes loin.", voiceCta: "Découvrir votre voix →",
-    chat: "Une petite question avant de dormir", question: "Quelle chose de cette histoire aimerais-tu essayer ou mieux comprendre ?",
+    question: "Quelle chose de cette histoire aimerais-tu essayer ou mieux comprendre ?",
     source: "Mise à jour biographique", reviewed: date => `Vérifié le ${date}`, close: "Fermer l'histoire", minutes: "min", more: "Lire l'histoire →",
     pause: "Pause", resume: "Reprendre", stop: "Arrêter", sleep: "Minuteur", off: "Désactivé", seek: "Progression de l'histoire",
     preparing: "Préparation de l'histoire…", device: "Lecture avec la voix de votre appareil. La progression suit les phrases.",
@@ -1523,7 +1520,6 @@ function openReader(id) {
       <div class="audio-status" id="audioStatus" role="status"></div>
     </div>
     <div class="story-body">${pick(textFor(s, lengthsFor(s).includes(storyLen) ? storyLen : "short")).map(p => `<p>${p}</p>`).join("")}</div>
-    <aside class="conversation"><h3>${h.chat}</h3><div>${escapeHtml(s.question?.[lang] || s.question?.[effLang()] || h.question)}</div></aside>
     ${renderAskBox(s)}
     <div style="text-align:center">
       <a class="learn-more" href="${wikiLink(s.name)}" target="_blank" rel="noopener noreferrer">${t.learnMore(s.name)}</a>
@@ -1570,7 +1566,7 @@ const ASK_UI = {
     review: "Check the facts and whether these words suit your child. You can change the wording as you read, or skip this draft.",
     approve: "I've checked it · ready to read", approved: "AI-assisted · ready to read together", dismiss: "Skip this draft",
     remaining: n => `${n} AI request${n === 1 ? "" : "s"} left for now.`,
-    cap: "Your AI allowance is used for now. Keep wondering together — try the story's conversation question or draw what you discovered.",
+    cap: "Your AI allowance is used for now. Keep exploring the story together or draw what you discovered.",
     retry: hours => `An AI request becomes available in about ${hours} hour${hours === 1 ? "" : "s"}.`,
     err: "We couldn't prepare a draft. Your question is still here; please try again shortly.", timeout: "This is taking too long. Your question is still here; you can try again.",
     needParent: "A parent needs to open this activity first.", needAge: "Choose an age range so the explanation fits your child.", needQuestion: "Please enter a question between 2 and 200 characters.",
@@ -1596,7 +1592,7 @@ const ASK_UI = {
     review: "Hakikisha ukweli na kama maneno haya yanamfaa mtoto wako. Unaweza kuyabadilisha unaposoma au kuruka rasimu hii.",
     approve: "Nimekagua · tayari kusoma", approved: "Kwa msaada wa AI · tayari kusoma pamoja", dismiss: "Ruka rasimu hii",
     remaining: n => `Maombi ${n} ya AI yamesalia kwa sasa.`,
-    cap: "Kikomo cha AI kimefikiwa kwa sasa. Endeleeni kudadisi pamoja — jaribuni swali la hadithi au chora ulichogundua.",
+    cap: "Kikomo cha AI kimefikiwa kwa sasa. Endeleeni kuichunguza hadithi pamoja au choreni mlichogundua.",
     retry: hours => `Ombi la AI litapatikana baada ya takriban saa ${hours}.`,
     err: "Rasimu haikuandaliwa. Swali lako bado lipo; jaribu tena baada ya muda mfupi.", timeout: "Hii inachukua muda mrefu. Swali lako bado lipo; unaweza kujaribu tena.",
     needParent: "Mzazi anahitaji kufungua shughuli hii kwanza.", needAge: "Chagua kundi la umri ili maelezo yamfae mtoto wako.", needQuestion: "Andika swali lenye herufi 2 hadi 200.",
@@ -1622,7 +1618,7 @@ const ASK_UI = {
     review: "Vérifiez les faits et si ces mots conviennent à votre enfant. Vous pouvez les adapter en lisant ou passer ce brouillon.",
     approve: "J'ai vérifié · prêt à lire", approved: "Avec l'aide de l'IA · prêt à lire ensemble", dismiss: "Passer ce brouillon",
     remaining: n => `${n} demande${n > 1 ? "s" : ""} d'IA restante${n > 1 ? "s" : ""} pour le moment.`,
-    cap: "Votre quota d'IA est utilisé pour le moment. Restez curieux ensemble : essayez la question de l'histoire ou dessinez votre découverte.",
+    cap: "Votre quota d'IA est utilisé pour le moment. Continuez à explorer l'histoire ensemble ou dessinez votre découverte.",
     retry: hours => `Une demande d'IA sera disponible dans environ ${hours} heure${hours > 1 ? "s" : ""}.`,
     err: "Le brouillon n'a pas pu être préparé. Votre question est toujours là ; réessayez dans un instant.", timeout: "Cela prend trop de temps. Votre question est toujours là ; vous pouvez réessayer.",
     needParent: "Un parent doit d'abord ouvrir cette activité.", needAge: "Choisissez une tranche d'âge pour adapter l'explication à votre enfant.", needQuestion: "Écrivez une question de 2 à 200 caractères.",

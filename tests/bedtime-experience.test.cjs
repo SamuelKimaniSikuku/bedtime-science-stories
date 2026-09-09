@@ -188,7 +188,8 @@ test('generated biography and marketing counts match the content source', () => 
   assert.equal(a.run('STORIES.find(s => s.id === "ngugi").years'), '1938–2025');
   assert.ok(html.includes(`name="description" content="${storyCount} true bedtime stories`));
   a.run('openReader("ngugi")');
-  assert.match(a.get('reader').innerHTML, /One little question/);
+  assert.doesNotMatch(a.get('reader').innerHTML, /class="conversation"/);
+  assert.match(a.get('reader').innerHTML, /<details class="ask"/);
   assert.match(a.get('reader').innerHTML, /news.uci.edu/);
 });
 
@@ -309,7 +310,7 @@ test('the allowance encourages curiosity, honours retry timing, and leaves offli
   const a = app({ fetcher: async () => { calls++; return askReply({ error: 'limit', remaining: 0, retryAfter: 3600 }, 429); } });
   await beginAsk(a); a.get('askInput').value = 'Why do trees grow?';
   await a.run('submitAsk()');
-  assert.match(a.get('askNote').textContent, /Keep wondering together/);
+  assert.match(a.get('askNote').textContent, /Keep exploring the story together/);
   assert.match(a.get('askNote').textContent, /about 1 hour/);
   await a.run('submitAsk()'); assert.equal(calls, 1);
   a.run('useAskStarter()');
