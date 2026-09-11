@@ -441,3 +441,63 @@ test('Wonder together pauses a playing story and offers age-appropriate offline 
   a.run('setLang("sw")');
   assert.match(a.run('offlineAskSteps("u2")'), /Hakuna maswali/);
 });
+
+const signedIn = { access_token: 'tok', refresh_token: 'r', expires_at: Date.now() + 86400000, email: 'p@example.com', user_id: 'user-1' };
+
+test('memory box keeps a note for signed-in families and asks guests to sign in', async () => {
+  const calls = [];
+  const a = app({ fetcher: async (url, opts = {}) => { calls.push({ url, opts }); return { ok: true, status: 201, json: async () => ({}) }; },
+    stored: { msSession: JSON.stringify(signedIn), childName: 'Malakai' } });
+  a.run('openReader("maathai")');
+  assert.match(a.get('reader').innerHTML, /when Malakai is older/);
+  assert.match(a.get('reader').innerHTML, /id="memNote"/);
+  a.run('toggleRead("maathai")');
+  await a.run('saveMemory()');
+  assert.match(a.get('memStatus').textContent, /few words/);
+  a.get('memNote').value = '  You fell asleep on my arm.  ';
+  await a.run('saveMemory()');
+  const post = calls.find(c => /\/rest\/v1\/memories$/.test(c.url));
+  assert.ok(post);
+  const body = JSON.parse(post.opts.body);
+  assert.equal(body.story, 'maathai');
+  assert.equal(body.note, 'You fell asleep on my arm.');
+  assert.equal(body.user_id, 'user-1');
+  assert.equal(body.audio_path, null);
+  assert.match(body.night, /^\d{4}-\d{2}-\d{2}$/);
+  assert.equal(post.opts.headers.Authorization, 'Bearer tok');
+  assert.match(a.get('memStatus').textContent, /Kept in the memory book/);
+  assert.equal(a.get('memNote').value, '');
+  const guest = app();
+  guest.run('openReader("maathai")');
+  assert.match(guest.get('reader').innerHTML, /id="memSignIn"/);
+  assert.ok(!guest.get('reader').innerHTML.includes('id="memNote"'));
+});
+
+test('memory book lists private memories with signed audio, escapes notes, and deletes', async () => {
+  const calls = [];
+  const rows = [
+    { id: 'm-1', story: 'ngugi', night: '2026-09-10', note: 'Tonight you said <b>treasure</b> back to me.', audio_path: 'user-1/m-1.webm', audio_secs: 12 },
+    { id: 'm-2', story: 'maathai', night: '2026-09-02', note: 'First story ever.', audio_path: null, audio_secs: null },
+  ];
+  const a = app({ fetcher: async (url, opts = {}) => {
+    calls.push({ url, opts });
+    if (/rest\/v1\/memories\?select/.test(url)) return { ok: true, json: async () => rows };
+    if (/object\/sign\/memories\//.test(url)) return { ok: true, json: async () => ({ signedURL: '/object/sign/memories/user-1/m-1.webm?token=abc' }) };
+    return { ok: true, status: 204, json: async () => ({}) };
+  }, stored: { msSession: JSON.stringify(signedIn), childName: 'Malakai' } });
+  await a.run('openMemoryBook()');
+  const html = a.get('memoryBody').innerHTML;
+  assert.equal(a.get('memoryModal').hidden, false);
+  assert.match(html, /Malakai&#39;s memory book|Malakai's memory book/);
+  assert.match(html, /2 memories/);
+  assert.match(html, /10 September 2026/);
+  assert.ok(html.includes('&lt;b&gt;treasure&lt;/b&gt;') && !html.includes('<b>'));
+  assert.match(html, /src="https:\/\/[^"]+\/storage\/v1\/object\/sign\/memories\/user-1\/m-1\.webm\?token=abc"/);
+  assert.match(html, /id="memDownloadBtn"/);
+  assert.ok(calls.some(c => /rest\/v1\/memories\?select/.test(c.url) && c.opts.headers.Authorization === 'Bearer tok'));
+  await a.run('deleteMemory("m-1")');
+  assert.ok(calls.some(c => c.opts.method === 'DELETE' && /memories\?id=eq\.m-1/.test(c.url)));
+  assert.ok(calls.some(c => c.opts.method === 'DELETE' && /\/object\/memories$/.test(c.url) && c.opts.body.includes('user-1/m-1.webm')));
+  assert.match(a.get('memoryBody').innerHTML, /1 memory\b/);
+  assert.ok(!a.get('memoryBody').innerHTML.includes('treasure'));
+});

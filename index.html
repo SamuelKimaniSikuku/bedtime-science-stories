@@ -580,6 +580,32 @@
   .ask-rate button.on { border-color: var(--gold); background: rgba(245,198,100,.15); }
   @media (max-width: 560px) { .ask-content { padding: 12px 14px; } .ask-disclosure { padding-inline: 14px; } .ask-age select { max-width: 100%; } }
   @media (max-width: 420px) { .ask-row { flex-wrap: wrap; } .ask-row .ask-btn { width: 100%; } }
+  /* --- memory book: a note or voice for when the child is older --- */
+  .memory { border: 1px solid rgba(245,198,100,.30); background: rgba(245,198,100,.06); border-radius: 16px; padding: 16px 18px; margin: 18px 0 8px; }
+  .memory-head { font-size: 15px; color: var(--moon); font-weight: 700; margin: 0 0 4px; }
+  .memory-sub { font-size: 13px; color: var(--ink-soft); margin: 0 0 12px; line-height: 1.5; }
+  .memory textarea {
+    width: 100%; min-height: 84px; resize: vertical; background: #141b38; border: 1.5px solid #323d68;
+    color: var(--ink); border-radius: 12px; padding: 11px 14px; font-size: 15px; font-family: inherit; line-height: 1.5;
+  }
+  .memory textarea:focus { outline: none; border-color: var(--gold); }
+  .memory-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+  .mem-rec {
+    background: transparent; border: 1.5px solid #3a466f; color: var(--ink-soft); font-family: inherit;
+    font-size: 13.5px; padding: 9px 14px; border-radius: 999px; cursor: pointer; min-height: 40px;
+  }
+  .mem-rec.rec { border-color: #ff8a8a; color: #ffb3b3; }
+  .memory audio { width: 100%; max-width: 320px; height: 36px; }
+  .mem-status { font-size: 12.5px; color: var(--ink-soft); opacity: .85; min-height: 1.3em; margin: 0; }
+  .mem-status.err { color: #ff8a8a; opacity: 1; }
+  .memory-card { max-width: 560px; max-height: 90vh; overflow: auto; }
+  .mem-list { display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+  .mem-item { border: 1px solid #3a466f; border-radius: 14px; padding: 14px 16px; }
+  .mem-when { font-size: 12.5px; color: var(--gold); font-weight: 700; letter-spacing: .02em; }
+  .mem-story { font-size: 13px; color: var(--ink-soft); margin: 2px 0 8px; }
+  .mem-note { font-family: Georgia, serif; font-size: 16.5px; line-height: 1.55; color: var(--moon); white-space: pre-wrap; }
+  .mem-item audio { width: 100%; height: 36px; margin-top: 10px; }
+  .mem-tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
   .source-note { font-size: 12px; color: var(--ink-soft); margin: 22px 0; }
   .source-note a { color: var(--gold); text-underline-offset: 3px; }
   @media (max-width: 650px) {
@@ -675,6 +701,12 @@
     <div id="authBody"></div>
   </div>
 </div>
+<div class="auth-modal" id="memoryModal" hidden>
+  <div class="auth-card memory-card">
+    <button class="auth-close" id="memoryClose" aria-label="Close">✕</button>
+    <div id="memoryBody"></div>
+  </div>
+</div>
 
 <div class="auth-modal" id="onboardModal" hidden>
   <div class="auth-card">
@@ -724,7 +756,21 @@ const UI = {
         introFor: name => `Tonight's story for ${name}…`,
         pickFor: name => `Tonight's pick for ${name}`, pickCta: "Read tonight's story",
         learnMore: name => `Learn more about ${name} on Wikipedia ↗`,
-        },
+        memTitle: name => `Something for when ${name || "your little one"} is older`,
+        memSub: "A feeling, a moment, your voice — kept privately in your family's memory book.",
+        memPh: "Tonight you asked why the trees die, then fell asleep on my arm…",
+        memRecord: "Record a voice note", memStop: "Stop recording",
+        memRecording: s => `Recording… ${s}s (up to 60)`, memRecorded: s => `${s}-second voice note ready`,
+        memNoMic: "Recording isn't available on this device — your words are enough.",
+        memSave: "Keep this memory", memSaving: "Keeping…", memSaved: "Kept in the memory book 💛",
+        memErr: "Couldn't save just now. Try again.", memNeed: "Write a few words or record a voice note first.",
+        memSignIn: "Sign in to start a memory book", memBook: "Memory book",
+        memBookTitle: name => `${name ? name + "'s" : "Our"} memory book`,
+        memEmpty: "No memories yet. After a story, leave a few words or your voice for later.",
+        memCount: n => `${n} ${n === 1 ? "memory" : "memories"}`, memDelete: "Delete",
+        memConfirmDelete: "Delete this memory? This can't be undone.",
+        memDownload: "Download everything", memDownloading: "Packing your memory book…",
+        memDownloadErr: "Couldn't build the download. Try again." },
   sw: { title: "Malakai Stories",
         subtitle: "Hadithi fupi za usiku zenye funzo — kuhusu watu waliobadilisha dunia: walikozaliwa, walivyolelewa, na kwa nini walikuwa muhimu.",
         region: "Kanda", topic: "Mada", gender: "Jinsia", all: "Zote",
@@ -760,7 +806,21 @@ const UI = {
         introFor: name => `Hadithi ya usiku wa leo kwa ${name}…`,
         pickFor: name => `Chaguo la leo kwa ${name}`, pickCta: "Soma hadithi ya leo",
         learnMore: name => `Jifunze zaidi kuhusu ${name} kwenye Wikipedia ↗`,
-        },
+        memTitle: name => `Kitu cha ${name || "mtoto wako"} atakapokuwa mkubwa`,
+        memSub: "Hisia, tukio, sauti yako — huhifadhiwa kwa faragha kwenye kitabu cha kumbukumbu cha familia yako.",
+        memPh: "Leo uliuliza kwa nini miti hufa, kisha ukalala mkononi mwangu…",
+        memRecord: "Rekodi ujumbe wa sauti", memStop: "Acha kurekodi",
+        memRecording: s => `Inarekodi… sekunde ${s} (hadi 60)`, memRecorded: s => `Ujumbe wa sauti wa sekunde ${s} uko tayari`,
+        memNoMic: "Kurekodi hakupatikani kwenye kifaa hiki — maneno yako yanatosha.",
+        memSave: "Hifadhi kumbukumbu hii", memSaving: "Inahifadhi…", memSaved: "Imehifadhiwa kwenye kitabu cha kumbukumbu 💛",
+        memErr: "Haikuhifadhiwa sasa hivi. Jaribu tena.", memNeed: "Andika maneno machache au rekodi sauti kwanza.",
+        memSignIn: "Ingia uanze kitabu cha kumbukumbu", memBook: "Kitabu cha kumbukumbu",
+        memBookTitle: name => `Kitabu cha kumbukumbu cha ${name || "familia yetu"}`,
+        memEmpty: "Bado hakuna kumbukumbu. Baada ya hadithi, acha maneno machache au sauti yako kwa ajili ya baadaye.",
+        memCount: n => `Kumbukumbu ${n}`, memDelete: "Futa",
+        memConfirmDelete: "Ufute kumbukumbu hii? Haiwezi kurudishwa.",
+        memDownload: "Pakua zote", memDownloading: "Inaandaa kitabu chako cha kumbukumbu…",
+        memDownloadErr: "Upakuaji haukufanikiwa. Jaribu tena." },
   fr: { title: "Malakai Stories",
         subtitle: "De courtes histoires du soir qui enseignent — sur les gens qui ont changé le monde : où ils sont nés, comment ils ont grandi, et pourquoi ils ont compté.",
         region: "Région", topic: "Sujet", gender: "Genre", all: "Tout",
@@ -796,7 +856,21 @@ const UI = {
         introFor: name => `L'histoire de ce soir pour ${name}…`,
         pickFor: name => `La sélection de ce soir pour ${name}`, pickCta: "Lire l'histoire de ce soir",
         learnMore: name => `En savoir plus sur ${name} sur Wikipédia ↗`,
-        }
+        memTitle: name => `Quelque chose pour quand ${name || "votre enfant"} sera grand`,
+        memSub: "Une émotion, un moment, votre voix — gardés en privé dans le livre de souvenirs de votre famille.",
+        memPh: "Ce soir tu as demandé pourquoi les arbres meurent, puis tu t'es endormi sur mon bras…",
+        memRecord: "Enregistrer un message vocal", memStop: "Arrêter",
+        memRecording: s => `Enregistrement… ${s} s (60 max)`, memRecorded: s => `Message vocal de ${s} s prêt`,
+        memNoMic: "L'enregistrement n'est pas disponible sur cet appareil — vos mots suffisent.",
+        memSave: "Garder ce souvenir", memSaving: "Enregistrement…", memSaved: "Gardé dans le livre de souvenirs 💛",
+        memErr: "Impossible d'enregistrer pour l'instant. Réessayez.", memNeed: "Écrivez quelques mots ou enregistrez un message vocal d'abord.",
+        memSignIn: "Connectez-vous pour commencer un livre de souvenirs", memBook: "Livre de souvenirs",
+        memBookTitle: name => `Le livre de souvenirs ${name ? "de " + name : "de notre famille"}`,
+        memEmpty: "Pas encore de souvenirs. Après une histoire, laissez quelques mots ou votre voix pour plus tard.",
+        memCount: n => `${n} souvenir${n === 1 ? "" : "s"}`, memDelete: "Supprimer",
+        memConfirmDelete: "Supprimer ce souvenir ? Cette action est définitive.",
+        memDownload: "Tout télécharger", memDownloading: "Préparation de votre livre de souvenirs…",
+        memDownloadErr: "Impossible de préparer le téléchargement. Réessayez." }
 };
 
 const HOME_UI = {
@@ -1307,7 +1381,8 @@ function renderTracker() {
     </button>
     ${session && myInterests.length ? `<button class="unread-toggle${interestsOnly ? " on" : ""}" id="interestsToggle" style="margin-left:8px">
       🎯 ${t.forUs}
-    </button>` : ""}`;
+    </button>` : ""}
+    ${session ? `<button class="unread-toggle" id="memBookBtn" style="margin-left:8px">📖 ${t.memBook}</button>` : ""}`;
 }
 
 // One story a day, same pick all day on every device (seeded by the date, not
@@ -1527,6 +1602,21 @@ function openReader(id) {
     <div style="text-align:center">
       <button class="mark-read${isRead(s.id) ? " done" : ""}" id="markReadBtn">${isRead(s.id) ? t.markedRead : t.markRead}</button>
       <button class="fav-btn${isFav(s.id) ? " done" : ""}" id="favBtn">${isFav(s.id) ? t.favBtnOn : t.favBtn}</button>
+    </div>
+    <div class="memory" id="memoryBox">
+      <div class="memory-head">📖 ${escapeHtml(t.memTitle(myChildName))}</div>
+      <p class="memory-sub">${escapeHtml(t.memSub)}</p>
+      ${session ? `
+      <textarea id="memNote" maxlength="600" placeholder="${escapeHtml(t.memPh)}" aria-label="${escapeHtml(t.memBook)}"></textarea>
+      <div class="memory-row">
+        <button class="mem-rec" id="memRecordBtn">🎙 ${t.memRecord}</button>
+        <span class="mem-status" id="memRecStatus"></span>
+        <audio id="memPreview" controls hidden></audio>
+      </div>
+      <div class="memory-row">
+        <button class="ask-btn" id="memSaveBtn">${t.memSave}</button>
+        <span class="mem-status" id="memStatus" role="status"></span>
+      </div>` : `<button class="text-button" id="memSignIn">${t.memSignIn} →</button>`}
     </div>
     <div class="goodnight">${escapeHtml(goodnightLine(t))}</div>
     ${s.biographySource ? `<div class="source-note">${h.source}: <a href="${s.biographySource.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.biographySource.label)}</a> · ${h.reviewed(formatReviewDate(s.biographySource.reviewed))}</div>` : ""}`;
@@ -1891,12 +1981,247 @@ async function rateAsk(index, good) {
 }
 
 
+/* ---------- memory book: a few words or a voice note, for when the child is older ----------
+   Signed-in families only. Rows live in the `memories` table and recordings in
+   the private `memories` bucket, both RLS-scoped so nobody else can read or hear
+   them. Drafts (text + a pending recording) live only in memory until "Keep". */
+let memRecorder = null, memChunks = [], memClip = null, memRecStart = 0, memRecTimer = null;
+const MEM_MAX_SECS = 60;
+// A function, not a constant: SUPABASE_URL is declared further down the script.
+const storageBase = () => `${SUPABASE_URL}/storage/v1`;
+const storageHeaders = () => ({ "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + (session ? session.access_token : SUPABASE_ANON_KEY) });
+const localDateISO = ms => {
+  const d = new Date(ms);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+const newId = () => (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID()
+  : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+
+function discardMemClip() {
+  if (memClip?.url && typeof URL !== "undefined" && URL.revokeObjectURL) URL.revokeObjectURL(memClip.url);
+  memClip = null;
+  const preview = document.getElementById("memPreview");
+  if (preview) { preview.hidden = true; preview.removeAttribute("src"); }
+}
+
+async function toggleMemRecording() {
+  const t = UI[effLang()];
+  const btn = document.getElementById("memRecordBtn"), status = document.getElementById("memRecStatus");
+  if (memRecorder && memRecorder.state === "recording") { memRecorder.stop(); return; }
+  if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+    if (status) status.textContent = t.memNoMic; return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    discardMemClip();
+    memChunks = [];
+    memRecorder = new MediaRecorder(stream);
+    memRecorder.ondataavailable = ev => memChunks.push(ev.data);
+    memRecorder.onstop = () => {
+      stream.getTracks().forEach(tr => tr.stop());
+      clearInterval(memRecTimer); memRecTimer = null;
+      const secs = Math.max(1, Math.round((Date.now() - memRecStart) / 1000));
+      const type = memRecorder.mimeType || "audio/webm";
+      const blob = new Blob(memChunks, { type });
+      const ext = /mp4|aac|m4a/.test(type) ? "m4a" : /ogg/.test(type) ? "ogg" : "webm";
+      memClip = { blob, ext, secs, type, url: URL.createObjectURL(blob) };
+      memRecorder = null;
+      if (btn) { btn.textContent = `🎙 ${t.memRecord}`; btn.classList.remove("rec"); }
+      if (status) status.textContent = t.memRecorded(secs);
+      const preview = document.getElementById("memPreview");
+      if (preview) { preview.src = memClip.url; preview.hidden = false; }
+    };
+    memRecorder.start();
+    memRecStart = Date.now();
+    if (btn) { btn.textContent = `■ ${t.memStop}`; btn.classList.add("rec"); }
+    if (status) status.textContent = t.memRecording(0);
+    memRecTimer = setInterval(() => {
+      const s = Math.floor((Date.now() - memRecStart) / 1000);
+      if (status) status.textContent = t.memRecording(s);
+      if (s >= MEM_MAX_SECS && memRecorder?.state === "recording") memRecorder.stop();
+    }, 500);
+  } catch {
+    if (status) status.textContent = t.memNoMic;
+  }
+}
+
+async function saveMemory() {
+  const t = UI[effLang()];
+  const story = document.getElementById("reader").dataset.story;
+  const noteEl = document.getElementById("memNote"), status = document.getElementById("memStatus"), btn = document.getElementById("memSaveBtn");
+  const note = (noteEl?.value || "").trim();
+  if (!session || !story) return;
+  if (!note && !memClip) { if (status) { status.textContent = t.memNeed; status.className = "mem-status err"; } return; }
+  if (memRecorder?.state === "recording") memRecorder.stop();
+  if (btn) btn.disabled = true;
+  if (status) { status.textContent = t.memSaving; status.className = "mem-status"; }
+  try {
+    if (!await ensureSession()) throw new Error("signed out");
+    const id = newId();
+    let audio_path = null, audio_secs = null;
+    if (memClip) {
+      audio_path = `${session.user_id}/${id}.${memClip.ext}`;
+      const up = await fetch(`${storageBase()}/object/memories/${audio_path}`, {
+        method: "POST", headers: { ...storageHeaders(), "Content-Type": memClip.type, "x-upsert": "false" }, body: memClip.blob
+      });
+      if (!up.ok) throw new Error("upload failed");
+      audio_secs = memClip.secs;
+    }
+    const night = localDateISO(readMap[story] || Date.now());
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/memories`, {
+      method: "POST", headers: { ...authHeaders(), "Prefer": "return=minimal" },
+      body: JSON.stringify({ id, user_id: session.user_id, story, night, note, audio_path, audio_secs })
+    });
+    if (!r.ok) throw new Error("insert failed");
+    if (noteEl) noteEl.value = "";
+    discardMemClip();
+    const recStatus = document.getElementById("memRecStatus");
+    if (recStatus) recStatus.textContent = "";
+    if (status) { status.textContent = t.memSaved; status.className = "mem-status"; }
+  } catch {
+    if (status) { status.textContent = t.memErr; status.className = "mem-status err"; }
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+let memoryList = [];
+async function signedAudioUrl(path) {
+  try {
+    const r = await fetch(`${storageBase()}/object/sign/memories/${path}`, {
+      method: "POST", headers: { ...storageHeaders(), "Content-Type": "application/json" }, body: JSON.stringify({ expiresIn: 3600 })
+    });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return j.signedURL ? `${storageBase()}${j.signedURL}` : null;
+  } catch { return null; }
+}
+
+async function openMemoryBook() {
+  if (!session) { openAuthModal(); return; }
+  const t = UI[effLang()];
+  const body = document.getElementById("memoryBody");
+  body.innerHTML = `<h3>📖 ${escapeHtml(t.memBookTitle(myChildName))}</h3><p>${t.memDownloading.replace("…", "")}…</p>`;
+  document.getElementById("memoryModal").hidden = false;
+  memoryList = [];
+  try {
+    if (!await ensureSession()) throw new Error("signed out");
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/memories?select=*&order=night.desc,created_at.desc`, { headers: authHeaders() });
+    if (r.ok) memoryList = await r.json();
+  } catch {}
+  await Promise.all(memoryList.map(async m => { if (m.audio_path) m.audio_url = await signedAudioUrl(m.audio_path); }));
+  renderMemoryBook();
+}
+
+function renderMemoryBook() {
+  const t = UI[effLang()];
+  const body = document.getElementById("memoryBody");
+  if (!body) return;
+  const items = memoryList.map(m => {
+    const s = STORIES.find(x => x.id === m.story);
+    return `<div class="mem-item" data-mem="${m.id}">
+      <div class="mem-when">${escapeHtml(formatReviewDate(m.night))}</div>
+      ${s ? `<div class="mem-story">${s.emoji} ${escapeHtml(s.name)} · ${escapeHtml(pick(s.title))}</div>` : ""}
+      ${m.note ? `<div class="mem-note">${escapeHtml(m.note)}</div>` : ""}
+      ${m.audio_url ? `<audio controls preload="none" src="${m.audio_url}"></audio>` : ""}
+      <div class="mem-tools"><span></span><button class="auth-signout" data-mem-delete="${m.id}" style="margin:6px 0 0">${t.memDelete}</button></div>
+    </div>`;
+  }).join("");
+  body.innerHTML = `
+    <h3>📖 ${escapeHtml(t.memBookTitle(myChildName))}</h3>
+    <div class="mem-tools">
+      <span class="tracker-count">${t.memCount(memoryList.length)}</span>
+      ${memoryList.length ? `<button class="text-button" id="memDownloadBtn">⬇ ${t.memDownload}</button>` : ""}
+    </div>
+    <div class="mem-status" id="memBookStatus" role="status"></div>
+    ${memoryList.length ? `<div class="mem-list">${items}</div>` : `<p style="margin-top:14px">${escapeHtml(t.memEmpty)}</p>`}`;
+}
+
+async function deleteMemory(id) {
+  const t = UI[effLang()];
+  const m = memoryList.find(x => x.id === id);
+  if (!m) return;
+  if (typeof confirm === "function" && !confirm(t.memConfirmDelete)) return;
+  try {
+    if (!await ensureSession()) return;
+    await fetch(`${SUPABASE_URL}/rest/v1/memories?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers: authHeaders() });
+    if (m.audio_path) {
+      await fetch(`${storageBase()}/object/memories`, {
+        method: "DELETE", headers: { ...storageHeaders(), "Content-Type": "application/json" }, body: JSON.stringify({ prefixes: [m.audio_path] })
+      }).catch(() => {});
+    }
+    memoryList = memoryList.filter(x => x.id !== id);
+    renderMemoryBook();
+  } catch {}
+}
+
+// "Download everything": a zip with a readable page, the raw data, and every
+// recording — so the book outlives the site, and no one has to trust us to keep it.
+function loadJSZip() {
+  if (window.JSZip) return Promise.resolve(window.JSZip);
+  return new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+    s.onload = () => resolve(window.JSZip);
+    s.onerror = () => reject(new Error("jszip"));
+    document.head.appendChild(s);
+  });
+}
+
+async function downloadMemoryBook() {
+  const t = UI[effLang()];
+  const status = document.getElementById("memBookStatus"), btn = document.getElementById("memDownloadBtn");
+  if (btn) btn.disabled = true;
+  if (status) { status.textContent = t.memDownloading; status.className = "mem-status"; }
+  try {
+    const JSZip = await loadJSZip();
+    const zip = new JSZip();
+    const entries = [];
+    for (const m of memoryList) {
+      const s = STORIES.find(x => x.id === m.story);
+      let file = null;
+      if (m.audio_url) {
+        const blob = await (await fetch(m.audio_url)).blob();
+        file = `audio/${m.night}-${m.id.slice(0, 8)}.${(m.audio_path.split(".").pop() || "webm")}`;
+        zip.file(file, blob);
+      }
+      entries.push({ night: m.night, story: s ? `${s.name} — ${s.title.en}` : m.story, note: m.note || "", audio: file });
+    }
+    const title = t.memBookTitle(myChildName);
+    zip.file("memory-book.json", JSON.stringify(entries, null, 2));
+    zip.file("memory-book.html", `<!doctype html><meta charset="utf-8"><title>${escapeHtml(title)}</title>
+<style>body{font-family:Georgia,serif;max-width:640px;margin:40px auto;padding:0 20px;color:#222;line-height:1.6}h1{font-weight:500}.m{border-top:1px solid #ddd;padding:18px 0}.w{font-size:13px;color:#8a6d1a;font-weight:700;letter-spacing:.04em}.s{font-size:13px;color:#666}p{white-space:pre-wrap}audio{width:100%;margin-top:8px}</style>
+<h1>📖 ${escapeHtml(title)}</h1>
+${entries.map(e => `<div class="m"><div class="w">${escapeHtml(e.night)}</div><div class="s">${escapeHtml(e.story)}</div>${e.note ? `<p>${escapeHtml(e.note)}</p>` : ""}${e.audio ? `<audio controls src="${e.audio}"></audio>` : ""}</div>`).join("\n")}`);
+    const blob = await zip.generateAsync({ type: "blob" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `malakai-stories-memory-book-${localDateISO(Date.now())}.zip`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    if (status) status.textContent = "";
+  } catch {
+    if (status) { status.textContent = t.memDownloadErr; status.className = "mem-status err"; }
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+document.getElementById("memoryModal").addEventListener("click", e => {
+  if (e.target.id === "memoryModal" || e.target.id === "memoryClose") { document.getElementById("memoryModal").hidden = true; return; }
+  if (e.target.closest("#memDownloadBtn")) { downloadMemoryBook(); return; }
+  const del = e.target.closest("[data-mem-delete]");
+  if (del) deleteMemory(del.dataset.memDelete);
+});
+
 function closeReader() {
   resetAsk();
   const askBox = document.getElementById("askBox");
   if (askBox) askBox.innerHTML = "";
   if (!document.getElementById("overlay").classList.contains("open")) return;
   stopNarration();
+  if (memRecorder?.state === "recording") memRecorder.stop();
+  discardMemClip();
   document.getElementById("overlay").classList.remove("open");
   document.body.style.overflow = pageOverflow;
   document.querySelectorAll(".wrap, .account-dock, .music-dock").forEach(el => { el.inert = false; });
@@ -2657,6 +2982,7 @@ function renderAuthModal() {
     body.innerHTML = `
       <h3>✓ ${t.signedInAs(session.email)}</h3>
       <p>${t.syncedNote}</p>
+      <button class="auth-signout" id="authMemoryBook" style="margin-right:18px">📖 ${t.memBook}</button>
       <button class="auth-signout" id="authEditPrefs" style="margin-right:18px">${t.obEdit}</button>
       <button class="auth-signout" id="authSignOut">${t.signOut}</button>`;
   } else {
@@ -2678,6 +3004,11 @@ document.getElementById("authModal").addEventListener("click", async e => {
     document.getElementById("authModal").hidden = true; return;
   }
   if (e.target.id === "authSignOut") { signOut(); return; }
+  if (e.target.id === "authMemoryBook") {
+    document.getElementById("authModal").hidden = true;
+    openMemoryBook();
+    return;
+  }
   if (e.target.id === "authEditPrefs") {
     document.getElementById("authModal").hidden = true;
     openOnboarding();
@@ -2799,6 +3130,10 @@ document.addEventListener("click", e => {
     if (control) { reviewAsk(Number(control.dataset[`ask${action[0].toUpperCase()}${action.slice(1)}`]), action); return; }
   }
   if (e.target.closest("#askBtn")) { submitAsk(); return; }
+  if (e.target.closest("#memRecordBtn")) { toggleMemRecording(); return; }
+  if (e.target.closest("#memSaveBtn")) { saveMemory(); return; }
+  if (e.target.closest("#memSignIn")) { openAuthModal(); return; }
+  if (e.target.closest("#memBookBtn")) { openMemoryBook(); return; }
   const rateBtn = e.target.closest("[data-ask-rate]");
   if (rateBtn) { rateAsk(Number(rateBtn.dataset.askRate), rateBtn.dataset.good === "1"); return; }
 
@@ -2891,6 +3226,8 @@ document.addEventListener("input", e => {
   if (e.target.id === "askInput") document.getElementById("askCount").textContent = `${e.target.value.length} / 200`;
 });
 document.addEventListener("keydown", e => {
+  const memModal = document.getElementById("memoryModal");
+  if (e.key === "Escape" && memModal && !memModal.hidden) { memModal.hidden = true; return; }
   if (!document.getElementById("overlay").classList.contains("open")) return;
   if (e.key === "Enter" && e.target?.id === "askInput") { e.preventDefault(); submitAsk(); return; }
   if (e.key === "Escape") { e.preventDefault(); closeReader(); return; }

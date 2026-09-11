@@ -336,3 +336,21 @@ In a staging Supabase project, verify:
   close/reopen and language/account changes. No failed review may expose a candidate answer.
 - Inspect the stored rows: new `ip` values must be null, no question/answer text should be
   present, and the chosen retention job must remove expired metadata as configured.
+
+## 9 · Memory book (a note or voice for when the child is older)
+
+At the end of every story, a signed-in parent can write a few words and/or record a voice note of up
+to 60 seconds "for when the child is older". Everything is private to that family: rows in a
+`memories` table and recordings in a private `memories` storage bucket, both locked down with RLS so
+one account can never read or hear another's. The book is opened from the account chip
+(→ **Memory book**) or the reading-journey panel; each entry shows the night, the story, the words
+and the recording, and **Download everything** packs the whole book (a readable page, the raw data,
+and every recording) into a zip — so the book outlives the site.
+
+**One-time setup.** Dashboard → **SQL Editor** → paste `migrations/0007_memories.sql` → **Run**.
+That's all: no edge function, no secret. The browser talks to the table and the bucket directly with
+the visitor's own session token, and RLS does the guarding.
+
+**What's stored.** `story`, `night` (the date the story was marked read), `note`, and the storage path
+of the recording (`{user id}/{memory id}.webm` or `.m4a` on Safari). Nothing is shared, indexed, or
+used for anything else. Deleting an entry removes both the row and the file.
