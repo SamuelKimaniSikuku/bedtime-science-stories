@@ -99,11 +99,6 @@
   .lang-btn.active { background: var(--gold); border-color: var(--gold); color: #201a08; }
 
   /* --- filters --- */
-  .filters {
-    background: rgba(255,255,255,.03); border: 1px solid #2b3560; border-radius: 20px;
-    padding: 20px 22px; margin: 26px 0 30px;
-    display: flex; flex-direction: column; gap: 18px;
-  }
   .filter-group + .filter-group { border-top: 1px solid rgba(255,255,255,.06); padding-top: 18px; }
   .filter-label {
     display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .14em;
@@ -493,14 +488,23 @@
   .voice-offer a { color: var(--gold); font-size: 14px; font-weight: 700; margin-left: auto; flex-shrink: 0; padding: 10px 0; text-underline-offset: 5px; }
   .library-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 18px; }
   .library-heading h2 { font-family: Georgia, serif; font-size: 28px; font-weight: 500; color: var(--moon); }
-  .library-heading span { color: var(--ink-soft); font-size: 13px; }
-  .collection-row { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 18px; }
+  /* Quiet text toggles: the reading journey (next to the heading) and the
+     region/topic/gender filters (next to search). Both open a panel below. */
+  .disclosure {
+    background: none; border: 0; color: var(--ink-soft); font: inherit; font-size: 14px;
+    cursor: pointer; padding: 8px 0; white-space: nowrap; min-height: 44px;
+  }
+  .disclosure::before { content: "▸ "; color: var(--gold); }
+  .disclosure[aria-expanded="true"]::before { content: "▾ "; }
+  .disclosure:hover { color: var(--ink); }
+  .collection-row { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
   .collection { border: 1px solid #424c74; border-radius: 12px; padding: 10px 14px; min-height: 44px; font: inherit; font-size: 14px; background: var(--card); color: var(--ink); cursor: pointer; }
   .collection[aria-pressed="true"] { background: var(--moon); border-color: var(--moon); color: #241d07; }
-  .journey { margin-bottom: 16px; }
   summary { cursor: pointer; color: var(--ink-soft); font-size: 14px; padding: 10px 0; }
-  .tracker { margin-top: 10px; }
-  .filters { margin: 0 0 16px; padding: 18px 20px 8px; }
+  .tracker { margin: 0 0 18px; }
+  .search-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .search-row .search-box { flex: 1; min-width: 0; }
+  .more-filters { border-top: 1px solid rgba(255,255,255,.06); padding-top: 6px; margin-bottom: 18px; }
   .more-filters .filter-group { margin-top: 16px; }
   .results-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .text-button { background: none; border: 0; color: var(--gold); font: inherit; font-size: 14px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; padding: 8px 0; }
@@ -610,6 +614,8 @@
   .source-note a { color: var(--gold); text-underline-offset: 3px; }
   @media (max-width: 650px) {
     .wrap { padding: 60px 16px 100px; }
+    .search-row { flex-wrap: wrap; gap: 0; }
+    .search-row .search-box { flex: 1 1 100%; }
     .featured-story { grid-template-columns: 1fr; }
     .featured-art { min-height: 0; aspect-ratio: 16/9; height: auto; max-height: 260px; }
     .featured-content { padding: 24px; }
@@ -641,18 +647,21 @@
   <aside id="voiceOffer" class="voice-offer"></aside>
 
   <main id="library">
-  <div class="library-heading"><h2 id="libraryTitle"></h2><span id="libraryNote"></span></div>
+  <div class="library-heading">
+    <h2 id="libraryTitle"></h2>
+    <button class="disclosure" id="journeyLabel" type="button" aria-expanded="false" aria-controls="tracker"></button>
+  </div>
+  <section class="tracker" id="tracker" hidden></section>
   <div class="collection-row" id="collections"></div>
-  <details class="journey"><summary id="journeyLabel"></summary><section class="tracker" id="tracker"></section></details>
-  <div class="filters">
-    <div class="filter-group search-group">
-      <div class="search-box">
-        <span class="search-ico" aria-hidden="true">🔍</span>
-        <input type="search" id="searchInput" autocomplete="off" spellcheck="false">
-        <button class="search-clear" id="searchClear" type="button" aria-label="Clear" hidden>✕</button>
-      </div>
+  <div class="search-row">
+    <div class="search-box">
+      <span class="search-ico" aria-hidden="true">🔍</span>
+      <input type="search" id="searchInput" autocomplete="off" spellcheck="false">
+      <button class="search-clear" id="searchClear" type="button" aria-label="Clear" hidden>✕</button>
     </div>
-    <details class="more-filters"><summary id="filterLabel"></summary>
+    <button class="disclosure" id="filterLabel" type="button" aria-expanded="false" aria-controls="moreFilters"></button>
+  </div>
+  <div class="more-filters" id="moreFilters" hidden>
     <div class="filter-group">
       <span class="filter-label" id="regionLabel"></span>
       <div class="chip-row" id="regionChips"></div>
@@ -665,7 +674,6 @@
       <span class="filter-label" id="genderLabel"></span>
       <div class="chip-row" id="genderChips"></div>
     </div>
-    </details>
   </div>
 
   <div class="results-heading"><p class="count-line" id="countLine" role="status"></p><button class="text-button" id="resetFilters" hidden></button></div>
@@ -877,7 +885,7 @@ const HOME_UI = {
   en: {
     subtitle: "True stories for little dreamers. Discover a remarkable life together, one bedtime at a time.",
     tonight: "Tonight's story", read: "Read together", listen: "Listen", library: "Find your next story",
-    note: "Read together · choose a short or longer story", filters: "Filter by region, topic or gender", reset: "Clear filters",
+    moreFilters: "More filters", filters: "Filter by region, topic or gender", reset: "Clear filters",
     voiceTitle: "Their favourite voice is yours.", voiceText: "Record three short passages. Let your child hear bedtime stories in your voice, even when you're away.", voiceCta: "Explore your voice →",
     question: "What is one thing from this story you would like to try or learn more about?",
     source: "Biography update", reviewed: date => `Checked ${date}`, close: "Close story", minutes: "min", more: "Read story →",
@@ -889,7 +897,7 @@ const HOME_UI = {
   sw: {
     subtitle: "Hadithi za kweli kwa waotaji wadogo. Gundua maisha ya watu wa ajabu pamoja, hadithi moja kila usiku.",
     tonight: "Hadithi ya leo", read: "Tusome pamoja", listen: "Sikiliza", library: "Chagua hadithi inayofuata",
-    note: "Somani pamoja · chagua hadithi fupi au ndefu", filters: "Chuja kwa kanda, mada au jinsia", reset: "Ondoa vichujio",
+    moreFilters: "Vichujio zaidi", filters: "Chuja kwa kanda, mada au jinsia", reset: "Ondoa vichujio",
     voiceTitle: "Sauti anayoipenda zaidi ni yako.", voiceText: "Rekodi vifungu vitatu vifupi. Mtoto wako asikie hadithi kwa sauti yako, hata ukiwa mbali.", voiceCta: "Hadithi kwa sauti yako →",
     question: "Ni jambo gani katika hadithi hii ungependa kujaribu au kujifunza zaidi?",
     source: "Taarifa ya maisha", reviewed: date => `Imehakikiwa tarehe ${date}`, close: "Funga hadithi", minutes: "dakika", more: "Soma hadithi →",
@@ -901,7 +909,7 @@ const HOME_UI = {
   fr: {
     subtitle: "Des histoires vraies pour les petits rêveurs. Découvrez une vie extraordinaire ensemble, un soir à la fois.",
     tonight: "L'histoire de ce soir", read: "Lire ensemble", listen: "Écouter", library: "Trouvez votre prochaine histoire",
-    note: "À lire ensemble · version courte ou plus longue", filters: "Filtrer par région, sujet ou genre", reset: "Effacer les filtres",
+    moreFilters: "Plus de filtres", filters: "Filtrer par région, sujet ou genre", reset: "Effacer les filtres",
     voiceTitle: "Sa voix préférée, c'est la vôtre.", voiceText: "Enregistrez trois courts passages. Votre enfant pourra écouter les histoires avec votre voix, même quand vous êtes loin.", voiceCta: "Découvrir votre voix →",
     question: "Quelle chose de cette histoire aimerais-tu essayer ou mieux comprendre ?",
     source: "Mise à jour biographique", reviewed: date => `Vérifié le ${date}`, close: "Fermer l'histoire", minutes: "min", more: "Lire l'histoire →",
@@ -1134,6 +1142,7 @@ let regionFilter = "all";
 let topicFilter = "all";
 let genderFilter = "all";
 let collectionFilter = "all";
+let filtersOpen = false, journeyOpen = false;
 let searchQuery = "";
 
 /* ---------- reading tracker + favourites ----------
@@ -1455,9 +1464,18 @@ function render() {
   document.getElementById("siteTitle").textContent = t.title;
   document.getElementById("siteSubtitle").textContent = h.subtitle;
   document.getElementById("libraryTitle").textContent = h.library;
-  document.getElementById("libraryNote").textContent = h.note;
-  document.getElementById("filterLabel").textContent = h.filters;
-  document.getElementById("journeyLabel").textContent = `${t.trackTitle} · ${t.starsRead(readCount(), STORIES.length)}`;
+  // Panels stay open while something inside them is active, so a chosen
+  // region/topic chip or an "unread only" toggle is never hidden from view.
+  const advancedActive = regionFilter !== "all" || topicFilter !== "all" || genderFilter !== "all";
+  const journeyActive = unreadOnly || favOnly || interestsOnly;
+  const filterBtn = document.getElementById("filterLabel"), journeyBtn = document.getElementById("journeyLabel");
+  filterBtn.textContent = h.moreFilters;
+  filterBtn.title = h.filters;
+  filterBtn.setAttribute("aria-expanded", String(filtersOpen || advancedActive));
+  document.getElementById("moreFilters").hidden = !(filtersOpen || advancedActive);
+  journeyBtn.textContent = `${t.trackTitle} · ${t.starsRead(readCount(), STORIES.length)}`;
+  journeyBtn.setAttribute("aria-expanded", String(journeyOpen || journeyActive));
+  document.getElementById("tracker").hidden = !(journeyOpen || journeyActive);
   document.getElementById("resetFilters").textContent = h.reset;
   document.getElementById("resetFilters").hidden = !(searchQuery || collectionFilter !== "all" || regionFilter !== "all" || topicFilter !== "all" || genderFilter !== "all" || unreadOnly || favOnly || interestsOnly);
   document.getElementById("voiceOffer").innerHTML = `<div><h2>${h.voiceTitle}</h2><p>${h.voiceText}</p></div><a href="your-voice.html">${h.voiceCta}</a>`;
@@ -3100,6 +3118,8 @@ document.addEventListener("click", e => {
     document.querySelector(`[data-collection="${collectionFilter}"]`)?.focus({ preventScroll: true });
     return;
   }
+  if (e.target.closest("#filterLabel")) { filtersOpen = !filtersOpen; render(); return; }
+  if (e.target.closest("#journeyLabel")) { journeyOpen = !journeyOpen; render(); return; }
   if (e.target.closest("#resetFilters")) {
     collectionFilter = regionFilter = topicFilter = genderFilter = "all";
     searchQuery = "";
