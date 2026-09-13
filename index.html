@@ -497,7 +497,7 @@
   .disclosure::before { content: "▸ "; color: var(--gold); }
   .disclosure[aria-expanded="true"]::before { content: "▾ "; }
   .disclosure:hover { color: var(--ink); }
-  .collection-row { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
+  .collection-row { display: flex; flex-wrap: wrap; gap: 9px; }
   .collection { border: 1px solid #424c74; border-radius: 12px; padding: 10px 14px; min-height: 44px; font: inherit; font-size: 14px; background: var(--card); color: var(--ink); cursor: pointer; }
   .collection[aria-pressed="true"] { background: var(--moon); border-color: var(--moon); color: #241d07; }
   summary { cursor: pointer; color: var(--ink-soft); font-size: 14px; padding: 10px 0; }
@@ -652,7 +652,6 @@
     <button class="disclosure" id="journeyLabel" type="button" aria-expanded="false" aria-controls="tracker"></button>
   </div>
   <section class="tracker" id="tracker" hidden></section>
-  <div class="collection-row" id="collections"></div>
   <div class="search-row">
     <div class="search-box">
       <span class="search-ico" aria-hidden="true">🔍</span>
@@ -662,6 +661,10 @@
     <button class="disclosure" id="filterLabel" type="button" aria-expanded="false" aria-controls="moreFilters"></button>
   </div>
   <div class="more-filters" id="moreFilters" hidden>
+    <div class="filter-group">
+      <span class="filter-label" id="collectionsLabel"></span>
+      <div class="collection-row" id="collections"></div>
+    </div>
     <div class="filter-group">
       <span class="filter-label" id="regionLabel"></span>
       <div class="chip-row" id="regionChips"></div>
@@ -885,7 +888,7 @@ const HOME_UI = {
   en: {
     subtitle: "True stories for little dreamers. Discover a remarkable life together, one bedtime at a time.",
     tonight: "Tonight's story", read: "Read together", listen: "Listen", library: "Find your next story",
-    moreFilters: "More filters", filters: "Filter by region, topic or gender", reset: "Clear filters",
+    moreFilters: "More filters", filters: "Filter by collection, region, topic or gender", collections: "Collections", reset: "Clear filters",
     voiceTitle: "Their favourite voice is yours.", voiceText: "Record three short passages. Let your child hear bedtime stories in your voice, even when you're away.", voiceCta: "Explore your voice →",
     question: "What is one thing from this story you would like to try or learn more about?",
     source: "Biography update", reviewed: date => `Checked ${date}`, close: "Close story", minutes: "min", more: "Read story →",
@@ -897,7 +900,7 @@ const HOME_UI = {
   sw: {
     subtitle: "Hadithi za kweli kwa waotaji wadogo. Gundua maisha ya watu wa ajabu pamoja, hadithi moja kila usiku.",
     tonight: "Hadithi ya leo", read: "Tusome pamoja", listen: "Sikiliza", library: "Chagua hadithi inayofuata",
-    moreFilters: "Vichujio zaidi", filters: "Chuja kwa kanda, mada au jinsia", reset: "Ondoa vichujio",
+    moreFilters: "Vichujio zaidi", filters: "Chuja kwa mkusanyiko, kanda, mada au jinsia", collections: "Mikusanyiko", reset: "Ondoa vichujio",
     voiceTitle: "Sauti anayoipenda zaidi ni yako.", voiceText: "Rekodi vifungu vitatu vifupi. Mtoto wako asikie hadithi kwa sauti yako, hata ukiwa mbali.", voiceCta: "Hadithi kwa sauti yako →",
     question: "Ni jambo gani katika hadithi hii ungependa kujaribu au kujifunza zaidi?",
     source: "Taarifa ya maisha", reviewed: date => `Imehakikiwa tarehe ${date}`, close: "Funga hadithi", minutes: "dakika", more: "Soma hadithi →",
@@ -909,7 +912,7 @@ const HOME_UI = {
   fr: {
     subtitle: "Des histoires vraies pour les petits rêveurs. Découvrez une vie extraordinaire ensemble, un soir à la fois.",
     tonight: "L'histoire de ce soir", read: "Lire ensemble", listen: "Écouter", library: "Trouvez votre prochaine histoire",
-    moreFilters: "Plus de filtres", filters: "Filtrer par région, sujet ou genre", reset: "Effacer les filtres",
+    moreFilters: "Plus de filtres", filters: "Filtrer par collection, région, sujet ou genre", collections: "Collections", reset: "Effacer les filtres",
     voiceTitle: "Sa voix préférée, c'est la vôtre.", voiceText: "Enregistrez trois courts passages. Votre enfant pourra écouter les histoires avec votre voix, même quand vous êtes loin.", voiceCta: "Découvrir votre voix →",
     question: "Quelle chose de cette histoire aimerais-tu essayer ou mieux comprendre ?",
     source: "Mise à jour biographique", reviewed: date => `Vérifié le ${date}`, close: "Fermer l'histoire", minutes: "min", more: "Lire l'histoire →",
@@ -1466,7 +1469,8 @@ function render() {
   document.getElementById("libraryTitle").textContent = h.library;
   // Panels stay open while something inside them is active, so a chosen
   // region/topic chip or an "unread only" toggle is never hidden from view.
-  const advancedActive = regionFilter !== "all" || topicFilter !== "all" || genderFilter !== "all";
+  const advancedActive = collectionFilter !== "all" || regionFilter !== "all" || topicFilter !== "all" || genderFilter !== "all";
+  document.getElementById("collectionsLabel").textContent = h.collections;
   const journeyActive = unreadOnly || favOnly || interestsOnly;
   const filterBtn = document.getElementById("filterLabel"), journeyBtn = document.getElementById("journeyLabel");
   filterBtn.textContent = h.moreFilters;
