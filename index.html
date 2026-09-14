@@ -470,21 +470,24 @@
   .lang-switch { margin: 0; }
   .lang-row { flex-wrap: wrap; }
   .lang-btn { min-height: 42px; }
-  .featured-story { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; border: 1px solid #414561; border-radius: 24px; background: #19213d; }
-  .featured-visual { position: relative; min-height: 330px; }
-  .featured-art { display: block; width: 100%; height: 100%; min-height: 330px; object-fit: cover; }
+  /* A banner, not a poster: the picture takes 40% and fills whatever height the
+     text needs (it is absolutely positioned), so the card is only as tall as
+     its words — about 280px on a laptop instead of 650. */
+  .featured-story { display: grid; grid-template-columns: 2fr 3fr; overflow: hidden; border: 1px solid #414561; border-radius: 20px; background: #19213d; }
+  .featured-visual { position: relative; min-height: 220px; }
+  .featured-art { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
   /* The picture fades into the text panel instead of stopping at a hard edge. */
   .featured-visual::after {
     content: ""; position: absolute; inset: 0;
     background: linear-gradient(90deg, rgba(25,33,61,0) 70%, #19213d 100%);
   }
-  .featured-content { padding: clamp(24px, 4vw, 42px); align-self: center; }
-  .eyebrow { color: var(--gold); font-size: 12px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
-  .featured-content h2 { font-family: Georgia, serif; font-weight: 500; font-size: clamp(29px, 3.8vw, 43px); line-height: 1.14; color: var(--moon); margin: 14px 0; }
-  .featured-content .hook { margin: 12px 0 14px; font-size: 16px; line-height: 1.65; }
-  .story-byline { font-size: 14px; color: var(--ink-soft); margin: 0 0 22px; }
+  .featured-content { padding: clamp(20px, 3vw, 30px) clamp(22px, 3.4vw, 36px); align-self: center; }
+  .eyebrow { color: var(--gold); font-size: 11.5px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+  .featured-content h2 { font-family: Georgia, serif; font-weight: 500; font-size: clamp(24px, 2.6vw, 32px); line-height: 1.18; color: var(--moon); margin: 8px 0; }
+  .featured-content .hook { margin: 6px 0 8px; font-size: 15px; line-height: 1.55; }
+  .story-byline { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 14px; }
   .story-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-  .story-actions a, .story-actions button { padding: 12px 18px; min-height: 46px; border-radius: 12px; border: 1px solid var(--gold); font-family: inherit; font-size: 14px; font-weight: 650; text-decoration: none; cursor: pointer; }
+  .story-actions a, .story-actions button { padding: 10px 16px; min-height: 42px; border-radius: 12px; border: 1px solid var(--gold); font-family: inherit; font-size: 14px; font-weight: 650; text-decoration: none; cursor: pointer; }
   .primary-action { background: var(--gold); color: #241d07; }
   .secondary-action { background: transparent; color: var(--moon); }
   .featured-symbol {
@@ -628,7 +631,7 @@
     .search-row .search-box { flex: 1 1 100%; }
     .featured-story { grid-template-columns: 1fr; }
     .featured-visual { min-height: 0; }
-    .featured-art { min-height: 0; aspect-ratio: 16/9; height: auto; max-height: 260px; }
+    .featured-art { position: static; aspect-ratio: 16/9; height: auto; max-height: 220px; }
     .featured-visual::after { background: linear-gradient(180deg, rgba(25,33,61,0) 70%, #19213d 100%); }
     .featured-symbol { font-size: 72px; }
     .featured-content { padding: 24px; }
